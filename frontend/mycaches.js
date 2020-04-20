@@ -10,15 +10,16 @@ function getList()
 }
 
 
-document.addEventListener("DOMContentLoaded", function(event) {
+document.addEventListener("DOMContentLoaded", async function() {
 
-  getList().then(data => {
-    var vm = new Vue({
-      el: '#app',
-      data: {
-        d: data,
-      },
-    });
+  var vm = new Vue({
+    el: '#app',
+    data: {
+      d: null,
+    },
+    async created() {
+      this.d = await getList();
+    }
   });
 
 });
