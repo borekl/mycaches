@@ -1,0 +1,101 @@
+@import url('https://fonts.googleapis.com/css?family=Alegreya:400,400i');
+
+/*--- generic classes -----------------------------------------------------*/
+
+.flexcenter {
+  display: flex;
+  justify-content: center;
+}
+
+.numeric {
+  text-align: right;
+}
+
+.emoji {
+  font-size: 80%;
+  margin-left: 0.5em;
+}
+
+.archived {
+  color: #888;
+}
+
+.hlf {
+  color: #aaa;
+}
+
+.dimmed {
+  color: #888;
+}
+
+.held {
+  background-color: #adf;
+}
+
+/*--- body ----------------------------------------------------------------*/
+
+body {
+  font-family: 'Alegreya', sans-serif;
+}
+
+/*--- tables --------------------------------------------------------------*/
+
+table {
+  border-collapse: collapse;
+  margin: 1em;
+}
+
+th {
+  border: black 1px solid;
+}
+
+td {
+  border: black 1px solid;
+  padding: 0.5em;
+  font-weight: 400;
+  font-size: 133%;
+}
+
+
+/*--- cache rating --------------------------------------------------------*/
+
+.rating {
+ text-align: left;
+ font-size: 100%;
+ line-height: 90%;
+}
+
+/*--- cache name ----------------------------------------------------------*/
+  
+div.cachename {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/*--- svg setup -----------------------------------------------------------*/
+
+svg {
+  height: 32px;
+  width: 32px;
+  vertical-align: middle;
+  margin: 0;
+  padding: 0;
+}
+
+/*--- links ---------------------------------------------------------------*/
+
+a:link {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+a:visited {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+a:hover {
+  color: blue;
+  text-decoration: underline;
+}

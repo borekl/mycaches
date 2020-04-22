@@ -7,16 +7,59 @@
   <title>Mandevi'ls Geocaches</title>
   <link rel="stylesheet" href="default.css" type="text/css">
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="/lib/moment.min.js" type="text/javascript"></script>
   <script src="mycaches.js"></script>
 </head>
 
 <body>
 
-<h1>Dev</h1>
-
 <div id="app">
-  <p v-if="d">{{d.length}} item(s) loaded</p>
-  <p v-else>Loading data</p>
+
+  <div class="flexcenter">
+
+    <table>
+
+      <thead>
+        <tr>
+          <th title="My geocache number">#</th>
+          <th title="Geocache id">id</th>
+          <th title="Geocache type">type</th>
+          <th title="Difficulty/terrain">d/t</th>
+          <th title="Geocache's listed name">name</th>
+          <th title="Date I found the cache">date</th>
+          <th title="How many days since last find when I found it">age</th>
+          <th title="How many days have I been the last finder">held</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr v-for="(row,i) in d" :key="'tab-fi-'+i">
+          <td class="numeric">{{i+1}}</td>
+          <td v-if="row.cacheid">
+            <a :href="'https://coords.info/' + row.cacheid">{{row.cacheid}}</a>
+          </td>
+          <td v-else></td>
+          <td><cache-icon :type="row.ctype"></cache-icon></td>
+          <td class="rating"><cache-rating :difficulty="row.difficulty" :terrain="row.terrain"></cache-rating></td>
+          <td><cache-name :row="row"></cache-name></td>
+          <td v-if="row.logid">
+            <a
+            :href="'https://www.geocaching.com/seek/log.aspx?LUID=' + row.logid"
+            >{{row.found}}</a>
+          </td>
+          <td v-else>{{row.found}}</td>
+          <td class="numeric">{{age(row)}}</td>
+          <td
+            class="numeric"
+            :class="{dimmed: !row.next && row.archived, held: !row.next &&
+            row.ctype != 'L' && !row.archived}"
+          >{{held(row)}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+
 </div>
 
 </body>
