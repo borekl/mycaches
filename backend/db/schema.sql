@@ -1,17 +1,20 @@
 CREATE TABLE finds (
 
-  -- meaningless primary key
+  -- primary key and sequence number
   finds_i INTEGER PRIMARY KEY,
 
   -- GC code
-  cacheid TEXT NOT NULL UNIQUE,
+  cacheid TEXT UNIQUE,
 
   -- cache name
   name TEXT NOT NULL,
 
   -- D/T rating times two (ie. 5 is 10, 2.5 is 5 etc.)
-  difficulty INTEGER NOT NULL CHECK ( difficulty BETWEEN 1 AND 10 ),
-  terrain INTEGER NOT NULL CHECK ( terrain BETWEEN 1 AND 10 ),
+  difficulty INTEGER CHECK ( difficulty BETWEEN 2 AND 10 ),
+  terrain INTEGER CHECK ( terrain BETWEEN 2 AND 10 ),
+
+  -- date last found before me
+  prev TEXT,
 
   -- date when found
   found TEXT,
@@ -26,21 +29,16 @@ CREATE TABLE finds (
   -- favorite flag
   favorite INTEGER,
   
-  -- photo gallery partial URL
-  gallery TEXT,
+  -- photo gallery flag
+  gallery INTEGER,
   
   -- FTF/STF/TTF flag (1,2,3)
-  xtf INTEGER
+  xtf INTEGER,
 
-);
+  -- archived
+  archived INTEGER,
 
-INSERT INTO finds VALUES (
-  1,
-  'GC2MFHF', 'Pamatne stromy - 1. Dub u nemocnice na Bukove',
-  4, 3,
-  '2018-07-12', '2018-07-13',
-  't',
-  0,
-  NULL,
-  NULL
+  -- FI log's LUID
+  logid TEXT
+
 );
