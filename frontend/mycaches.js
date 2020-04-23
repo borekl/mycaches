@@ -87,9 +87,16 @@ Vue.component('cache-name', {
 
 /*--- MAIN -----------------------------------------------------------------*/
 
-function getList()
+function getList(req)
 {
-  return fetch('mycaches.cgi')
+  let req_options = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+  };
+
+  if(req) req_options.body = JSON.strigify(req);
+
+  return fetch('mycaches.cgi', req_options)
   .then(response => {
     if(!response.ok) {
       throw new Error(`Failed to retrieve data (${response.statusText})`);

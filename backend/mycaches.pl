@@ -10,10 +10,10 @@ use Plack::Request;
 use Plack::Response;
 use Plack::Handler::CGI;
 
-
 my $app = sub {
   my $req = Plack::Request->new(shift);
   my $res = Plack::Response->new(200);
+  my $json = decode_json($req->content) if $req->content;
 
   my $dbfile = 'mycaches.sqlite';
   my $dbh = DBI->connect("dbi:SQLite:dbname=$dbfile","","");
