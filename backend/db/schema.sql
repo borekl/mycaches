@@ -42,3 +42,43 @@ CREATE TABLE finds (
   logid TEXT
 
 );
+
+
+CREATE TABLE hides (
+
+  -- primary key and sequence number
+  hides_i INTEGER PRIMARY KEY,
+
+  -- GC code
+  cacheid TEXT UNIQUE,
+
+  -- cache name
+  name TEXT NOT NULL,
+
+  -- D/T rating times two (ie. 5 is 10, 2.5 is 5 etc.)
+  difficulty INTEGER CHECK ( difficulty BETWEEN 2 AND 10 ),
+  terrain INTEGER CHECK ( terrain BETWEEN 2 AND 10 ),
+
+  -- publication date
+  published TEXT,
+
+  -- number of finds
+  finds INTEGER,
+
+  -- date when last found
+  found TEXT,
+
+  -- cache type as t-traditional, ?-mystery, m-multicache, w-wherigo,
+  -- l-letterbox,L-lab,v-virtual,e-earth,E-event,M-mega,G-giga,C-CITO
+  ctype TEXT,
+
+  -- photo gallery flag
+  gallery INTEGER,
+
+  -- archived
+  archived INTEGER,
+
+  -- status (0-unspecified, 1-active,2-disabled,10-in development,
+  -- 11-waiting to be placed)
+  status INTEGER
+);

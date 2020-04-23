@@ -20,12 +20,17 @@ my $app = sub {
   $dbh->{sqlite_unicode} = 1;
 
   my $finds = $dbh->selectall_arrayref(
-    'SELECT * FROM finds',
+    'SELECT * FROM finds ORDER BY finds_i',
+    { Slice => {} }
+  );
+
+  my $hides = $dbh->selectall_arrayref(
+    'SELECT * FROM hides ORDER BY hides_i',
     { Slice => {} }
   );
 
   $res->headers([ 'Content-type' => 'application/json' ]);
-  $res->body(encode_json($finds));
+  $res->body(encode_json({ finds => $finds, hides => $hides }));
   $res->finalize;
 };
 

@@ -32,6 +32,11 @@
   background-color: #adf;
 }
 
+.mycachestatus {
+  font-style: italic;
+  color: #888;
+}
+
 /*--- body ----------------------------------------------------------------*/
 
 body {
@@ -56,6 +61,16 @@ td {
   font-size: 133%;
 }
 
+tr.descr {
+  text-transform: uppercase;
+  font-size: 166%;
+  letter-spacing: 0.2em;
+}
+
+tr.descr td {
+  border: none;
+  text-align: center;
+}
 
 /*--- cache rating --------------------------------------------------------*/
 

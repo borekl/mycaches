@@ -17,9 +17,14 @@
 
   <div class="flexcenter">
 
-    <table>
+    <table v-if="d">
 
-      <thead>
+      <tbody id="found">
+
+        <tr class="descr">
+          <td colspan="8">my found caches</td>
+        </tr>
+
         <tr>
           <th title="My geocache number">#</th>
           <th title="Geocache id">id</th>
@@ -30,10 +35,8 @@
           <th title="How many days since last find when I found it">age</th>
           <th title="How many days have I been the last finder">held</th>
         </tr>
-      </thead>
 
-      <tbody>
-        <tr v-for="(row,i) in d" :key="'tab-fi-'+i">
+        <tr v-for="(row,i) in d.finds" :key="'tab-fi-'+i">
           <td class="numeric">{{i+1}}</td>
           <td v-if="row.cacheid">
             <a :href="'https://coords.info/' + row.cacheid">{{row.cacheid}}</a>
@@ -55,7 +58,44 @@
             row.ctype != 'L' && !row.archived}"
           >{{held(row)}}</td>
         </tr>
+
       </tbody>
+
+      <tbody id="hidden">
+
+        <tr class="descr" id="hidden">
+          <td colspan=8>my hidden caches</td>
+        </tr>
+
+        <tr>
+          <th>#</th>
+          <th>id</th>
+          <th>type</th>
+          <th>d/t</th>
+          <th>name</th>
+          <th>date published</th>
+          <th title="Days since last found">age</th>
+          <th title="How many total FIs">finds</th>
+        </tr>
+
+        <tr v-for="(row,i) in d.hides">
+          <td class="numeric">{{i+1}}</td>
+          <td>
+            <a :href="'https://coords.info/' + row.cacheid">{{row.cacheid}}</a>
+          </td>
+          <td><cache-icon :type="row.ctype" :disabled="row.status != 1"></cache-icon></td>
+          <td class="rating"><cache-rating v-if="row.status == 1" :difficulty="row.difficulty" :terrain="row.terrain"></cache-rating></td>
+          <td>
+            <cache-name v-if="row.status < 10" :row="row"></cache-name>
+            <span class="mycachestatus" v-else>{{hideStatus(row)}}</span>
+          </td>
+          <td>{{row.published}}</td>
+          <td class="numeric">{{age_hide(row)}}</td>
+          <td class="numeric">{{row.finds}}</td>
+        </tr>
+
+      </tbody>
+
     </table>
 
   </div>

@@ -24,7 +24,7 @@ Vue.component('cache-icon', {
   created() {
     if(this.type && this.type in svgIconMap) {
       this.icon = svgIconMap[this.type];
-      if(this.disabled) icon += '-disabled';
+      if(this.disabled) this.icon += '-disabled';
     }
   },
   template: `<svg><use :xlink:href="'cache-types.svg#'+icon" /></use></svg>`,
@@ -141,8 +141,30 @@ document.addEventListener("DOMContentLoaded", async function() {
           m = moment();
 
         return m.diff(moment(row.found), 'days');
-      }
+      },
 
+      age_hide(row) {
+        let m;
+        if(row.found) {
+          m = moment(row.found);
+        } else if(row.published) {
+          m = moment(row.published);
+        } else {
+          return null;
+        }
+        return moment().diff(m, 'days');
+      },
+
+      hideStatus(row) {
+        let s;
+
+        switch(row.status) {
+          case 10: s = 'in development'; break;
+          case 11: s = 'waiting to be placed'; break;
+        }
+
+        return s;
+      }
     }
 
   });
