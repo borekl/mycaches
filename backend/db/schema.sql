@@ -25,13 +25,13 @@ CREATE TABLE finds (
   -- cache type as t-traditional, ?-mystery, m-multicache, w-wherigo,
   -- l-letterbox,L-lab,v-virtual,e-earth,E-event,M-mega,G-giga,C-CITO
   ctype TEXT,
-  
+
   -- favorite flag
   favorite INTEGER,
-  
+
   -- photo gallery flag
   gallery INTEGER,
-  
+
   -- FTF/STF/TTF flag (1,2,3)
   xtf INTEGER,
 
@@ -79,6 +79,6 @@ CREATE TABLE hides (
   archived INTEGER,
 
   -- status (0-unspecified, 1-active,2-disabled,10-in development,
-  -- 11-waiting to be placed)
+  -- 11-waiting to be placed,12-waiting for publication)
   status INTEGER
 );

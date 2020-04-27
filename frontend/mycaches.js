@@ -161,6 +161,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         switch(row.status) {
           case 10: s = 'in development'; break;
           case 11: s = 'waiting to be placed'; break;
+          case 12: s = 'waiting for publication'; break;
         }
 
         return s;
