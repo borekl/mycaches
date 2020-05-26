@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env plackup
 
 use strict;
 use warnings;
@@ -8,7 +8,6 @@ use JSON::MaybeXS;
 use DBI;
 use Plack::Request;
 use Plack::Response;
-use Plack::Handler::CGI;
 
 my $app = sub {
   my $req = Plack::Request->new(shift);
@@ -33,5 +32,3 @@ my $app = sub {
   $res->body(encode_json({ finds => $finds, hides => $hides }));
   $res->finalize;
 };
-
-Plack::Handler::CGI->new->run($app);
