@@ -6,7 +6,6 @@ use utf8;
 use feature 'state';
 
 use FindBin qw($Bin);
-use JSON::MaybeXS;
 use DBI;
 use Plack::Request;
 use Plack::Response;
