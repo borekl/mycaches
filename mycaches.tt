@@ -1,0 +1,188 @@
+[% MACRO rating(difficulty,terrain) BLOCK %]
+  [%- SET asterisk = '★' -%]
+  [% IF difficulty %]
+    [% asterisk.repeat(difficulty / 2) %]<span
+    class="hlf">[% asterisk.repeat(difficulty % 2) %]</span>
+    <br>
+    [% asterisk.repeat(terrain / 2) %]<span
+    class="hlf">[% asterisk.repeat(terrain % 2) %]</span>
+  [% END %]
+[% END %]
+
+[% MACRO typeicon(type,disabled) BLOCK %]
+  [%- SWITCH type %]
+    [% CASE 't'; SET icon = 'icon-2' %]
+    [% CASE 'm'; SET icon = 'icon-3' %]
+    [% CASE '?'; SET icon = 'icon-8' %]
+    [% CASE 'e'; SET icon = 'icon-137' %]
+    [% CASE 'v'; SET icon = 'icon-4' %]
+    [% CASE 'w'; SET icon = 'icon-1858' %]
+    [% CASE DEFAULT; SET icon = '' %]
+  [% END %]
+  [% IF disabled; SET icon = icon _ '-disabled'; END %]
+  [% IF icon %]<svg><use xlink:href="cache-types.svg#[% icon %]"></use></svg>[% END %]
+[% END %]
+
+[% MACRO cachename(item) BLOCK %]
+  <div[% IF item.archived %] class="archived"[% END %]>
+    [% IF item.gallery %]
+      <a target="_blank" href="https://voyager.lupomesky.cz/fotky/gc/[% item.cacheid %]/">[% item.name %]</a>
+      <span class="emoji">&#x1f4f7;</span>
+    [% ELSE %]
+      [% item.name %]
+    [% END %]
+  </div>
+[% END %]
+
+[% MACRO cachebadges(item) BLOCK %]
+  [% IF item.xtf || item.favorite %]
+    <div class="emoji">
+      [% IF item.favorite %]&#x1f499;[% END %]
+      [% IF item.xtf == 1 %]&#x1f947;[% END %]
+      [% IF item.xtf == 2 %]&#x1f948;[% END %]
+      [% IF item.xtf == 3 %]&#x1f949;[% END %]
+    </div>
+  [% END %]
+[% END %]
+
+[% MACRO held(item) BLOCK;
+  IF item.ctype != 'L' && !item.next;
+    ' held';
+  END;
+END %]
+
+<!doctype html>
+
+<html>
+
+<head>
+  <title>Mandevil's Geocaching Page</title>
+  <link rel="stylesheet" href="default.css" type="text/css">
+</head>
+
+<body>
+
+<div class="flexcenter">
+
+<table>
+
+<thead>
+
+<tr class="descr">
+  <td colspan="8">my found caches</td>
+</tr>
+
+<tr>
+  <th title="My geocache number">#</th>
+  <th title="Geocache id">id</th>
+  <th title="Geocache type">type</th>
+  <th title="Difficulty/terrain">d/t</th>
+  <th title="Geocache's listed name">name</th>
+  <th title="Date I found the cache">date</th>
+  <th title="How many days since last find when I found it">age</th>
+  <th title="How many days have I been the last finder">held</th>
+</tr>
+
+</thead>
+
+<tbody id="found">
+
+[% FOREACH item IN finds %]
+<tr>
+  <td class="numeric">[% item.finds_i %]</td>
+  <td><a target="_blank" href="https://coords.info/[% item.cacheid %]">[% item.cacheid %]</a></td>
+  <td>[% typeicon(item.ctype) %]</td>
+  <td class="rating">[% rating(item.difficulty,item.terrain) %]</td>
+  <td>
+    <div class="cachename">
+      [% cachename(item) %]
+      [% cachebadges(item) %]
+    </div>
+  </td>
+  <td>[% item.found %]</td>
+  <td class="numeric">[% item.age %]</td>
+  <td class="numeric[% held(item) %]">[% item.held %]</td>
+</tr>
+[% END %]
+
+</tbody>
+
+<tbody id="hidden">
+
+<tr class="descr">
+  <td colspan="8">my hidden caches</td>
+</tr>
+
+<tr>
+  <th title="My geocache number">#</th>
+  <th title="Geocache id">id</th>
+  <th title="Geocache type">type</th>
+  <th title="Difficulty/terrain">d/t</th>
+  <th title="Geocache's listed name">name</th>
+  <th title="Date I found the cache">published</th>
+  <th title="How many days since last find when I found it">age</th>
+  <th title="How many days have I been the last finder">finds</th>
+</tr>
+
+[% FOREACH item IN hides %]
+<tr>
+  <td class="numeric">[% item.hides_i %]</td>
+  <td><a target="_blank" href="https://coords.info/[% item.cacheid %]">[% item.cacheid %]</a></td>
+  <td>[% typeicon(item.ctype, item.status == 1 ? 0 : 1) %]</td>
+  <td class="rating">[% IF item.status == 1; rating(item.difficulty,item.terrain); END %]</td>
+  <td>
+    [% IF item.status == 1 %]
+    <div class="cachename">[% cachename(item) %]</div>
+    [% END %]
+  </td>
+  <td>[% item.published %]</td>
+  <td class="numeric">[% item.age %]</td>
+  <td class="numeric">[% item.finds %]</td>
+</tr>
+[% END %]
+
+</tbody>
+
+</table>
+
+</div>
+
+<div id="maps" class="flexcenter" style="margin-top: 4em;">
+<div style="border:1px solid #7B7B7B">
+<img width="734" height="459" src="https://www.geocaching.cz/mapgen/4.5/mapgen.php?cht=t,MapBkg&center=49.8,15.5&zoom=7&size=640x400&scale=2&maptype=roadmap&style=feature:landscape|lightness:100&style=feature:poi|lightness:100&style=feature:road|lightness:100&style=feature:transit|lightness:100&style=feature:administrative|lightness:40&style=element:labels|visibility:off&style=feature:water|hue:0xC2DFFF|lightness:20&format=png">
+<div id="L42019" style="display:; margin-top:-459px; line-height:0;">
+<img width="734" height="459" src="https://www.geocaching.cz/mapgen/4.5/mapgen.php?cht=t,Dots&chtm=Custom&chgeo=49.8,15.5,640,400,7&chs=wx734&chm=&chdot=126389,2,E10000,2018-01-01,2030-01-01,No" />
+</div>
+</div>
+</div>
+
+<div class="flexcenter">
+<div style="width:734px;border:1px solid #7B7B7B">
+<img width="734" height="550" src="https://www.geocaching.cz/mapgen/4.5/mapgen.php?cht=t,MapBkg&center=50.55,13.82&zoom=8&size=400x300&scale=2&maptype=roadmap&style=feature:landscape|lightness:100&style=feature:poi|lightness:100&style=feature:road|lightness:100&style=feature:transit|lightness:100&style=feature:administrative|lightness:40&style=element:labels|visibility:off&style=feature:water|hue:0xC2DFFF|lightness:20&format=png">
+<div id="L52019" style="display:; margin-top:-550px; line-height:0;">
+<img width="734" height="550" src="https://www.geocaching.cz/mapgen/4.5/mapgen.php?cht=t,Dots&chtm=Custom&chgeo=50.55,13.82,400,300,8&chs=wx734&chm=&chdot=126389,2,E10000,2018-01-01,2030-01-01,No" />
+</div>
+</div>
+</div>
+
+<div class="flexcenter">
+<div style="width:734px;border:1px solid #7B7B7B">
+<img width="734" height="734" src="https://www.geocaching.cz/mapgen/4.5/mapgen.php?cht=t,MapBkg&center=50.655,14.0410&zoom=12&size=640x640&scale=2&maptype=roadmap&style=feature:administrative|lightness:20&style=element:labels|lightness:50&style=feature:water|hue:0xC2DFFF|lightness:20&format=png">
+<div id="L62019" style="display:; margin-top:-734px; line-height:0;">
+<img width="734" height="734" src="https://www.geocaching.cz/mapgen/4.5/mapgen.php?cht=t,Dots&chtm=Custom&chgeo=50.655,14.0410,640,640,12&chs=wx734&chm=&chdot=126389,4,E10000,2018-01-01,2030-01-01,No" />
+</div>
+</div>
+</div>
+
+<div class="flexcenter">
+<div style="border:1px solid #7B7B7B">
+<img width="734" height="631" src="https://www.geocaching.cz/mapgen/4.5/mapgen.php?cht=t,MapBkg&center=50.064,14.46&zoom=11&size=640x550&scale=2&maptype=roadmap&style=feature:administrative|lightness:20&style=element:labels|lightness:50&style=feature:water|hue:0xC2DFFF|lightness:20&format=png">
+<div id="L72019" style="display:; margin-top:-631px; line-height:0;">
+<img width="734" height="631" src="https://www.geocaching.cz/mapgen/4.5/mapgen.php?cht=t,Dots&chtm=Custom&chgeo=50.064,14.46,640,550,11&chs=wx734&chm=&chdot=126389,4,E10000,2018-01-01,2030-01-01,No" />
+</div>
+</div>
+</div>
+
+</body>
+
+</html>
