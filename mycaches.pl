@@ -19,7 +19,8 @@ my $app = sub {
   my $req = Plack::Request->new(shift);
   my $res = Plack::Response->new(200);
   my $json = decode_json($req->content) if $req->content;
-  my $now = Time::Moment->now_utc;
+  my $now = Time::Moment->now;
+  my $tz = $now->strftime('%:z');
   state $tt  = Template->new({ INCLUDE_PATH => "$Bin", ENCODING => 'utf8'  });
 
   my $dbfile = 'mycaches.sqlite';
@@ -44,13 +45,13 @@ my $app = sub {
     next if $_->{ctype} eq 'L';
 
     # calculate 'age', ie. numer of days since previous find
-    my $previous_find = Time::Moment->from_string($_->{prev} . 'T00Z');
-    my $found = Time::Moment->from_string($_->{found} . 'T00Z');
+    my $previous_find = Time::Moment->from_string($_->{prev} . "T00:00$tz");
+    my $found = Time::Moment->from_string($_->{found} . "T00:00$tz");
     $_->{age} = $previous_find->delta_days($found);
 
     # calculate 'held', ie. number of days when I was the last finder
     my $next_find = $now->at_midnight;
-    $next_find = Time::Moment->from_string($_->{next} . 'T00Z') if $_->{next};
+    $next_find = Time::Moment->from_string($_->{next} . "T00:00$tz") if $_->{next};
     $_->{held} = $found->delta_days($next_find);
   }
 
@@ -61,9 +62,9 @@ my $app = sub {
     # ignore unpublished hides
     next if !$_->{published};
 
-    my $last_found = Time::Moment->from_string($_->{found} . 'T00Z')
+    my $last_found = Time::Moment->from_string($_->{found} . "T00:00$tz")
       if $_->{found};
-    my $published = Time::Moment->from_string($_->{published} . 'T00Z')
+    my $published = Time::Moment->from_string($_->{published} . "T00:00$tz")
       if $_->{published};
     my $timeref = $last_found // $published;
 
@@ -101,7 +102,7 @@ my $app = sub {
 
   $res->headers([
     'Content-Type' => 'text/html; charset=utf-8',
-    'Expires' => $expire->strftime('%a, %d %b %Y %H:%M:%S GMT'),
+    'Expires' => $expire->at_utc->strftime('%a, %d %b %Y %H:%M:%S GMT'),
     'Refresh' => $seconds_to_midnight,
   ]);
   $res->body(encode('UTF-8', $out));
