@@ -99,7 +99,13 @@ END %]
       [% cachebadges(item) %]
     </div>
   </td>
-  <td>[% item.found %]</td>
+  <td>
+    [% IF item.logid %]
+      <a href="https://www.geocaching.com/seek/log.aspx?LUID=[% item.logid %]">[% item.found %]</a>
+    [% ELSE %]
+      [% item.found %]
+    [% END %]
+  </td>
   <td class="numeric">[% item.age %]</td>
   <td class="numeric[% held(item) %]">[% item.held %]</td>
 </tr>
