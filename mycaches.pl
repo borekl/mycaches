@@ -1,5 +1,8 @@
 #!/usr/bin/env plackup
 
+package MyCaches;
+use Web::Simple;
+
 use strict;
 use warnings;
 use utf8;
@@ -7,24 +10,40 @@ use feature 'state';
 
 use FindBin qw($Bin);
 use DBI;
-use Plack::Request;
-use Plack::Response;
 use Template;
 use Encode qw(encode);
 use Time::Moment;
 
 
-my $app = sub {
-  my $req = Plack::Request->new(shift);
-  my $res = Plack::Response->new(200);
-  my $json = decode_json($req->content) if $req->content;
+#==============================================================================
+# initialization
+#==============================================================================
+
+# instantiate Template Toolkit
+my $tt = Template->new({ INCLUDE_PATH => "$Bin", ENCODING => 'utf8'  });
+
+# connect to database
+my $dbfile = 'mycaches.sqlite';
+my $dbh = DBI->connect("dbi:SQLite:dbname=$dbfile","","");
+$dbh->{sqlite_unicode} = 1;
+
+
+#==============================================================================
+# routes
+#==============================================================================
+
+sub dispatch_request {
+  '/' => 'cache_list',
+  '' => sub { [ 301, [ 'Location', '/' ], [] ] },
+}
+
+
+#--- function to generate cache list ------------------------------------------
+
+sub cache_list
+{
   my $now = Time::Moment->now;
   my $tz = $now->strftime('%:z');
-  state $tt  = Template->new({ INCLUDE_PATH => "$Bin", ENCODING => 'utf8'  });
-
-  my $dbfile = 'mycaches.sqlite';
-  my $dbh = DBI->connect("dbi:SQLite:dbname=$dbfile","","");
-  $dbh->{sqlite_unicode} = 1;
 
   my $finds = $dbh->selectall_arrayref(
     'SELECT * FROM finds ORDER BY finds_i',
@@ -99,11 +118,18 @@ my $app = sub {
 
   #--- finish
 
-  $res->headers([
+  my $headers = [
     'Content-Type' => 'text/html; charset=utf-8',
     'Expires' => $expire->at_utc->strftime('%a, %d %b %Y %H:%M:%S GMT'),
     'Refresh' => $seconds_to_midnight,
-  ]);
-  $res->body(encode('UTF-8', $out));
-  $res->finalize;
-};
+  ];
+
+  return [ 200, $headers, [ encode('UTF-8', $out) ] ];
+}
+
+
+#==============================================================================
+# run the request handler
+#==============================================================================
+
+MyCaches->run_if_script;
