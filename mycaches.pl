@@ -20,7 +20,10 @@ use Time::Moment;
 #==============================================================================
 
 # instantiate Template Toolkit
-my $tt = Template->new({ INCLUDE_PATH => "$Bin", ENCODING => 'utf8'  });
+my $tt = Template->new({
+  INCLUDE_PATH => "$Bin/templates",
+  ENCODING => 'utf8'
+});
 
 # connect to database
 my $dbfile = 'mycaches.sqlite';
