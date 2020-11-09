@@ -27,16 +27,16 @@ CREATE TABLE finds (
   ctype TEXT,
 
   -- favorite flag
-  favorite INTEGER,
+  favorite INTEGER CHECK ( favorite BETWEEN 0 AND 1 ),
 
   -- photo gallery flag
-  gallery INTEGER,
+  gallery INTEGER CHECK ( gallery BETWEEN 0 AND 1 ),
 
   -- FTF/STF/TTF flag (1,2,3)
-  xtf INTEGER,
+  xtf INTEGER CHECK ( xtf BETWEEN 0 and 3 ),
 
   -- archived
-  archived INTEGER,
+  archived INTEGER CHECK ( archived BETWEEN 0 AND 1 ),
 
   -- FI log's LUID
   logid TEXT
