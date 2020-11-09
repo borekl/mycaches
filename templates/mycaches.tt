@@ -24,7 +24,11 @@
 [% END %]
 
 [% MACRO cachename(item) BLOCK %]
-  <div[% IF item.archived %] class="archived"[% END %]>
+  <div [%
+    IF item.archived; 'class="archived"';
+    ELSIF item.status == 2; 'class="disabled"';
+    END
+  %]>
     [% IF item.gallery %]
       <a target="_blank" href="https://voyager.lupomesky.cz/fotky/gc/[% item.cacheid %]/">[% item.name %]</a>
       <span class="emoji">&#x1f4f7;</span>
@@ -135,11 +139,9 @@ END %]
   <td class="numeric">[% item.hides_i %]</td>
   <td><a target="_blank" href="https://coords.info/[% item.cacheid %]">[% item.cacheid %]</a></td>
   <td>[% typeicon(item.ctype, item.status == 1 ? 0 : 1) %]</td>
-  <td class="rating">[% IF item.status == 1; rating(item.difficulty,item.terrain); END %]</td>
+  <td class="rating">[% IF item.status < 10; rating(item.difficulty,item.terrain); END %]</td>
   <td>
-    [% IF item.status == 1 %]
     <div class="cachename">[% cachename(item) %]</div>
-    [% END %]
   </td>
   <td>[% item.published %]</td>
   <td class="numeric">[% item.age %]</td>

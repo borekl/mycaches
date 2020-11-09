@@ -88,6 +88,11 @@ div.cachename {
   align-items: center;
 }
 
+div.disabled a {
+  color: #f00;
+  background-color: #ff0;
+}
+
 /*--- svg setup -----------------------------------------------------------*/
 
 svg {
