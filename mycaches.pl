@@ -39,7 +39,14 @@ sub dispatch_request {
   '/' => sub { cache_list() },
   '/finds' => sub { cache_list(finds => 1) },
   '/hides' => sub { cache_list(hides => 1) },
-  '' => sub { [ 301, [ 'Location', '/' ], [] ] },
+  '' => sub {
+    my ($self, $env) = @_;
+    return [
+      200,
+      [ 'Content-Type', 'text/plain' ],
+      [ 'Unhandled Request URI: ' . $env->{REQUEST_URI} ]
+    ]
+  }
 }
 
 
