@@ -70,90 +70,100 @@ END %]
 
 <table>
 
-<thead>
+[% IF finds %]
 
-<tr class="descr">
-  <td colspan="8">my found caches</td>
-</tr>
+  <thead>
 
-<tr>
-  <th title="My geocache number">#</th>
-  <th title="Geocache id">id</th>
-  <th title="Geocache type">type</th>
-  <th title="Difficulty/terrain">d/t</th>
-  <th title="Geocache's listed name">name</th>
-  <th title="Date I found the cache">date</th>
-  <th title="How many days since last find when I found it">age</th>
-  <th title="How many days have I been the last finder">held</th>
-</tr>
+  <tr class="descr">
+    <td colspan="8">my found caches</td>
+  </tr>
 
-</thead>
+  <tr>
+    <th title="My geocache number">#</th>
+    <th title="Geocache id">id</th>
+    <th title="Geocache type">type</th>
+    <th title="Difficulty/terrain">d/t</th>
+    <th title="Geocache's listed name">name</th>
+    <th title="Date I found the cache">date</th>
+    <th title="How many days since last find when I found it">age</th>
+    <th title="How many days have I been the last finder">held</th>
+  </tr>
 
-<tbody id="found">
+  </thead>
 
-[% FOREACH item IN finds %]
-<tr>
-  <td class="numeric">[% item.finds_i %]</td>
-  <td><a target="_blank" href="https://coords.info/[% item.cacheid %]">[% item.cacheid %]</a></td>
-  <td>[% typeicon(item.ctype) %]</td>
-  <td class="rating">[% rating(item.difficulty,item.terrain) %]</td>
-  <td>
-    <div class="cachename">
-      [% cachename(item) %]
-      [% cachebadges(item) %]
-    </div>
-  </td>
-  <td>
-    [% IF item.logid %]
-      <a href="https://www.geocaching.com/seek/log.aspx?LUID=[% item.logid %]">[% item.found %]</a>
-    [% ELSE %]
-      [% item.found %]
-    [% END %]
-  </td>
-  <td class="numeric">[% item.age %]</td>
-  <td class="numeric[% held(item) %]">[% item.held %]</td>
-</tr>
+  <tbody id="found">
+
+  [% FOREACH item IN finds %]
+  <tr>
+    <td class="numeric">[% item.finds_i %]</td>
+    <td><a target="_blank" href="https://coord.info/[% item.cacheid %]">[% item.cacheid %]</a></td>
+    <td>[% typeicon(item.ctype) %]</td>
+    <td class="rating">[% rating(item.difficulty,item.terrain) %]</td>
+    <td>
+      <div class="cachename">
+        [% cachename(item) %]
+        [% cachebadges(item) %]
+      </div>
+    </td>
+    <td>
+      [% IF item.logid %]
+        <a href="https://www.geocaching.com/seek/log.aspx?LUID=[% item.logid %]">[% item.found %]</a>
+      [% ELSE %]
+        [% item.found %]
+      [% END %]
+    </td>
+    <td class="numeric">[% item.age %]</td>
+    <td class="numeric[% held(item) %]">[% item.held %]</td>
+  </tr>
+  [% END %]
+
+  </tbody>
+
 [% END %]
 
-</tbody>
+[% IF hides %]
 
-<tbody id="hidden">
+  <tbody id="hidden">
 
-<tr class="descr">
-  <td colspan="8">my hidden caches</td>
-</tr>
+  <tr class="descr">
+    <td colspan="8">my hidden caches</td>
+  </tr>
 
-<tr>
-  <th title="My geocache number">#</th>
-  <th title="Geocache id">id</th>
-  <th title="Geocache type">type</th>
-  <th title="Difficulty/terrain">d/t</th>
-  <th title="Geocache's listed name">name</th>
-  <th title="Date I found the cache">published</th>
-  <th title="How many days since last find when I found it">age</th>
-  <th title="How many days have I been the last finder">finds</th>
-</tr>
+  <tr>
+    <th title="My geocache number">#</th>
+    <th title="Geocache id">id</th>
+    <th title="Geocache type">type</th>
+    <th title="Difficulty/terrain">d/t</th>
+    <th title="Geocache's listed name">name</th>
+    <th title="Date I found the cache">published</th>
+    <th title="How many days since last find when I found it">age</th>
+    <th title="How many days have I been the last finder">finds</th>
+  </tr>
 
-[% FOREACH item IN hides %]
-<tr>
-  <td class="numeric">[% item.hides_i %]</td>
-  <td><a target="_blank" href="https://coords.info/[% item.cacheid %]">[% item.cacheid %]</a></td>
-  <td>[% typeicon(item.ctype, item.status == 1 ? 0 : 1) %]</td>
-  <td class="rating">[% IF item.status < 10; rating(item.difficulty,item.terrain); END %]</td>
-  <td>
-    <div class="cachename">[% cachename(item) %]</div>
-  </td>
-  <td>[% item.published %]</td>
-  <td class="numeric">[% item.age %]</td>
-  <td class="numeric">[% item.finds %]</td>
-</tr>
+  [% FOREACH item IN hides %]
+  <tr>
+    <td class="numeric">[% item.hides_i %]</td>
+    <td><a target="_blank" href="https://coord.info/[% item.cacheid %]">[% item.cacheid %]</a></td>
+    <td>[% typeicon(item.ctype, item.status == 1 ? 0 : 1) %]</td>
+    <td class="rating">[% IF item.status < 10; rating(item.difficulty,item.terrain); END %]</td>
+    <td>
+      <div class="cachename">[% cachename(item) %]</div>
+    </td>
+    <td>[% item.published %]</td>
+    <td class="numeric">[% item.age %]</td>
+    <td class="numeric">[% item.finds %]</td>
+  </tr>
+  [% END %]
+
+  </tbody>
+
 [% END %]
-
-</tbody>
 
 </table>
 
 </div>
+
+[% IF finds %]
 
 <div id="maps" class="flexcenter" style="margin-top: 4em;">
 <div style="border:1px solid #7B7B7B">
@@ -190,6 +200,8 @@ END %]
 </div>
 </div>
 </div>
+
+[% END %]
 
 </body>
 

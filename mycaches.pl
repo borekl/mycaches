@@ -36,7 +36,9 @@ $dbh->{sqlite_unicode} = 1;
 #==============================================================================
 
 sub dispatch_request {
-  '/' => 'cache_list',
+  '/' => sub { cache_list() },
+  '/finds' => sub { cache_list(finds => 1) },
+  '/hides' => sub { cache_list(hides => 1) },
   '' => sub { [ 301, [ 'Location', '/' ], [] ] },
 }
 
@@ -49,51 +51,64 @@ sub dispatch_request {
 
 sub cache_list
 {
+  #--- arguments
+
+  my %arg = @_;
+
+  #--- other variables
+
   my $now = Time::Moment->now;
   my $tz = $now->strftime('%:z');
+  my ($finds, $hides);
 
-  my $finds = $dbh->selectall_arrayref(
+  #--- run queries
+
+  $finds = $dbh->selectall_arrayref(
     'SELECT * FROM finds ORDER BY finds_i',
     { Slice => {} }
-  );
+  ) if !%arg || $arg{finds};
 
-  my $hides = $dbh->selectall_arrayref(
+  $hides = $dbh->selectall_arrayref(
     'SELECT * FROM hides ORDER BY hides_i',
     { Slice => {} }
-  );
+  ) if !%arg || $arg{hides};
 
   #--- calculate age/held fields for finds
 
-  foreach (@$finds) {
+  if($finds && @$finds) {
+    foreach (@$finds) {
 
-    # ignore lab caches
-    next if $_->{ctype} eq 'L';
+      # ignore lab caches
+      next if $_->{ctype} eq 'L';
 
-    # calculate 'age', ie. numer of days since previous find
-    my $previous_find = Time::Moment->from_string($_->{prev} . "T00:00$tz");
-    my $found = Time::Moment->from_string($_->{found} . "T00:00$tz");
-    $_->{age} = $previous_find->delta_days($found);
+      # calculate 'age', ie. numer of days since previous find
+      my $previous_find = Time::Moment->from_string($_->{prev} . "T00:00$tz");
+      my $found = Time::Moment->from_string($_->{found} . "T00:00$tz");
+      $_->{age} = $previous_find->delta_days($found);
 
-    # calculate 'held', ie. number of days when I was the last finder
-    my $next_find = $now->at_midnight;
-    $next_find = Time::Moment->from_string($_->{next} . "T00:00$tz") if $_->{next};
-    $_->{held} = $found->delta_days($next_find);
+      # calculate 'held', ie. number of days when I was the last finder
+      my $next_find = $now->at_midnight;
+      $next_find = Time::Moment->from_string($_->{next} . "T00:00$tz") if $_->{next};
+      $_->{held} = $found->delta_days($next_find);
+    }
   }
 
   #--- calculate age for hides
 
-  foreach (@$hides) {
+  if($hides && @$hides) {
+    foreach (@$hides) {
 
-    # ignore unpublished hides
-    next if !$_->{published};
+      # ignore unpublished hides
+      next if !$_->{published};
 
-    my $last_found = Time::Moment->from_string($_->{found} . "T00:00$tz")
-      if $_->{found};
-    my $published = Time::Moment->from_string($_->{published} . "T00:00$tz")
-      if $_->{published};
-    my $timeref = $last_found // $published;
+      my $last_found = Time::Moment->from_string($_->{found} . "T00:00$tz")
+        if $_->{found};
+      my $published = Time::Moment->from_string($_->{published} . "T00:00$tz")
+        if $_->{published};
+      my $timeref = $last_found // $published;
 
-    $_->{age} = $timeref->at_midnight->delta_days($now->at_midnight);
+      $_->{age} = $timeref->at_midnight->delta_days($now->at_midnight);
+    }
   }
 
   #--- run the data through a template
