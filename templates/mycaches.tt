@@ -107,7 +107,7 @@ END %]
     </td>
     <td>
       [% IF item.logid %]
-        <a href="https://www.geocaching.com/seek/log.aspx?LUID=[% item.logid %]">[% item.found %]</a>
+        <a target="_blank" href="https://www.geocaching.com/seek/log.aspx?LUID=[% item.logid %]">[% item.found %]</a>
       [% ELSE %]
         [% item.found %]
       [% END %]
