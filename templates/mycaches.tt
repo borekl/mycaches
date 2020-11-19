@@ -20,7 +20,7 @@
     [% CASE DEFAULT; SET icon = '' %]
   [% END %]
   [% IF disabled; SET icon = icon _ '-disabled'; END %]
-  [% IF icon %]<svg><use xlink:href="cache-types.svg#[% icon %]"></use></svg>[% END %]
+  [% IF icon %]<svg><use xlink:href="/cache-types.svg#[% icon %]"></use></svg>[% END %]
 [% END %]
 
 [% MACRO cachename(item) BLOCK %]
@@ -61,7 +61,7 @@ END %]
 
 <head>
   <title>Mandevil's Geocaching Page</title>
-  <link rel="stylesheet" href="default.css" type="text/css">
+  <link rel="stylesheet" href="/default.css" type="text/css">
 </head>
 
 <body>
