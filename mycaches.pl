@@ -13,6 +13,7 @@ use DBI;
 use Template;
 use Encode qw(encode);
 use Time::Moment;
+use SQL::Abstract::More;
 
 
 #==============================================================================
@@ -30,15 +31,31 @@ my $dbfile = 'mycaches.sqlite';
 my $dbh = DBI->connect("dbi:SQLite:dbname=$dbfile","","");
 $dbh->{sqlite_unicode} = 1;
 
+# SQL::Abstract
+my $sql = SQL::Abstract::More->new;
+
 
 #==============================================================================
 #=== ROUTING ==================================================================
 #==============================================================================
 
 sub dispatch_request {
+
+  # default rule
   '/' => sub { cache_list() },
+
+  # show finds
   '/finds' => sub { cache_list(finds => 1) },
+  '/finds/limit/*' => sub {
+    my ($self, $limit) = @_;
+    $limit = 0 if $limit !~ /^\d+$/;
+    cache_list(finds => 1, limit => $limit);
+  },
+
+  # show hides
   '/hides' => sub { cache_list(hides => 1) },
+
+  # default rule
   '' => sub {
     my ($self, $env) = @_;
     return [
@@ -54,9 +71,9 @@ sub dispatch_request {
 #=== ROUTE HANDLERS ===========================================================
 #==============================================================================
 
-#--- function to generate cache list ------------------------------------------
+#--- function to generate list of finds ---------------------------------------
 
-sub cache_list
+sub finds_list
 {
   #--- arguments
 
@@ -66,23 +83,28 @@ sub cache_list
 
   my $now = Time::Moment->now;
   my $tz = $now->strftime('%:z');
-  my ($finds, $hides);
 
-  #--- run queries
+  #--- run query
 
-  $finds = $dbh->selectall_arrayref(
-    'SELECT * FROM finds ORDER BY finds_i',
-    { Slice => {} }
-  ) if !%arg || $arg{finds};
+  my %qry_finds = (
+    -from => 'finds',
+    -columns => '*',
+    -order_by => { -desc => 'finds_i' }
+  );
 
-  $hides = $dbh->selectall_arrayref(
-    'SELECT * FROM hides ORDER BY hides_i',
-    { Slice => {} }
-  ) if !%arg || $arg{hides};
+  $qry_finds{'-limit'} = $arg{limit} if $arg{limit};
 
-  #--- calculate age/held fields for finds
+  #--- run query
 
-  if($finds && @$finds) {
+  my ($qry, @bind) = $sql->select(%qry_finds);
+  my $sth = $dbh->prepare($qry);
+  my $r = $sth->execute(@bind);
+  my $finds = $sth->fetchall_arrayref({});
+
+  #--- calculate age/held fields
+
+  if(@$finds) {
+    $finds = [ reverse @$finds ];
     foreach (@$finds) {
 
       # ignore lab caches
@@ -100,9 +122,42 @@ sub cache_list
     }
   }
 
+  #--- finish
+
+  return $finds;
+}
+
+
+#--- function to generate list of hides ---------------------------------------
+
+sub hides_list
+{
+  #--- arguments
+
+  my %arg = @_;
+
+  #--- other variables
+
+  my $now = Time::Moment->now;
+  my $tz = $now->strftime('%:z');
+
+  #--- run query
+
+  my %qry_hides = (
+    -from => 'hides',
+    -columns => '*',
+    -order_by => { -desc => 'hides_i' }
+  );
+
+  my ($qry, @bind) = $sql->select(%qry_hides);
+  my $sth = $dbh->prepare($qry);
+  my $r = $sth->execute(@bind);
+  my $hides = $sth->fetchall_arrayref({});
+
   #--- calculate age for hides
 
-  if($hides && @$hides) {
+  if(@$hides) {
+    $hides = [ reverse @$hides ];
     foreach (@$hides) {
 
       # ignore unpublished hides
@@ -117,6 +172,35 @@ sub cache_list
       $_->{age} = $timeref->at_midnight->delta_days($now->at_midnight);
     }
   }
+
+  #--- finish
+
+  return $hides;
+}
+
+
+#--- function to generate cache list ------------------------------------------
+
+sub cache_list
+{
+  #--- arguments
+
+  # following arguments are supported
+  # - finds  ... only load finds
+  # - hides  ... only load hides
+  # - limit  ... limit the returned list to given number of entries
+
+  my %arg = @_;
+
+  #--- other variables
+
+  my $now = Time::Moment->now;
+  my ($finds, $hides);
+
+  #--- query finds
+
+  $finds = finds_list(%arg) if !%arg || $arg{finds};
+  $hides = hides_list() if !%arg || $arg{hides};
 
   #--- run the data through a template
 
