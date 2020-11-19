@@ -72,6 +72,17 @@ tr.descr td {
   text-align: center;
 }
 
+/*--- options -------------------------------------------------------------*/
+
+div.filter {
+  text-align: center;
+  color: #777;
+}
+
+div.filter a {
+  text-decoration: underline;
+}
+
 /*--- cache rating --------------------------------------------------------*/
 
 .rating {
@@ -81,7 +92,7 @@ tr.descr td {
 }
 
 /*--- cache name ----------------------------------------------------------*/
-  
+
 div.cachename {
   display: flex;
   justify-content: space-between;

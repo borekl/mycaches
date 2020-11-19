@@ -163,6 +163,23 @@ END %]
 
 </div>
 
+
+[% IF filter.finds.limit %]
+<div class="filter">
+Showing only last [% filter.finds.limit %] finds
+| <a href="/finds">show all</a>
+</div>
+[% ELSIF !hides %]
+<div class="filter">
+Showing all finds
+| show last
+<a href="/finds/limit/10">10</a>,
+<a href="/finds/limit/20">20</a>,
+<a href="/finds/limit/50">50</a>,
+<a href="/finds/limit/50">100</a>
+</div>
+[% END %]
+
 [% IF finds %]
 
 <div id="maps" class="flexcenter" style="margin-top: 4em;">

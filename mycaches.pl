@@ -207,7 +207,10 @@ sub cache_list
   my $out;
   $tt->process(
     'mycaches.tt',
-    { finds => $finds, hides => $hides },
+    {
+      finds => $finds, hides => $hides,
+      filter => { finds => { limit => $arg{limit} // undef } }
+    },
     \$out
   ) or $out = $tt->error;
 
