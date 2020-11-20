@@ -164,9 +164,14 @@ END %]
 </div>
 
 
-[% IF filter.finds.limit %]
+[% IF info.finds.limit %]
 <div class="filter">
-Showing only last [% filter.finds.limit %] finds
+Showing only last [% info.finds.limit %] finds
+| <a href="/finds">show all</a>
+</div>
+[% ELSIF info.finds.archived %]
+<div class="filter">
+Showing only [% info.finds.archived %] archived finds
 | <a href="/finds">show all</a>
 </div>
 [% ELSIF !hides %]
@@ -176,7 +181,8 @@ Showing all finds
 <a href="/finds/limit/10">10</a>,
 <a href="/finds/limit/20">20</a>,
 <a href="/finds/limit/50">50</a>,
-<a href="/finds/limit/50">100</a>
+<a href="/finds/limit/50">100</a>,
+<a href="/finds/archived">archived</a>
 </div>
 [% END %]
 

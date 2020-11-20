@@ -51,6 +51,7 @@ sub dispatch_request {
     $limit = 0 if $limit !~ /^\d+$/;
     cache_list(finds => 1, limit => $limit);
   },
+  '/finds/archived' => sub { cache_list(finds => 1, archived => 1) },
 
   # show hides
   '/hides' => sub { cache_list(hides => 1) },
@@ -93,6 +94,7 @@ sub finds_list
   );
 
   $qry_finds{'-limit'} = $arg{limit} if $arg{limit};
+  $qry_finds{'-where'} = { 'archived' => 1 } if $arg{archived};
 
   #--- run query
 
@@ -186,9 +188,10 @@ sub cache_list
   #--- arguments
 
   # following arguments are supported
-  # - finds  ... only load finds
-  # - hides  ... only load hides
-  # - limit  ... limit the returned list to given number of entries
+  # - finds    ... only load finds
+  # - hides    ... only load hides
+  # - limit    ... limit the returned list to given number of entries
+  # - archived ... return only archived finds
 
   my %arg = @_;
 
@@ -202,15 +205,23 @@ sub cache_list
   $finds = finds_list(%arg) if !%arg || $arg{finds};
   $hides = hides_list() if !%arg || $arg{hides};
 
+  #--- info
+
+  my %info;
+
+  if(%arg) {
+    $info{finds} = {} if $arg{finds};
+    $info{hides} = {} if $arg{hides};
+    $info{finds}{limit} = $arg{limit} if $arg{limit};
+    $info{finds}{archived} = @$finds if $arg{archived};
+  }
+
   #--- run the data through a template
 
   my $out;
   $tt->process(
     'mycaches.tt',
-    {
-      finds => $finds, hides => $hides,
-      filter => { finds => { limit => $arg{limit} // undef } }
-    },
+    { finds => $finds, hides => $hides, info => \%info },
     \$out
   ) or $out = $tt->error;
 
