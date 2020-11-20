@@ -41,10 +41,10 @@ my $sql = SQL::Abstract::More->new;
 
 sub dispatch_request {
 
-  # default rule
+  # root rule
   '/' => sub { cache_list() },
 
-  # show finds
+  # show list of finds
   '/finds' => sub { cache_list(finds => 1) },
   '/finds/limit/*' => sub {
     my ($self, $limit) = @_;
@@ -53,7 +53,7 @@ sub dispatch_request {
   },
   '/finds/archived' => sub { cache_list(finds => 1, archived => 1) },
 
-  # show hides
+  # show list of hides
   '/hides' => sub { cache_list(hides => 1) },
 
   # default rule
