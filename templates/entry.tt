@@ -1,0 +1,128 @@
+<!doctype html>
+
+<html>
+
+<head>
+  <title>Mandevil's Geocaching Page :: [% entrytype.ucfirst %]</title>
+  <base href="/">
+  <link rel="stylesheet" href="default.css" type="text/css">
+</head>
+
+<body>
+
+[% IF status == 'error' %]
+
+  <p>Something went wrong: [% errmsg %]</p>
+
+[% ELSE %]
+
+<div class="flexcenter">
+
+  <form method="post" action="/submit/hide">
+
+  <input type="hidden" name="entrytype" value="[% entrytype %]">
+
+  <table>
+    <tbody>
+
+      [% IF result.exists('hides_i') %]
+      <tr>
+        <td>hide id</td>
+        <td>
+          [% result.hides_i %]
+          <input type="hidden" name="hides_i" value="[% result.hides_i %]">
+        </td>
+      </tr>
+      [% END %]
+
+      <tr>
+        <td>cache id</td>
+        <td>
+          <input name="cacheid" value="[% result.cacheid %]" maxlength="7">
+        </td>
+      </tr>
+
+      <tr>
+        <td>name</td>
+        <td>
+          <input name="name" value="[% result.name %]">
+        </td>
+      </tr>
+
+      <tr>
+        <td>type</td>
+        <td>
+          <input name="ctype" value="[% result.ctype %]">
+        </td>
+      </tr>
+
+      <tr>
+        <td>difficulty</td>
+        <td>
+          <input name="difficulty" value="[% result.difficulty %]">
+        </td>
+      </tr>
+
+      <tr>
+        <td>terrain</td>
+        <td>
+          <input name="terrain" value="[% result.terrain %]">
+        </td>
+      </tr>
+
+      <tr>
+        <td>published</td>
+        <td>
+          <input name="published" value="[% result.published %]">
+        </td>
+      </tr>
+
+      <tr>
+        <td>finds</td>
+        <td>
+          <input name="finds" value="[% result.finds %]">
+        </td>
+      </tr>
+
+      <tr>
+        <td>last found</td>
+        <td>
+          <input name="found" value="[% result.found %]">
+        </td>
+      </tr>
+
+      <tr>
+        <td>gallery</td>
+        <td>
+          <input name="gallery" value="[% result.gallery %]">
+        </td>
+      </tr>
+
+      <tr>
+        <td>archived</td>
+        <td>
+          <input name="archived" value="[% result.archived %]">
+        </td>
+      </tr>
+
+      <tr>
+        <td>status</td>
+        <td>
+          <input name="status" value="[% result.status %]">
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <button type="submit">Submit</button>
+
+  </form>
+
+</div>
+
+[% END %]
+
+</body>
+
+</html>

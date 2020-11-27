@@ -56,6 +56,15 @@ sub dispatch_request {
   # show list of hides
   '/hides' => sub { cache_list(hides => 1) },
 
+  # load single hide
+  '/hide/*' => sub {
+    my ($self, $hide_id) = @_;
+    load_hide($hide_id);
+  },
+
+  # submit a hide
+  'POST + /submit/hide + %*' => sub { submit_hide($_[1]) },
+
   # default rule
   '' => sub {
     my ($self, $env) = @_;
@@ -252,6 +261,79 @@ sub cache_list
   ];
 
   return [ 200, $headers, [ encode('UTF-8', $out) ] ];
+}
+
+
+#--- show single hide form ----------------------------------------------------
+
+sub load_hide
+{
+  my $hide_id = shift;
+  my (%re, $entry);
+
+  my ($qry, @bind) = $sql->select(
+    -columns => '*',
+    -from => 'hides',
+    -where => { 'hides_i' => $hide_id }
+  );
+
+  my $sth = $dbh->prepare($qry);
+  my $r = $sth->execute(@bind);
+  if($r) {
+    $entry = $sth->fetchrow_hashref() if $r;
+    if($entry) {
+      $re{status} = 'ok';
+      $re{result} = $entry;
+    } else {
+      $re{status} = 'error';
+      $re{errmsg} = sprintf('Hide %d not found', $hide_id);
+    }
+  } else {
+    $re{query} = sprintf('%s (%s)', $qry, join(',', @bind));
+    $re{status} = 'error';
+    $re{errmsg} = $dbh->errstr;
+  }
+
+  #--- run template
+
+  my $out;
+  $re{entrytype} = 'hide';
+  $tt->process('entry.tt', \%re, \$out) or $out = $tt->error;
+
+  return [
+    200,
+    [ 'Content-Type' => 'text/html; charset=utf-8' ],
+    [ encode('UTF-8', $out) ]
+  ];
+}
+
+
+#--- update a hide entry ------------------------------------------------------
+
+sub submit_hide
+{
+  my ($form) = @_;
+
+  my ($qry, @bind) = $sql->update(
+    -table => 'hides',
+    -where => { 'hides_i' => $form->{hides_i} },
+    -set => $form
+  );
+
+  my $r = $dbh->do($qry, undef, @bind);
+  my $res;
+
+  if($r) {
+    $res = "Successfully updated $r entries\n";
+  } else {
+    $res = "Update failed, " . $dbh->errstr;
+  }
+
+  return [
+    200,
+    [ 'Content-Type' => 'text/html; charset=utf-8' ],
+    [ $res ]
+  ]
 }
 
 

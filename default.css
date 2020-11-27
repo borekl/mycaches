@@ -39,7 +39,7 @@
 
 /*--- body ----------------------------------------------------------------*/
 
-body {
+body, input {
   font-family: 'Alegreya', sans-serif;
 }
 
@@ -56,7 +56,7 @@ th {
 
 td {
   border: black 1px solid;
-  padding: 0.4em 0.5em;
+  padding: 0.4rem 0.5rem;
   font-weight: 400;
   font-size: 133%;
 }
@@ -129,4 +129,12 @@ a:visited {
 a:hover {
   color: blue;
   text-decoration: underline;
+}
+
+/*--- form ----------------------------------------------------------------*/
+
+input {
+  font-size: 100%;
+  border: none;
+  margin: 0;
 }
