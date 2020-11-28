@@ -56,10 +56,20 @@ sub dispatch_request {
   # show list of hides
   '/hides' => sub { cache_list(hides => 1) },
 
+  # open new find/hide form
+  '/find/new' => sub { new_entry('find'); },
+  '/hide/new' => sub { new_entry('hide'); },
+
   # load single hide
   '/hide/*' => sub {
     my ($self, $hide_id) = @_;
-    load_hide($hide_id);
+    load_entry('hide', $hide_id);
+  },
+
+  # load single find
+  '/find/*' => sub {
+    my ($self, $find_id) = @_;
+    load_entry('find', $find_id);
   },
 
   # submit a hide
@@ -266,15 +276,15 @@ sub cache_list
 
 #--- show single hide form ----------------------------------------------------
 
-sub load_hide
+sub load_entry
 {
-  my $hide_id = shift;
+  my ($type, $entry_id) = @_;
   my (%re, $entry);
 
   my ($qry, @bind) = $sql->select(
     -columns => '*',
-    -from => 'hides',
-    -where => { 'hides_i' => $hide_id }
+    -from => $type . 's',
+    -where => { "${type}s_i" => $entry_id }
   );
 
   my $sth = $dbh->prepare($qry);
@@ -286,7 +296,7 @@ sub load_hide
       $re{result} = $entry;
     } else {
       $re{status} = 'error';
-      $re{errmsg} = sprintf('Hide %d not found', $hide_id);
+      $re{errmsg} = sprintf('%s %d not found', $type, $entry_id);
     }
   } else {
     $re{query} = sprintf('%s (%s)', $qry, join(',', @bind));
@@ -297,7 +307,7 @@ sub load_hide
   #--- run template
 
   my $out;
-  $re{entrytype} = 'hide';
+  $re{entrytype} = $type;
   $tt->process('entry.tt', \%re, \$out) or $out = $tt->error;
 
   return [
@@ -333,6 +343,38 @@ sub submit_hide
     200,
     [ 'Content-Type' => 'text/html; charset=utf-8' ],
     [ $res ]
+  ]
+}
+
+#--- show new entry form ------------------------------------------------------
+
+sub new_entry
+{
+  my $entry_type = shift;
+
+  #--- get highest existing entry id, the new entry id will be this number
+  #--- incremented by 1
+
+  my ($qry) = $sql->select(
+    -from => $entry_type . 's',
+    -columns => [ "max(${entry_type}s_i)" ]
+  );
+
+  my $sth = $dbh->prepare($qry);
+  my $r = $sth->execute() or die;
+  my ($max) = $sth->fetchrow_array;
+
+  #--- run template
+
+  my (%re, $out);
+  $re{entrytype} = $entry_type;
+  $re{result}{"${entry_type}s_i"} = $max + 1;
+  $tt->process('entry.tt', \%re, \$out) or $out = $tt->error;
+
+  return [
+    200,
+    [ 'Content-Type' => 'text/html; charset=utf-8' ],
+    [ encode('UTF-8', $out) ]
   ]
 }
 
