@@ -95,7 +95,9 @@ END %]
 
   [% FOREACH item IN finds %]
   <tr>
-    <td class="numeric">[% item.finds_i %]</td>
+    <td class="numeric">
+      <a href="/find/[% item.finds_i %]">[% item.finds_i %]</a>
+    </td>
     <td><a target="_blank" href="https://coord.info/[% item.cacheid %]">[% item.cacheid %]</a></td>
     <td>[% typeicon(item.ctype) %]</td>
     <td class="rating">[% rating(item.difficulty,item.terrain) %]</td>
@@ -142,7 +144,9 @@ END %]
 
   [% FOREACH item IN hides %]
   <tr>
-    <td class="numeric">[% item.hides_i %]</td>
+    <td class="numeric">
+      <a href="/hide/[% item.hides_i %]">[% item.hides_i %]</a>
+    </td>
     <td><a target="_blank" href="https://coord.info/[% item.cacheid %]">[% item.cacheid %]</a></td>
     <td>[% typeicon(item.ctype, item.status == 1 ? 0 : 1) %]</td>
     <td class="rating">[% IF item.status < 10; rating(item.difficulty,item.terrain); END %]</td>
