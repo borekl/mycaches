@@ -14,6 +14,7 @@ use Template;
 use Encode qw(encode);
 use Time::Moment;
 use SQL::Abstract::More;
+use Try::Tiny;
 
 
 #==============================================================================
@@ -132,14 +133,16 @@ sub finds_list
       next if $_->{ctype} eq 'L';
 
       # calculate 'age', ie. numer of days since previous find
-      my $previous_find = Time::Moment->from_string($_->{prev} . "T00:00$tz");
-      my $found = Time::Moment->from_string($_->{found} . "T00:00$tz");
-      $_->{age} = $previous_find->delta_days($found);
+      try {
+        my $previous_find = Time::Moment->from_string($_->{prev} . "T00:00$tz");
+        my $found = Time::Moment->from_string($_->{found} . "T00:00$tz");
+        $_->{age} = $previous_find->delta_days($found);
 
       # calculate 'held', ie. number of days when I was the last finder
-      my $next_find = $now->at_midnight;
-      $next_find = Time::Moment->from_string($_->{next} . "T00:00$tz") if $_->{next};
-      $_->{held} = $found->delta_days($next_find);
+        my $next_find = $now->at_midnight;
+        $next_find = Time::Moment->from_string($_->{next} . "T00:00$tz") if $_->{next};
+        $_->{held} = $found->delta_days($next_find);
+      };
     }
   }
 
