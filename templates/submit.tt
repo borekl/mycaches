@@ -1,0 +1,49 @@
+<!doctype html>
+
+<html>
+
+<head>
+  <title>Mandevil's Geocaching Page</title>
+  <link rel="stylesheet" href="/default.css" type="text/css">
+</head>
+
+<body>
+
+[% IF status == 'error' %]
+
+  <h1>There was an error</h1>
+  <p>[% mesg %]</p>
+
+  [% IF query.defined %]
+  <p>
+    query: [% query %]<br>
+    values: [% values.join(',') %]
+  </p>
+  [% END %]
+
+[% ELSE %]
+
+  [% IF op == 'insert' %]
+    <h1>New [% entrytype %] [% id %] was created</h1>
+  [% ELSE %]
+    <h1>[% entrytype.ucfirst %] [% id %] was updated</h1>
+  [% END %]
+
+  <ul>
+    <li>
+      <a href="/[% entrytype %]/[% id %]">View the [% entrytype %]
+      [% id %]</a>
+    </li>
+    <li>
+      <a href="/[% entrytype %]s">View all [% entrytype %]s</a>
+    </li>
+    <li>
+      <a href="/">View all caches</a>
+    </li>
+  </ul>
+
+[% END %]
+
+</body>
+
+</html>

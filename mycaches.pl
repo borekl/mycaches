@@ -73,8 +73,9 @@ sub dispatch_request {
     load_entry('find', $find_id);
   },
 
-  # submit a hide
-  'POST + /submit/hide + %*' => sub { submit_hide($_[1]) },
+  # submit an find/hide
+  'POST + /submit/hide + %*' => sub { submit_entry($_[1]) },
+  'POST + /submit/find + %*' => sub { submit_entry($_[1]) },
 
   # default rule
   '' => sub {
@@ -321,33 +322,93 @@ sub load_entry
 }
 
 
-#--- update a hide entry ------------------------------------------------------
+#--- update/insert a hide entry -----------------------------------------------
 
-sub submit_hide
+sub submit_entry
 {
   my ($form) = @_;
+  my $type = $form->{entrytype};
+  my $id = $form->{"${type}s_i"};
 
-  my ($qry, @bind) = $sql->update(
-    -table => 'hides',
-    -where => { 'hides_i' => $form->{hides_i} },
-    -set => $form
+  my %re = (
+    status => 'ok',
+    entrytype => $type,
+    id => $id,
   );
 
-  my $r = $dbh->do($qry, undef, @bind);
-  my $res;
+  delete $form->{entrytype};
 
-  if($r) {
-    $res = "Successfully updated $r entries\n";
-  } else {
-    $res = "Update failed, " . $dbh->errstr;
-  }
+  try {
+
+    #--- sanity checks
+
+    if($type ne 'hide' && $type ne 'find') {
+      $re{status} = 'error';
+      $re{mesg} = "Incorrect entrytype ($type)";
+      die;
+    }
+
+    if(!defined $id || $id < 1) {
+      $re{status} = 'error';
+      $re{mesg} = "Incorrect entry id value ($id)";
+      die;
+    }
+
+    #--- first try an update
+
+    my ($qry, @bind) = $sql->update(
+      -table => "${type}s",
+      -where => { "${type}s_i" => $id },
+      -set => $form
+    );
+
+    my $r = $dbh->do($qry, undef, @bind);
+    if(!$r) {
+      $re{status} = 'error';
+      $re{mesg} = "Update failed, " . $dbh->errstr;
+      $re{query} = $qry;
+      $re{values} = [ @bind ];
+      die;
+    } elsif($r > 0) {
+      $re{op} = 'update';
+      die;
+    } if($r != 0) {
+      $re{status} = 'error';
+      $re{mesg} = "Unexpected UPDATE result ($r)";
+      die;
+    }
+
+    #--- if update does not fail, but indicates that zero rows were updated,
+    #--- try an insert instead
+
+    ($qry, @bind) = $sql->insert(
+      -into => "${type}s",
+      -values => $form
+    );
+
+    $r = $dbh->do($qry, undef, @bind);
+    if(!$r) {
+      $re{status} = 'error';
+      $re{mesg} = "Insert failed, " . $dbh->errstr;
+      $re{query} = $qry;
+      $re{values} = [ @bind ];
+      die;
+    }
+    $re{op} = 'insert';
+  };
+
+  #--- finish
+
+  my $out;
+  $tt->process('submit.tt', \%re, \$out) or $out = $tt->error;
 
   return [
     200,
     [ 'Content-Type' => 'text/html; charset=utf-8' ],
-    [ $res ]
+    [ encode('UTF-8', $out) ]
   ]
 }
+
 
 #--- show new entry form ------------------------------------------------------
 
