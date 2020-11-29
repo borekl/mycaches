@@ -73,9 +73,19 @@ sub dispatch_request {
     load_entry('find', $find_id);
   },
 
-  # submit an find/hide
+  # submit a find/hide
   'POST + /submit/hide + %*' => sub { submit_entry($_[1]) },
   'POST + /submit/find + %*' => sub { submit_entry($_[1]) },
+
+  # delete a find/hide
+  '/delete/hide/*' => sub {
+    my ($self, $id) = @_;
+    delete_entry($id, 'hide');
+  },
+  '/delete/find/*' => sub {
+    my ($self, $id) = @_;
+    delete_entry($id, 'find');
+  },
 
   # default rule
   '' => sub {
@@ -434,6 +444,36 @@ sub new_entry
   $re{entrytype} = $entry_type;
   $re{result}{"${entry_type}s_i"} = $max + 1;
   $tt->process('entry.tt', \%re, \$out) or $out = $tt->error;
+
+  return [
+    200,
+    [ 'Content-Type' => 'text/html; charset=utf-8' ],
+    [ encode('UTF-8', $out) ]
+  ]
+}
+
+
+#--- delete an entry ----------------------------------------------------------
+
+sub delete_entry
+{
+  my ($id, $type) = @_;
+  my %re = ( status => 'ok', entrytype => $type, id => $id );
+
+  my ($qry, @bind) = $sql->delete(
+    -from => "${type}s",
+    -where => { "${type}s_i" => $id }
+  );
+
+  my $r = $dbh->do($qry, undef, @bind);
+
+  if(!$r) {
+    $re{status} = 'error';
+    $re{mesg} = "Deleting $type $id failed, " . $dbh->errstr;
+  }
+
+  my $out;
+  $tt->process('delete.tt', \%re, \$out) or $out = $tt->error;
 
   return [
     200,
