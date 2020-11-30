@@ -138,3 +138,21 @@ input {
   border: none;
   margin: 0;
 }
+
+/*==========================================================================*
+  RATING CUSTOM INPUT
+ *==========================================================================*/
+
+.input-rating .fivestar {
+  position: relative;
+  cursor: arrow;
+  user-select: none;
+}
+
+.input-rating .fivestar .mask {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  background-color: rgba(255,255,255,0.9);
+}
