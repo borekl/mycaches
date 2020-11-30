@@ -156,3 +156,16 @@ input {
   height: 100%;
   background-color: rgba(255,255,255,0.9);
 }
+
+/*==========================================================================*
+  EMOJI PSEUDO-BUTTON CUSTOM INPUT
+ *==========================================================================*/
+
+ .input-emoji {
+  user-select: none;
+  cursor: pointer;
+}
+
+.input-emoji-dimmed {
+  filter: grayscale(1) opacity(20%);
+}

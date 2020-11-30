@@ -18,4 +18,30 @@ document.addEventListener("DOMContentLoaded", () => {
     })
   })
 
+  /* emoji pseudo-buttons */
+
+  document.querySelectorAll('.input-emoji').forEach(el => {
+    let input = el.querySelectorAll('input')[0]
+    let values = [...el.getAttribute('data-emojis')]
+
+    function show(value) {
+      if(value) {
+        el.textContent = values[value-1]
+        if(value == 1) el.classList.remove('input-emoji-dimmed')
+      } else {
+        el.textContent = values[0]
+        el.classList.add('input-emoji-dimmed')
+      }
+    };
+
+    show(parseInt(input.value));
+
+    el.addEventListener('click', evt => {
+      let value = parseInt(input.value) + 1;
+      if(value > values.length) value = 0;
+      input.value = value;
+      show(value);
+    })
+  })
+
 })
