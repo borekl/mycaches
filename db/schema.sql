@@ -22,9 +22,8 @@ CREATE TABLE finds (
   -- date of the next found it log
   next TEXT,
 
-  -- cache type as t-traditional, ?-mystery, m-multicache, w-wherigo,
-  -- l-letterbox,L-lab,v-virtual,e-earth,E-event,M-mega,G-giga,C-CITO
-  ctype TEXT,
+  -- cache type
+  ctype INTEGER,
 
   -- favorite flag
   favorite INTEGER CHECK ( favorite BETWEEN 0 AND 1 ),
@@ -68,9 +67,8 @@ CREATE TABLE hides (
   -- date when last found
   found TEXT,
 
-  -- cache type as t-traditional, ?-mystery, m-multicache, w-wherigo,
-  -- l-letterbox,L-lab,v-virtual,e-earth,E-event,M-mega,G-giga,C-CITO
-  ctype TEXT,
+  -- cache type
+  ctype INTEGER,
 
   -- photo gallery flag
   gallery INTEGER,
