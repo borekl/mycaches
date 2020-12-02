@@ -349,6 +349,11 @@ sub submit_entry
   delete $form->{entrytype};
   form_nulls($form);
 
+  #--- convert terrain/difficulty to db representation
+
+  $form->{terrain} *= 2 unless !$form->{terrain};
+  $form->{difficulty} *= 2 unless !$form->{difficulty};
+
   try {
 
     #--- sanity checks
