@@ -347,6 +347,7 @@ sub submit_entry
   );
 
   delete $form->{entrytype};
+  form_nulls($form);
 
   try {
 
@@ -401,7 +402,7 @@ sub submit_entry
       $re{status} = 'error';
       $re{mesg} = "Insert failed, " . $dbh->errstr;
       $re{query} = $qry;
-      $re{values} = [ @bind ];
+      $re{values} = [ map { $_ ? $_ : '' } @bind ];
       die;
     }
     $re{op} = 'insert';
@@ -480,6 +481,24 @@ sub delete_entry
     [ 'Content-Type' => 'text/html; charset=utf-8' ],
     [ encode('UTF-8', $out) ]
   ]
+}
+
+
+#==============================================================================
+#=== AUXILIARY FUNCTIONS ======================================================
+#==============================================================================
+
+sub form_nulls
+{
+  my $form = shift;
+
+  foreach my $key (keys %$form) {
+    if($form->{$key} eq '') {
+      $form->{$key} = undef;
+    }
+  }
+
+  return $form;
 }
 
 
