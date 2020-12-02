@@ -145,7 +145,7 @@ input {
 
 .input-rating .fivestar {
   position: relative;
-  cursor: arrow;
+  cursor: pointer;
   user-select: none;
 }
 
