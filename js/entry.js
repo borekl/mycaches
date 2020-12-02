@@ -44,4 +44,29 @@ document.addEventListener("DOMContentLoaded", () => {
     })
   })
 
+  /* cache-type selection menu */
+
+  let
+    popup = document.querySelectorAll('.popup')[0],
+    ctype_icon = document.querySelectorAll('.input-cachetype svg use')[0],
+    ctype_input = document.querySelectorAll('.grid-icon input')[0];
+
+  document.querySelectorAll('.cachetype').forEach(el => {
+    el.addEventListener('click', evt => {
+      let icon_href = el.querySelectorAll('svg use')[0].getAttribute('xlink:href');
+      ctype_icon.setAttribute('xlink:href', icon_href);
+      ctype_input.value = icon_href.match(/(\d+)$/)[1];
+      popup.style.display = 'none';
+      evt.stopPropagation();
+    })
+  })
+
+  document.querySelectorAll('.input-cachetype').forEach(el => {
+    popup.addEventListener('click', (evt) => {
+      if(evt.target.classList.contains('popup')) {
+        popup.style.display = 'none';
+      }
+    });
+    el.addEventListener('click', () => popup.style.display = 'flex');
+  })
 })
