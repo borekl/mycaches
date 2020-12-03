@@ -1,27 +1,4 @@
-[% MACRO rating(difficulty,terrain) BLOCK %]
-  [%- SET asterisk = '★' -%]
-  [% IF difficulty %]
-    [% asterisk.repeat(difficulty / 2) %]<span
-    class="hlf">[% asterisk.repeat(difficulty % 2) %]</span>
-    <br>
-    [% asterisk.repeat(terrain / 2) %]<span
-    class="hlf">[% asterisk.repeat(terrain % 2) %]</span>
-  [% END %]
-[% END %]
-
-[% MACRO typeicon(type,disabled) BLOCK %]
-  [%- SWITCH type %]
-    [% CASE 't'; SET icon = 'icon-2' %]
-    [% CASE 'm'; SET icon = 'icon-3' %]
-    [% CASE '?'; SET icon = 'icon-8' %]
-    [% CASE 'e'; SET icon = 'icon-137' %]
-    [% CASE 'v'; SET icon = 'icon-4' %]
-    [% CASE 'w'; SET icon = 'icon-1858' %]
-    [% CASE DEFAULT; SET icon = '' %]
-  [% END %]
-  [% IF disabled; SET icon = icon _ '-disabled'; END %]
-  [% IF icon %]<svg><use xlink:href="/cache-types.svg#[% icon %]"></use></svg>[% END %]
-[% END %]
+[% PROCESS 'macros.tt' %]
 
 [% MACRO cachename(item) BLOCK %]
   <div [%
