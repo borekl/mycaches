@@ -8,9 +8,10 @@
   <title>Mandevil's Geocaching Page :: [% entrytype.ucfirst %]</title>
   <base href="/">
   <link rel="stylesheet" href="default.css" type="text/css">
+  <script type="text/javascript" src="js/entry.js"></script>
 </head>
 
-<body>
+<body class="entry">
 
 [% IF status == 'error' %]
 
@@ -18,181 +19,126 @@
 
 [% ELSE %]
 
-<div class="flexcenter">
+  [%# ======================================================================
+      ==== FIND FORM =======================================================
+      ====================================================================== %]
+
+  [% IF entrytype == 'find' %]
 
   <form method="post" action="/submit/[% entrytype %]">
 
-  <input type="hidden" name="entrytype" value="[% entrytype %]">
+    <input type="hidden" name="entrytype" value="[% entrytype %]">
 
-  <table>
-    <tbody>
+    <div class="form-find">
 
-      [%# hides_i/finds_i are special; if the are present, submitting updates
-      existing entry; if they are missing, submitting creates new entry %]
+      [%#--- CACHE TYPE -----------------------------------------------------%]
 
-      [% IF entrytype == 'hide' %]
-      <tr>
-        <td>hide id</td>
-        <td>
-          [% result.hides_i %]
-          <input type="hidden" name="hides_i" value="[% result.hides_i %]">
-        </td>
-      </tr>
-      [% END %]
+      <div class="cell grid-icon fcenter">
+        <span class="input-cachetype">[% typeicon(result.ctype || 2) %]</span>
+        <input type="hidden" name="ctype" value="[% result.ctype || 2 %]">
+      </div>
 
-      [% IF entrytype == 'find' %]
-      <tr>
-        <td>find id</td>
-        <td>
-          [% result.finds_i %]
-          <input type="hidden" name="finds_i" value="[% result.finds_i %]">
-        </td>
-      </tr>
-      [% END %]
+      [%#--- ROW IDENTIFIER -------------------------------------------------%]
 
-      <tr>
-        <td>cache id</td>
-        <td>
-          <input name="cacheid" value="[% result.cacheid %]" maxlength="7">
-        </td>
-      </tr>
+      <div class="cell grid-id fcenter">
+        [% result.finds_i %]
+        <input type="hidden" name="finds_i" value="[% result.finds_i %]">
+      </div>
 
-      <tr>
-        <td>name</td>
-        <td>
-          <input name="name" value="[% result.name %]" size="40">
-        </td>
-      </tr>
+      [%#--- CACHE ID -------------------------------------------------------%]
 
-      <tr>
-        <td>type</td>
-        <td>
-          <input name="ctype" value="[% result.ctype %]">
-        </td>
-      </tr>
+      <div class="cell grid-cid fcenter">
+        <input name="cacheid" value="[% result.cacheid %]"
+        placeholder="GC code" size="7" maxlength="7">
+      </div>
 
-      <tr>
-        <td>difficulty</td>
-        <td>
-          <input name="difficulty" value="[% result.difficulty %]">
-        </td>
-      </tr>
+      [%#--- DIFFICULTY / TERRAIN RATING ------------------------------------%]
 
-      <tr>
-        <td>terrain</td>
-        <td>
-          <input name="terrain" value="[% result.terrain %]">
-        </td>
-      </tr>
+      <div class="cell grid-rating fcenter">
 
-      [% IF entrytype == 'hide' %]
-      <tr>
-        <td>published</td>
-        <td>
-          <input name="published" value="[% result.published %]">
-        </td>
-      </tr>
-      [% END %]
+        [% SET diff_default = result.difficulty || 2 %]
+        [% SET terr_default = result.terrain || 2 %]
 
-      [% IF entrytype == 'hide' %]
-      <tr>
-        <td>finds</td>
-        <td>
-          <input name="finds" value="[% result.finds %]">
-        </td>
-      </tr>
-      [% END %]
+        <div class="input-rating">
+          <div class="fivestar">★★★★★<div class="mask" style="width:[% 100 - diff_default * 10 %]%"></div></div>
+          <input type="hidden" name="difficulty" value="[% diff_default / 2 %]">
+        </div>
 
-      [% IF entrytype == 'hide' %]
-      <tr>
-        <td>last found</td>
-        <td>
-          <input name="found" value="[% result.found %]">
-        </td>
-      </tr>
-      [% END %]
+        <div class="input-rating">
+          <div class="fivestar">★★★★★<div class="mask" style="width:[% 100 - terr_default * 10 %]%"></div></div>
+          <input type="hidden" name="terrain" value="[% terr_default / 2 %]">
+        </div>
 
-      <tr>
-        <td>gallery</td>
-        <td>
-          <input name="gallery" value="[% result.gallery %]">
-        </td>
-      </tr>
+      </div>
 
-      <tr>
-        <td>archived</td>
-        <td>
-          <input name="archived" value="[% result.archived %]">
-        </td>
-      </tr>
+      [%#--- CACHE NAME -----------------------------------------------------%]
 
-      [% IF entrytype == 'find' %]
-      <tr>
-        <td>prev</td>
-        <td>
-          <input name="prev" value="[% result.prev %]">
-        </td>
-      </tr>
+      <div class="cell grid-name">
+        <input name="name" value="[% result.name %]" placeholder="cache name">
+      </div>
 
-      <tr>
-        <td>found</td>
-        <td>
-          <input name="found" value="[% result.found %]">
-        </td>
-      </tr>
+      [%#--- PREVIOUS FIND DATE ---------------------------------------------%]
 
-      <tr>
-        <td>next</td>
-        <td>
-          <input name="next" value="[% result.next %]">
-        </td>
-      </tr>
-      [% END %]
+      <div class="cell grid-prev fcenter">
+        <input name="prev" value="[% result.prev %]" placeholder="prev find">
+      </div>
 
-      [% IF entrytype == 'find' %]
-      <tr>
-        <td>favorite</td>
-        <td>
-          <input name="favorite" value="[% result.favorite %]">
-        </td>
-      </tr>
-      [% END %]
+      [%#--- FIND DATE ------------------------------------------------------%]
 
-      [% IF entrytype == 'find' %]
-      <tr>
-        <td>xtf</td>
-        <td>
-          <input name="xtf" value="[% result.xtf %]">
-        </td>
-      </tr>
-      [% END %]
+      <div class="cell grid-found fcenter">
+        <input name="found" value="[% result.found %]" placeholder="date found">
+      </div>
 
-      [% IF entrytype == 'find' %]
-      <tr>
-        <td>logid</td>
-        <td>
-          <input name="logid" value="[% result.logid %]">
-        </td>
-      </tr>
-      [% END %]
+      [%#--- NEXT FIND DATE -------------------------------------------------%]
 
-      [% IF entrytype == 'hide' %]
-      <tr>
-        <td>status</td>
-        <td>
-          <input name="status" value="[% result.status %]">
-        </td>
-      </tr>
-      [% END %]
+      <div class="cell grid-next fcenter">
+        <input name="next" value="[% result.next %]" placeholder="next find">
+      </div>
 
-    </tbody>
-  </table>
+      [%#--- FLAGS ----------------------------------------------------------%]
 
-  <button type="submit">Submit</button>
+      <div class="cell grid-flags">
+
+        <div>
+          <span class="input-emoji" data-emojis="📷"></span><input
+          type="hidden" name="gallery" value="[% result.gallery %]">
+        </div>
+
+        <div>
+          <span class="input-emoji" data-emojis="💙"></span><input
+          type="hidden" name="favorite" value="[% result.favorite %]">
+        </div>
+
+        <div>
+          <span class="input-emoji" data-emojis="🥇🥈🥉"></span><input
+          type="hidden" name="xtf" value="[% result.xtf %]">
+        </div>
+
+        <div>
+          <span class="input-emoji" data-emojis="❌"></span><input
+          type="hidden" name="archived" value="[% result.archived %]">
+        </div>
+
+      </div>
+
+      [%#--- LOG UUID -------------------------------------------------------%]
+
+      <div class="cell grid-logid">
+        <input name="logid" value="[% result.logid %]" placeholder="log uuid">
+      </div>
+
+      [%#--- FORM CONTROLS --------------------------------------------------%]
+
+      <div class="cell grid-foot">
+        <button type="submit">Submit</button>
+      </div>
+
+    </div>
 
   </form>
 
-</div>
+  [% END %]
+
   [%#--- POPUP WITH CACHE TYPES MENU --------------------------------------- %]
 
   <div class="popup">

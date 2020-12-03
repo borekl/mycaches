@@ -205,3 +205,77 @@ input {
   background: rgba(0, 0, 0, 0.7);
   display: none;
 }
+
+
+/*==========================================================================*
+  GRID LAYOUT FORM
+ *==========================================================================*/
+
+body.entry {
+  background-color: #ddd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+div.form-find {
+  border: 4px solid #333;
+  background-color: #333;
+  box-shadow: 5px 5px 16px 8px #bbb;
+  display: grid;
+  gap: 4px;
+  grid-template-columns: repeat(6, 6rem);
+  grid-template-rows: repeat(7, 4rem);
+  grid-template-areas:
+    "rowid cacheid cacheid cacheid rating rating"
+    "icon cacheid cacheid cacheid rating rating"
+    "name name name name name name"
+    "prev prev found found next next"
+    "flags flags flags flags flags flags"
+    "logid logid logid logid logid logid"
+    "foot foot foot foot foot foot";
+}
+
+div.cell {
+  display: flex;
+  align-items: center;
+  font-size: 166%;
+  padding: 1rem;
+  background: white;
+}
+
+div.cell input {
+  width: 100%;
+  background: none;
+}
+
+div.cell input::placeholder {
+  color: #bbb;
+}
+
+div.fcenter {
+  justify-content: center;
+}
+
+div.fcenter input {
+  text-align: center;
+}
+
+div.grid-icon { grid-area: icon; }
+div.grid-cid { grid-area: cacheid; font-size: 250% }
+div.grid-id { grid-area: rowid; }
+div.grid-rating { grid-area: rating; flex-direction: column; }
+div.grid-name { grid-area: name; }
+div.grid-prev { grid-area: prev; }
+div.grid-found { grid-area: found; }
+div.grid-next { grid-area: next; }
+div.grid-flags { grid-area: flags; justify-content: space-around; }
+div.grid-logid { grid-area: logid; }
+div.grid-foot {
+  grid-area: foot;
+  background-color: #eee;
+  justify-content: space-between;
+}
+
