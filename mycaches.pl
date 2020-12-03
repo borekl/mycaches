@@ -444,11 +444,25 @@ sub new_entry
   my $r = $sth->execute() or die;
   my ($max) = $sth->fetchrow_array;
 
+  #--- set default
+
+  my %re = (
+    entrytype => $entry_type,
+    result => {
+      "${entry_type}s_i" => $max + 1,
+      ctype => 2,
+      terrain => 2,
+      difficulty => 2,
+      gallery => 0,
+      archived => 0,
+      xtf => 0,
+      favorite => 0,
+    }
+  );
+
   #--- run template
 
-  my (%re, $out);
-  $re{entrytype} = $entry_type;
-  $re{result}{"${entry_type}s_i"} = $max + 1;
+  my $out;
   $tt->process('entry.tt', \%re, \$out) or $out = $tt->error;
 
   return [
