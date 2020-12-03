@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
   /* emoji pseudo-buttons */
 
   document.querySelectorAll('.input-emoji').forEach(el => {
-    let input = el.querySelectorAll('input')[0]
+    let input = el.nextSibling;
     let values = [...el.getAttribute('data-emojis')]
 
     function show(value) {
@@ -34,10 +34,14 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     };
 
+    let value = input.value;
+    if(!value) input.value = value = 0;
     show(parseInt(input.value));
 
     el.addEventListener('click', evt => {
-      let value = parseInt(input.value) + 1;
+      let value = parseInt(input.value);
+      if(!value) value = 0;
+      value++;
       if(value > values.length) value = 0;
       input.value = value;
       show(value);
