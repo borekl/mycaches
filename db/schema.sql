@@ -76,7 +76,7 @@ CREATE TABLE hides (
   -- archived
   archived INTEGER,
 
-  -- status (0-unspecified, 1-active,2-disabled,10-in development,
-  -- 11-waiting to be placed,12-waiting for publication)
+  -- status (0-unspecified, 1-active,2-disabled,3-in development,
+  -- 4-waiting to be placed,5-waiting for publication)
   status INTEGER
 );

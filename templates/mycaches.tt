@@ -126,7 +126,7 @@ END %]
     </td>
     <td><a target="_blank" href="https://coord.info/[% item.cacheid %]">[% item.cacheid %]</a></td>
     <td>[% typeicon(item.ctype, item.status == 1 ? 0 : 1) %]</td>
-    <td class="rating">[% IF item.status < 10; rating(item.difficulty,item.terrain); END %]</td>
+    <td class="rating">[% IF item.status < 3; rating(item.difficulty,item.terrain); END %]</td>
     <td>
       <div class="cachename">[% cachename(item) %]</div>
     </td>
