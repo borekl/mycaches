@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.querySelectorAll('.input-emoji').forEach(el => {
     let input = el.nextSibling;
-    let values = [...el.getAttribute('data-emojis')]
+    let values = el.getAttribute('data-emojis').split('|');
 
     function show(value) {
       if(value) {

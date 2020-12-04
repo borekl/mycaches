@@ -99,6 +99,15 @@
 
       <div class="cell grid-flags">
 
+        [% IF entrytype == 'hide' %]
+
+        <div>
+          <span class="input-emoji" data-emojis="☀️|🌥️|🛠️|⛏️|🏁"></span><input
+          type="hidden" name="status" value="[% result.status %]">
+        </div>
+
+        [% END %]
+
         <div>
           <span class="input-emoji" data-emojis="📷"></span><input
           type="hidden" name="gallery" value="[% result.gallery %]">
