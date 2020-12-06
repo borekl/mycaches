@@ -13,6 +13,10 @@
 
 <body class="entry">
 
+  [%# ======================================================================
+      ==== ERROR MESSAGE ===================================================
+      ====================================================================== %]
+
 [% IF status == 'error' %]
 
   <p>Something went wrong: [% errmsg %]</p>
@@ -23,13 +27,13 @@
       ==== FIND FORM =======================================================
       ====================================================================== %]
 
-  [% IF entrytype == 'find' %]
+  [% IF entrytype == 'find' || entrytype == 'hide' %]
 
   <form method="post" action="/submit/[% entrytype %]">
 
     <input type="hidden" name="entrytype" value="[% entrytype %]">
 
-    <div class="form-find">
+    <div class="form form-[% entrytype %]">
 
       [%#--- CACHE TYPE -----------------------------------------------------%]
 
@@ -41,8 +45,9 @@
       [%#--- ROW IDENTIFIER -------------------------------------------------%]
 
       <div class="cell grid-id fcenter">
-        [% result.finds_i %]
-        <input type="hidden" name="finds_i" value="[% result.finds_i %]">
+        [% result.item(entrytype _ 's_i') %]
+        <input type="hidden" name="[% entrytype %]s_i"
+        value="[% result.item(entrytype _ 's_i') %]">
       </div>
 
       [%#--- CACHE ID -------------------------------------------------------%]
@@ -77,16 +82,18 @@
         <input name="name" value="[% result.name %]" placeholder="cache name">
       </div>
 
-      [%#--- PREVIOUS FIND DATE ---------------------------------------------%]
-
-      <div class="cell grid-prev fcenter">
-        <input name="prev" value="[% result.prev %]" placeholder="prev find">
-      </div>
-
       [%#--- FIND DATE ------------------------------------------------------%]
 
       <div class="cell grid-found fcenter">
         <input name="found" value="[% result.found %]" placeholder="date found">
+      </div>
+
+      [%#--- PREVIOUS FIND DATE ---------------------------------------------%]
+
+      [% IF entrytype == 'find' %]
+
+      <div class="cell grid-prev fcenter">
+        <input name="prev" value="[% result.prev %]" placeholder="prev find">
       </div>
 
       [%#--- NEXT FIND DATE -------------------------------------------------%]
@@ -94,6 +101,28 @@
       <div class="cell grid-next fcenter">
         <input name="next" value="[% result.next %]" placeholder="next find">
       </div>
+
+      [% END %]
+
+      [%#--- PUBLISHED DATE -------------------------------------------------%]
+
+      [% IF entrytype == 'hide' %]
+
+      <div class="cell grid-published fcenter">
+        <input name="published" value="[% result.published %]" placeholder="published">
+      </div>
+
+      [% END %]
+
+      [%#--- FINDS ----------------------------------------------------------%]
+
+      [% IF entrytype == 'hide' %]
+
+      <div class="cell grid-finds fcenter">
+        <input name="finds" value="[% result.finds %]" placeholder="finds">
+      </div>
+
+      [% END %]
 
       [%#--- FLAGS ----------------------------------------------------------%]
 
@@ -113,15 +142,19 @@
           type="hidden" name="gallery" value="[% result.gallery %]">
         </div>
 
+        [% IF entrytype == 'find' %]
+
         <div>
           <span class="input-emoji" data-emojis="💙"></span><input
           type="hidden" name="favorite" value="[% result.favorite %]">
         </div>
 
         <div>
-          <span class="input-emoji" data-emojis="🥇🥈🥉"></span><input
+          <span class="input-emoji" data-emojis="🥇|🥈|🥉"></span><input
           type="hidden" name="xtf" value="[% result.xtf %]">
         </div>
+
+        [% END %]
 
         <div>
           <span class="input-emoji" data-emojis="❌"></span><input
@@ -132,9 +165,13 @@
 
       [%#--- LOG UUID -------------------------------------------------------%]
 
+      [% IF entrytype == 'find' %]
+
       <div class="cell grid-logid">
         <input name="logid" value="[% result.logid %]" placeholder="log uuid">
       </div>
+
+      [% END %]
 
       [%#--- FORM CONTROLS --------------------------------------------------%]
 
@@ -185,6 +222,7 @@
 
   </div>
 
+</div>
 
 [% END %]
 
