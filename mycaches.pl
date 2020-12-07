@@ -29,7 +29,7 @@ my $tt = Template->new({
 
 # connect to database
 my $dbfile = 'mycaches.sqlite';
-my $dbh = DBI->connect("dbi:SQLite:dbname=$dbfile","","");
+my $dbh = DBI->connect("dbi:SQLite:dbname=$Bin/$dbfile","","");
 $dbh->{sqlite_unicode} = 1;
 
 # SQL::Abstract
