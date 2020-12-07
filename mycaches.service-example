@@ -1,0 +1,17 @@
+[Unit]
+Description=MyCaches
+After=syslog.target
+
+[Service]
+WorkingDirectory=/opt/mycaches
+User=mycaches
+Group=mycaches
+Type=forking
+ExecStart=/usr/bin/starman -l 127.0.0.1:30448 \
+  --workers 2 -D --error-log=mycaches_error.log \
+  -e 'enable "Plack::Middleware::Static", path => qr/\.(css|svg|js)$/' \
+  mycaches.pl
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
