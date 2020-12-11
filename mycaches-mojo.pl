@@ -46,9 +46,11 @@ sub caches($caches)
     elsif(exists $h{finds_i}) {
       # calculate 'age', ie. numer of days since previous find
       try {
-        my $previous_find = Time::Moment->from_string($h{prev} . "T00:00$tz");
+        my $previous_find
+          = Time::Moment->from_string($h{prev} . "T00:00$tz")
+          if $h{prev};
         my $found = Time::Moment->from_string($h{found} . "T00:00$tz");
-        $h{age} = $previous_find->delta_days($found);
+        $h{age} = $previous_find->delta_days($found) if $h{prev};
 
       # calculate 'held', ie. number of days when I was the last finder
         my $next_find
@@ -71,17 +73,39 @@ sub caches($caches)
 
 #==============================================================================
 
+get '/' => sub ($c) {
+  my $db = $c->sqlite->db;
+  $c->stash(
+    finds => caches($db->query(q{select * from finds})->hashes)->to_array,
+    hides => caches($db->query(q{select * from hides})->hashes)->to_array,
+  );
+  $c->respond_to(
+    json => { json => $c->stash },
+    html => { template => 'cachelist' }
+  );
+};
+
 get '/finds' => sub ($c) {
   my $db = $c->sqlite->db;
-  $c->render(
-    json => caches($db->query(q{select * from finds})->hashes)->to_array
+  $c->stash(
+    finds => caches($db->query(q{select * from finds})->hashes)->to_array,
+    hides => undef
+  );
+  $c->respond_to(
+    json => { json => $c->stash },
+    html => { template => 'cachelist' }
   );
 };
 
 get '/hides' => sub ($c) {
   my $db = $c->sqlite->db;
-  $c->render(
-    json => caches($db->query(q{select * from hides})->hashes)->to_array
+  $c->stash(
+    hides => caches($db->query(q{select * from hides})->hashes)->to_array,
+    finds => undef
+  );
+  $c->respond_to(
+    json => { json => $c->stash },
+    html => { template => 'cachelist' }
   );
 };
 

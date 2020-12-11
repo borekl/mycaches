@@ -1,0 +1,199 @@
+<% my $typeicon = begin %>
+  <% my $icon = 'icon-' . $_[0]->{ctype}; %>
+  <% $icon .= '-disabled' if exists $_[0]->{status} && $_[0]->{status} != 1; %>
+  <svg><use xlink:href="/cache-types.svg#<%= $icon %>"></use></svg>
+<% end %>
+
+<% my $rating = begin %>
+  <% my ($item) = @_; %>
+  <% my $asterisk = '★'; %>
+  <% if(($item->{status} // 0) < 3 && ($item->{difficulty} || $item->{terrain})) { %>
+    <%= $asterisk x int($item->{difficulty} / 2) %><span
+    class="hlf"><%= $asterisk x ($item->{difficulty} % 2) %></span>
+    <br>
+    <%= $asterisk x int($item->{terrain} / 2) %><span
+    class="hlf"><%= $asterisk x ($item->{terrain} % 2) %></span>
+  <% } %>
+<% end %>
+
+<% my $cachename = begin %>
+  <% my ($item) = @_; %>
+  <% my $class; %>
+  <% $class = 'archived' if($item->{archived}); %>
+  <% $class = 'disabled' if(exists $item->{status} && $item->{status} == 2); %>
+  <div <%= $class ? 'class="' . $class . '"' : '' %>>
+    <% if($item->{gallery}) { %>
+      <a target="_blank"
+      href="https://voyager.lupomesky.cz/fotky/gc/<%= $item->{cacheid} %>/"
+      ><%= $item->{name} %></a>
+      <span class="emoji">&#x1f4f7;</span>
+    <% } else { %>
+      <%= $item->{name} %>
+    <% } %>
+  </div>
+<% end %>
+
+<% my $cachebadges = begin %>
+  % my ($item) = @_;
+  % if($item->{xtf} || $item->{favorite}) {
+    <div class="emoji">
+      <% if($item->{favorite}) { %>&#x1f499;<% } %>
+      <% if($item->{xtf} == 1) { %>&#x1f947;<% } %>
+      <% if($item->{xtf} == 2) { %>&#x1f948;<% } %>
+      <% if($item->{xtf} == 3) { %>&#x1f949;<% } %>
+    </div>
+  % }
+<% end %>
+
+
+<!doctype html>
+
+<html>
+
+<head>
+  <title>MyCaches</title>
+  <link rel="stylesheet" href="/default.css" type="text/css">
+</head>
+
+<body>
+
+<div class="flexcenter">
+
+<table>
+
+  %#=========================================================================
+  %#=== FINDS ===============================================================
+  %#=========================================================================
+
+  % if($finds) {
+
+    <tbody id="found">
+
+      <tr class="descr">
+        <td colspan="8">my found caches</td>
+      </tr>
+
+      <tr>
+        <th title="My geocache number">#</th>
+        <th title="Geocache id">id</th>
+        <th title="Geocache type">type</th>
+        <th title="Difficulty/terrain">d/t</th>
+        <th title="Geocache's listed name">name</th>
+        <th title="Date I found the cache">date</th>
+        <th title="How many days since last find when I found it">age</th>
+        <th title="How many days have I been the last finder">held</th>
+      </tr>
+
+      % foreach my $item (@$finds) {
+
+        <tr>
+
+          <td class="numeric">
+            <a href="/find/<%= $item->{finds_i} %>"><%= $item->{finds_i} %></a>
+          </td>
+
+          <td>
+            <a target="_blank" href="https://coord.info/<%= $item->{cacheid} %>"
+            ><%= $item->{cacheid} %></a>
+          </td>
+
+          <td><%= $typeicon->($item) %></td>
+
+          <td class="rating"><%= $rating->($item) %></td>
+
+          <td>
+            <div class="cachename">
+              <%= $cachename->($item) %>
+              <%= $cachebadges->($item) %>
+            </div>
+          </td>
+
+          <td>
+            % if($item->{logid}) {
+              <a target="_blank"
+              href="https://www.geocaching.com/seek/log.aspx?LUID=<%= $item->{logid} %>"
+              ><%= $item->{found} %></a>
+            % } else {
+              %= $item->{found}
+            % }
+          </td>
+
+          <td class="numeric"><%= $item->{age} %></td>
+
+          <td class="numeric<%= $item->{next} ? '' : ' held' %>">
+            %= $item->{held}
+          </td>
+
+        </tr>
+
+
+      % }
+
+    </tbody>
+
+
+  % }
+
+  %#=========================================================================
+  %#=== HIDES ===============================================================
+  %#=========================================================================
+
+  <% if($hides) { %>
+
+    <tr class="descr">
+      <td colspan="8">my hidden caches</td>
+    </tr>
+
+    <tr>
+      <th title="My geocache number">#</th>
+      <th title="Geocache id">id</th>
+      <th title="Geocache type">type</th>
+      <th title="Difficulty/terrain">d/t</th>
+      <th title="Geocache's listed name">name</th>
+      <th title="Date I found the cache">published</th>
+      <th title="How many days since last find when I found it">age</th>
+      <th title="How many days have I been the last finder">finds</th>
+    </tr>
+
+    <% foreach my $item (@$hides) { %>
+
+      <tr>
+
+        <td class="numeric">
+          <a href="/hide/<%= $item->{hides_i} %>"><%= $item->{hides_i} %></a>
+        </td>
+
+        <td>
+          <a target="_blank" href="https://coord.info/<%= $item->{cacheid} %>">
+            <%= $item->{cacheid} %>
+          </a>
+        </td>
+
+        <td><%= $typeicon->($item) %></td>
+
+        <td class="rating"><%= $rating->($item) %></td>
+
+        <td>
+          <div class="cachename">
+            <%= $cachename->($item) %>
+            <%= $cachebadges->($item) %>
+          </div>
+        </td>
+
+        <td><%= $item->{published} %></td>
+        <td class="numeric"><%= $item->{age} %></td>
+        <td class="numeric"><%= $item->{finds} %></td>
+
+      </tr>
+
+    <% } %>
+
+  <% } %>
+
+</table>
+
+</div>
+
+</body>
+
+</html>
