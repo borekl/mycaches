@@ -3,11 +3,13 @@ use Mojo::Base 'Mojolicious', -signatures;
 
 sub startup($self)
 {
-  my $r = $self->routes;
+  $self->plugin('Config', default => { dbfile => 'mycaches' });
 
   $self->helper(sqlite => sub {
-    state $sql = Mojo::SQLite->new('mycaches.sqlite')
+    state $sql = Mojo::SQLite->new($self->config('dbfile') . '.sqlite')
   });
+
+  my $r = $self->routes;
 
   $r->get('/')->to('cachelist#list', finds => {}, hides => {});
   $r->get('/finds')->to('cachelist#list', finds => {}, hides => undef);
