@@ -1,25 +1,18 @@
-#!/usr/bin/perl
+package MyCaches::Controller::Cachelist;
 
-use Mojolicious::Lite -signatures;
+use Mojo::Base 'Mojolicious::Controller', -signatures;
 use Mojo::SQLite;
 use Time::Moment;
 use Try::Tiny;
 
-#==============================================================================
 
-helper sqlite => sub {
-  state $sql = Mojo::SQLite->new('mycaches.sqlite')
-};
-
-
-#==============================================================================
 
 #------------------------------------------------------------------------------
 # The function to calculate 'age' and 'held' fields from entries retrieved
 # from the database.
 #------------------------------------------------------------------------------
 
-sub caches($caches)
+sub caches_process($caches)
 {
   my $now = Time::Moment->now;
   my $tz = $now->strftime('%:z');
@@ -70,46 +63,35 @@ sub caches($caches)
   });
 }
 
+#------------------------------------------------------------------------------
+# Generate cache list
+#------------------------------------------------------------------------------
 
-#==============================================================================
+sub list($self)
+{
+  my $db = $self->sqlite->db;
+  my %json_result;
 
-get '/' => sub ($c) {
-  my $db = $c->sqlite->db;
-  $c->stash(
-    finds => caches($db->query(q{select * from finds})->hashes)->to_array,
-    hides => caches($db->query(q{select * from hides})->hashes)->to_array,
-  );
-  $c->respond_to(
-    json => { json => $c->stash },
-    html => { template => 'cachelist' }
-  );
-};
+  if($self->stash('finds')) {
+    $self->stash(
+      finds => $json_result{finds} = caches_process(
+        $db->query(q{select * from finds})->hashes
+      )->to_array
+    );
+  }
 
-get '/finds' => sub ($c) {
-  my $db = $c->sqlite->db;
-  $c->stash(
-    finds => caches($db->query(q{select * from finds})->hashes)->to_array,
-    hides => undef
-  );
-  $c->respond_to(
-    json => { json => $c->stash },
-    html => { template => 'cachelist' }
-  );
-};
+  if($self->stash('hides')) {
+    $self->stash(
+      hides => $json_result{hides} = caches_process(
+        $db->query(q{select * from hides})->hashes
+      )->to_array,
+    );
+  }
 
-get '/hides' => sub ($c) {
-  my $db = $c->sqlite->db;
-  $c->stash(
-    hides => caches($db->query(q{select * from hides})->hashes)->to_array,
-    finds => undef
-  );
-  $c->respond_to(
-    json => { json => $c->stash },
-    html => { template => 'cachelist' }
-  );
-};
+  $self->respond_to(
+    json => { json => \%json_result },
+    html => sub { $self->render }
+  )
+}
 
-
-#==============================================================================
-
-app->start;
+1;
