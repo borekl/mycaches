@@ -18,10 +18,10 @@
 
 <% my $cachename = begin %>
   <% my ($item) = @_; %>
-  <% my $class; %>
+  <% my $class = ''; %>
   <% $class = 'archived' if($item->{archived}); %>
   <% $class = 'disabled' if(exists $item->{status} && $item->{status} == 2); %>
-  <div <%= $class ? 'class="' . $class . '"' : '' %>>
+  <div <%== qq{class="$class"} %>>
     <% if($item->{gallery}) { %>
       <a target="_blank"
       href="https://voyager.lupomesky.cz/fotky/gc/<%= $item->{cacheid} %>/"
