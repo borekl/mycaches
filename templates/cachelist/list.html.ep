@@ -45,6 +45,9 @@
   % }
 <% end %>
 
+%#===========================================================================
+%#=== HTML ==================================================================
+%#===========================================================================
 
 <!doctype html>
 
@@ -126,7 +129,6 @@
 
         </tr>
 
-
       % }
 
     </tbody>
@@ -193,6 +195,38 @@
 </table>
 
 </div>
+
+%#===========================================================================
+%#=== ADDITIONAL NAVIGATION =================================================
+%#===========================================================================
+
+<% if($limit) { %>
+
+  <div class="filter">
+    Showing only last <%= $limit %> finds
+    | <a href="/finds">show all</a>
+  </div>
+
+<% } elsif($archived) { %>
+
+   <div class="filter">
+     Showing only <%= @$finds %> archived finds
+     | <a href="/finds">show all</a>
+   </div>
+
+<% } elsif(!$hides) { %>
+
+   <div class="filter">
+      Showing all finds
+      | show last
+      <a href="/finds/limit/10">10</a>,
+      <a href="/finds/limit/20">20</a>,
+      <a href="/finds/limit/50">50</a>,
+      <a href="/finds/limit/50">100</a>,
+      <a href="/finds/archived">archived</a>
+   </div>
+
+<% } %>
 
 </body>
 

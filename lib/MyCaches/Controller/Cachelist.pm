@@ -17,14 +17,17 @@ sub list($self)
   my $finds = MyCaches::Model::Finds->new(db => $db);
   if($self->stash('finds')) {
     $self->stash(
-      finds => $json_result{finds} = $finds->list->to_array
+      finds => $json_result{finds} = $finds->list(
+        tail => $self->stash('limit'),
+        archived => $self->stash('archived')
+      )->to_array
     );
   }
 
   my $hides = MyCaches::Model::Hides->new(db => $db);
   if($self->stash('hides')) {
     $self->stash(
-      hides => $json_result{hides} = $hides->list->to_array,
+      hides => $json_result{hides} = $hides->list->to_array
     );
   }
 

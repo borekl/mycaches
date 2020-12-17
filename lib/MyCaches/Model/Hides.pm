@@ -1,10 +1,8 @@
 package MyCaches::Model::Hides;
 
-use Mojo::Base -base, -signatures;
+use Mojo::Base 'MyCaches::Model::Caches', -signatures;
 use Time::Moment;
 use Try::Tiny;
-
-has 'db';
 
 
 #------------------------------------------------------------------------------
@@ -38,10 +36,10 @@ sub fix_entries($self, $hides)
 # Retrieve and return list of finds.
 #------------------------------------------------------------------------------
 
-sub list($self)
+sub list($self, %arg)
 {
   $self->fix_entries(
-    $self->db->query(q{SELECT * FROM hides})->hashes
+    $self->SUPER::list(table => 'hides', %arg)
   );
 }
 
