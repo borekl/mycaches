@@ -1,5 +1,6 @@
 package MyCaches;
 use Mojo::Base 'Mojolicious', -signatures;
+use Mojo::SQLite;
 
 sub startup($self)
 {

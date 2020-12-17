@@ -1,7 +1,6 @@
 package MyCaches::Controller::Cachelist;
 
 use Mojo::Base 'Mojolicious::Controller', -signatures;
-use Mojo::SQLite;
 use Time::Moment;
 use Try::Tiny;
 
