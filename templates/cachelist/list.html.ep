@@ -1,54 +1,3 @@
-<% my $typeicon = begin %>
-  <% my $icon = 'icon-' . $_[0]->{ctype}; %>
-  <% $icon .= '-disabled' if exists $_[0]->{status} && $_[0]->{status} != 1; %>
-  <svg><use xlink:href="/cache-types.svg#<%= $icon %>"></use></svg>
-<% end %>
-
-<% my $rating = begin %>
-  <% my ($item) = @_; %>
-  <% my $asterisk = '★'; %>
-  <% if(($item->{status} // 0) < 3 && ($item->{difficulty} || $item->{terrain})) { %>
-    <%= $asterisk x int($item->{difficulty} / 2) %><span
-    class="hlf"><%= $asterisk x ($item->{difficulty} % 2) %></span>
-    <br>
-    <%= $asterisk x int($item->{terrain} / 2) %><span
-    class="hlf"><%= $asterisk x ($item->{terrain} % 2) %></span>
-  <% } %>
-<% end %>
-
-<% my $cachename = begin %>
-  <% my ($item) = @_; %>
-  <% my $class = ''; %>
-  <% $class = 'archived' if($item->{archived}); %>
-  <% $class = 'disabled' if(exists $item->{status} && $item->{status} == 2); %>
-  <div <%== qq{class="$class"} %>>
-    <% if($item->{gallery}) { %>
-      <a target="_blank"
-      href="https://voyager.lupomesky.cz/fotky/gc/<%= $item->{cacheid} %>/"
-      ><%= $item->{name} %></a>
-      <span class="emoji">&#x1f4f7;</span>
-    <% } else { %>
-      <%= $item->{name} %>
-    <% } %>
-  </div>
-<% end %>
-
-<% my $cachebadges = begin %>
-  % my ($item) = @_;
-  % if($item->{xtf} || $item->{favorite}) {
-    <div class="emoji">
-      <% if($item->{favorite}) { %>&#x1f499;<% } %>
-      <% if($item->{xtf} == 1) { %>&#x1f947;<% } %>
-      <% if($item->{xtf} == 2) { %>&#x1f948;<% } %>
-      <% if($item->{xtf} == 3) { %>&#x1f949;<% } %>
-    </div>
-  % }
-<% end %>
-
-%#===========================================================================
-%#=== HTML ==================================================================
-%#===========================================================================
-
 <!doctype html>
 
 <html>
@@ -100,14 +49,14 @@
             ><%= $item->{cacheid} %></a>
           </td>
 
-          <td><%= $typeicon->($item) %></td>
+          <td><%= typeicon $item %></td>
 
-          <td class="rating"><%= $rating->($item) %></td>
+          <td class="rating"><%= rating $item %></td>
 
           <td>
             <div class="cachename">
-              <%= $cachename->($item) %>
-              <%= $cachebadges->($item) %>
+              <%= cachename  $item %>
+              <%= cachebadges $item %>
             </div>
           </td>
 
@@ -171,14 +120,14 @@
           </a>
         </td>
 
-        <td><%= $typeicon->($item) %></td>
+        <td><%= typeicon $item %></td>
 
-        <td class="rating"><%= $rating->($item) %></td>
+        <td class="rating"><%= rating $item %></td>
 
         <td>
           <div class="cachename">
-            <%= $cachename->($item) %>
-            <%= $cachebadges->($item) %>
+            <%= cachename $item %>
+            <%= cachebadges $item %>
           </div>
         </td>
 

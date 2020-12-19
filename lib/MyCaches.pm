@@ -1,6 +1,7 @@
 package MyCaches;
 
 use Mojo::Base 'Mojolicious', -signatures;
+use MyCaches::Helpers;
 use Mojo::SQLite;
 
 
@@ -15,6 +16,10 @@ sub startup($self)
   $self->helper(sqlite => sub {
     state $sql = Mojo::SQLite->new($self->config('dbfile') . '.sqlite')
   });
+
+  #--- register custom tag helpers
+
+  MyCaches::Helpers->register($self);
 
   #--- stash defaults
 
