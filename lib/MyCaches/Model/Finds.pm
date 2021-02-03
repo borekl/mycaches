@@ -50,5 +50,17 @@ sub list($self, %arg)
   );
 }
 
+#------------------------------------------------------------------------------
+# Retrieve a find entry, requires 'id' argument.
+#------------------------------------------------------------------------------
+
+sub entry($self, %arg)
+{
+  die 'Argument "id" not specified' if !$arg{id};
+  return $self->db->select(
+    'finds', undef, { finds_i => $arg{id} }
+  )->hashes->first;
+}
+
 
 1;
