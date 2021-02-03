@@ -41,7 +41,7 @@
         <tr>
 
           <td class="numeric">
-            <a href="/find/<%= $item->{finds_i} %>"><%= $item->{finds_i} %></a>
+            <a href="/finds/<%= $item->{finds_i} %>"><%= $item->{finds_i} %></a>
           </td>
 
           <td>
@@ -111,7 +111,7 @@
       <tr>
 
         <td class="numeric">
-          <a href="/hide/<%= $item->{hides_i} %>"><%= $item->{hides_i} %></a>
+          <a href="/hides/<%= $item->{hides_i} %>"><%= $item->{hides_i} %></a>
         </td>
 
         <td>
@@ -173,6 +173,13 @@
       <a href="/finds/limit/50">50</a>,
       <a href="/finds/limit/50">100</a>,
       <a href="/finds/archived">archived</a>
+      | <a href="/finds/new">add new</a>
+   </div>
+
+<% } elsif(!$finds) { %>
+
+   <div class="filter">
+     <a href="/hides/new">add new</a>
    </div>
 
 <% } %>
