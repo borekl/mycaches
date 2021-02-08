@@ -49,11 +49,17 @@ sub startup($self)
   $finds->get('/limit/:limit')->to;
   $finds->get('/archived')->to(archived => 1);
 
+  $finds->get('/:id')->to('cachelist#find');
+
   #----------------------------------------------------------------------------
   #--- list hides -------------------------------------------------------------
   #----------------------------------------------------------------------------
 
-  $r->get('/hides')->to('cachelist#list', hides => 1);
+  my $hides = $r->get('/hides')->to('cachelist#list', hides => 1);
+  $hides->get->to;
+
+  $hides->get('/:id')->to('cachelist#hide');
+
 }
 
 
