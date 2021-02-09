@@ -74,6 +74,7 @@ sub _cachename
   if($item->{gallery}) {
     my $span = tag_to_html('span', class => 'emoji', '&#x1f4f7;');
     my $ahref = tag_to_html('a',
+      target => '_blank',
       href => 'https://voyager.lupomesky.cz/fotky/gc/'
       . $item->{cacheid} . '/', $item->{name}
     );
