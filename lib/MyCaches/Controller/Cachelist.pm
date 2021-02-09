@@ -24,6 +24,7 @@ sub list($self)
   if($self->stash('finds')) {
     $json_result{finds} = $finds->load(
       table => 'finds',
+      tail => $self->stash('limit') // 0,
       where => \%where,
     )->to_hash;
     $self->stash(finds => $json_result{finds});
@@ -33,6 +34,7 @@ sub list($self)
   if($self->stash('hides')) {
     $json_result{hides} = $hides->load(
       table => 'hides',
+      tail => $self->stash('limit') // 0,
       where => \%where,
     )->to_hash;
     $self->stash(hides => $json_result{hides});

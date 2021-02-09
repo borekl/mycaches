@@ -18,16 +18,24 @@ sub load($self, %arg)
 {
   my $db = $self->db;
   my $where = $arg{where} // undef;
+  my $order = { -asc => $arg{table} . '_i' };
 
-  my $result = $db->select($arg{table}, undef, $where);
+  my $result = $db->select($arg{table}, undef, $where, $order);
+
+  my @caches;
 
   while(my $row = $result->hash) {
     my $cache;
     $cache = MyCaches::Model::Find->new(%$row) if exists $row->{finds_i};
     $cache = MyCaches::Model::Hide->new(%$row) if exists $row->{hides_i};
-    push(@{$self->caches}, $cache);
+    push(@caches, $cache);
   }
 
+  if($arg{tail}) {
+    @caches = @caches[$#caches-$arg{tail}+1 .. $#caches];
+  }
+
+  $self->caches(\@caches);
   return $self;
 }
 
