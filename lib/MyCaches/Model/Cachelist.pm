@@ -26,8 +26,8 @@ sub load($self, %arg)
 
   while(my $row = $result->hash) {
     my $cache;
-    $cache = MyCaches::Model::Find->new(%$row) if exists $row->{finds_i};
-    $cache = MyCaches::Model::Hide->new(%$row) if exists $row->{hides_i};
+    $cache = MyCaches::Model::Find->new(entry => $row) if exists $row->{finds_i};
+    $cache = MyCaches::Model::Hide->new(entry => $row) if exists $row->{hides_i};
     push(@caches, $cache);
   }
 
