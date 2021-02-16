@@ -45,10 +45,14 @@ has 'age' => sub {
 # held, or how many days I was the last finder
 has 'held' => sub {
   my $self = shift;
-  if($self->found && $self->next) {
-    return $self->found_tm->delta_days($self->next_tm);
+  if($self->found) {
+    if($self->next) {
+      return $self->found_tm->delta_days($self->next_tm);
+    } else {
+      return $self->found_tm->delta_days($self->now);
+    }
   } else {
-    return $self->found_tm->delta_days($self->now);
+    return undef;
   }
 };
 
