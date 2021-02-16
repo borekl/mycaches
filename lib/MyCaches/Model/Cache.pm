@@ -38,8 +38,8 @@ sub new
     my $e = $arg{entry};
     $arg{cacheid} = $e->{cacheid};
     $arg{name} = $e->{name};
-    $arg{terrain} = $e->{terrain};
-    $arg{difficulty} = $e->{difficulty};
+    $arg{terrain} = $e->{terrain} / 2;
+    $arg{difficulty} = $e->{difficulty} / 2;
     $arg{gallery} = $e->{gallery};
     $arg{archived} = $e->{archived};
   }

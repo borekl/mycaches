@@ -22,6 +22,11 @@ sub register
   $app->helper( cachebadges => sub { _cachebadges(@_)} );
 }
 
+# Additional utility function that evaluates to 1 when argument has fractional
+# part
+
+sub _frac { $_[0] - int($_[0]) ? 1 : 0 }
+
 # Put up geocache type icon; Groundspeak's SVG file contains symbols for all
 # cache types, including cache icons for disabled caches; symbol names are
 # 'icon-N' or 'icon-N-disabled' where N is icon type number that we are storing
@@ -52,11 +57,17 @@ sub _rating
   my $r = '';
 
   if(($item->{status} // 0) < 3 && ($item->{difficulty} || $item->{terrain})) {
-    $r .= $asterisk x int($item->{difficulty} / 2);
-    $r .= tag_to_html('span', class => 'hlf', $asterisk x ($item->{difficulty} % 2));
+    $r .= $asterisk x int($item->{difficulty});
+    $r .= tag_to_html(
+      'span', class => 'hlf',
+      $asterisk x _frac($item->{difficulty})
+    );
     $r .= '<br>';
-    $r .= $asterisk x int($item->{terrain} / 2);
-    $r .= tag_to_html('span', class => 'hlf', $asterisk x ($item->{terrain} % 2));
+    $r .= $asterisk x int($item->{terrain});
+    $r .= tag_to_html(
+      'span', class => 'hlf',
+      $asterisk x _frac($item->{terrain})
+    );
   }
   return _bs($r);
 }
