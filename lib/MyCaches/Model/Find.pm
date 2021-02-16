@@ -60,10 +60,24 @@ sub new
 {
   my ($self, %arg) = @_;
 
+  #--- loading a database entry
+
+  if($arg{id}) {
+    my $db = $arg{db};
+    my $re = $db->select('finds', undef, { finds_i => $arg{id}});
+    my $entry = $re->hash;
+    if($entry) {
+      delete $arg{id};
+      $arg{entry} = $entry;
+    }
+    $re->finish;
+  }
+
   #--- initialization with a database entry
 
   if(exists $arg{entry}) {
     my $e = $arg{entry};
+    $arg{finds_i} = $e->{finds_i};
     $arg{prev} = $e->{prev};
     $arg{found} = $e->{found};
     $arg{next} = $e->{next};

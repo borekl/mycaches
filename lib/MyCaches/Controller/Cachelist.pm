@@ -54,16 +54,17 @@ sub list($self)
 
 sub find($self)
 {
-  my $finds = MyCaches::Model::Cachelist->new(db => $self->sqlite->db);
   my $id = $self->stash('id');
 
   if($id eq 'new') {
     $self->stash(find => MyCaches::Model::Find->new->to_hash);
   } else {
-    my $cl = $finds->load(
-      table => 'finds', where => { finds_i => $id }
-    )->to_hash;
-    $self->stash(find => $cl->[0]);
+    $self->stash(
+      find => MyCaches::Model::Find->new(
+        db => $self->sqlite->db,
+        id => $id
+      )->to_hash
+    )
   }
 
   $self->respond_to(
@@ -78,18 +79,23 @@ sub find($self)
 
 sub hide($self)
 {
-  my $hides = MyCaches::Model::Cachelist->new(db => $self->sqlite->db);
   my $id = $self->stash('id');
 
   if($id eq 'new') {
     $self->stash(hide => MyCaches::Model::Hide->new->to_hash);
   } else {
-    my $cl = $hides->load(
-      table => 'hides', where => { hides_i => $id }
-    )->to_hash;
-    $self->stash(hide => $cl->[0]);
+    $self->stash(
+      hide => MyCaches::Model::Hide->new(
+        db => $self->sqlite->db,
+        id => $id
+      )->to_hash
+    );
   }
 
+  $self->respond_to(
+    json => { json => $self->stash('hide') },
+    html => sub { $self->render }
+  );
 }
 
 #------------------------------------------------------------------------------

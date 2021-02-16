@@ -47,10 +47,24 @@ sub new
 {
   my ($self, %arg) = @_;
 
+  #--- loading a database entry
+
+  if($arg{id}) {
+    my $db = $arg{db};
+    my $re = $db->select('hides', undef, { hides_i => $arg{id}});
+    my $entry = $re->hash;
+    if($entry) {
+      delete $arg{id};
+      $arg{entry} = $entry;
+    }
+    $re->finish;
+  }
+
   #--- initialization with a database entry
 
   if(exists $arg{entry}) {
     my $e = $arg{entry};
+    $arg{hides_i} = $e->{hides_i};
     $arg{published} = $e->{published};
     $arg{finds} = $e->{finds};
     $arg{found} = $e->{found};
