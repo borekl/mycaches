@@ -81,13 +81,19 @@ sub new
 
   if(exists $arg{entry}) {
     my $e = $arg{entry};
-    $arg{finds_i} = $e->{finds_i};
+    $arg{id} = $e->{finds_i};
     $arg{prev} = $e->{prev};
     $arg{found} = $e->{found};
     $arg{next} = $e->{next};
     $arg{favorite} = $e->{favorite};
     $arg{xtf} = $e->{xtf};
     $arg{logid} = $e->{logid};
+  }
+
+  #--- map rowid
+
+  else {
+    $arg{id} = $arg{finds_i} if exists $arg{finds_i}
   }
 
   #--- finish
@@ -99,24 +105,57 @@ sub new
 # Return data as hash
 #------------------------------------------------------------------------------
 
-sub to_hash($self)
+sub to_hash($self, %arg)
 {
-  my $data = $self->SUPER::to_hash;
+  my $data = $self->SUPER::to_hash(%arg);
 
-  $data->{finds_i} = $self->{finds_i};
+  $data->{finds_i} = $self->id;
   $data->{prev} = $self->prev;
   $data->{found} = $self->found;
   $data->{next} = $self->next;
   $data->{favorite} = $self->favorite;
   $data->{xtf} = $self->xtf;
   $data->{logid} = $self->logid;
-  $data->{prev_tm} = $self->prev_tm;
-  $data->{found_tm} = $self->found_tm;
-  $data->{next_tm} = $self->next_tm;
-  $data->{age} = $self->age;
-  $data->{held} = $self->held;
+  $data->{age} = $self->age unless $arg{db};
+  $data->{held} = $self->held unless $arg{db};
 
   return $data;
+}
+
+#------------------------------------------------------------------------------
+# Return new row id for new entry
+#------------------------------------------------------------------------------
+
+sub get_new_id($self)
+{
+  $self->id($self->get_last_id('finds') + 1);
+  return $self;
+}
+
+#------------------------------------------------------------------------------
+# Create new entry in the database
+#------------------------------------------------------------------------------
+
+sub create($self)
+{
+  my $db = $self->db;
+  my $entry = $self->get_new_id->to_hash(db => 1);
+  $db->insert('finds', $entry);
+  return $self;
+}
+
+#------------------------------------------------------------------------------
+# Update existing entry in the database
+#------------------------------------------------------------------------------
+
+sub update($self)
+{
+  $self->db->update(
+    'finds',
+    $self->to_hash(db => 1),
+    { finds_i => $self->id }
+  );
+  return $self;
 }
 
 #------------------------------------------------------------------------------

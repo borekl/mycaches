@@ -64,11 +64,17 @@ sub new
 
   if(exists $arg{entry}) {
     my $e = $arg{entry};
-    $arg{hides_i} = $e->{hides_i};
+    $arg{id} = $e->{hides_i};
     $arg{published} = $e->{published};
     $arg{finds} = $e->{finds};
     $arg{found} = $e->{found};
     $arg{status} = $e->{status};
+  }
+
+  #--- map rowid
+
+  else {
+    $arg{id} = $arg{hides_i} if exists $arg{hides_i}
   }
 
   #--- finish
@@ -80,19 +86,53 @@ sub new
 # Return data as hash
 #------------------------------------------------------------------------------
 
-sub to_hash($self)
+sub to_hash($self, %arg)
 {
-  my $data = $self->SUPER::to_hash;
+  my $data = $self->SUPER::to_hash(%arg);
 
-  $data->{hides_i} = $self->{hides_i};
+  $data->{hides_i} = $self->id;
   $data->{published} = $self->published;
   $data->{finds} = $self->finds;
   $data->{found} = $self->found;
-  $data->{published_tm} = $self->published_tm;
-  $data->{found_tm} = $self->found_tm;
-  $data->{age} = $self->age;
+  $data->{age} = $self->age unless $arg{db};
 
   return $data;
+}
+
+#------------------------------------------------------------------------------
+# Return new row id for new entry
+#------------------------------------------------------------------------------
+
+sub get_new_id($self)
+{
+  $self->id($self->get_last_id('hides') + 1);
+  return $self;
+}
+
+#------------------------------------------------------------------------------
+# Create new entry in the database
+#------------------------------------------------------------------------------
+
+sub create($self)
+{
+  my $db = $self->db;
+  my $entry = $self->get_new_id->to_hash(db => 1);
+  $db->insert('hides', $entry);
+  return $self;
+}
+
+#------------------------------------------------------------------------------
+# Update existing entry in the database
+#------------------------------------------------------------------------------
+
+sub update($self)
+{
+  $self->db->update(
+    'hides',
+    $self->to_hash(db => 1),
+    { hides_i => $self->id }
+  );
+  return $self;
 }
 
 #------------------------------------------------------------------------------

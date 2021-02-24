@@ -1,0 +1,32 @@
+<div class="popup popup-cachetypes">
+
+  <div class="cachetypes">
+
+    <div>
+      <span class="cachetype"><%= typeicon 2 %> traditional cache</span>
+      <span class="cachetype"><%= typeicon 3 %> multicache</span>
+      <span class="cachetype"><%= typeicon 8 %> unknown cache</span>
+      <span class="cachetype"><%= typeicon 137 %> Earth cache</span>
+      <span class="cachetype"><%= typeicon 4 %> virtual cache</span>
+      <span class="cachetype"><%= typeicon 1858 %> Wherigo cache</span>
+      <span class="cachetype"><%= typeicon 5 %> letterbox hybrid</span>
+      <span class="cachetype"><%= typeicon 11 %> webcam cache</span>
+      <span class="cachetype"><%= typeicon 12 %> locationless cache</span>
+      <span class="cachetype"><%= typeicon 9 %> Project APE cache</span>
+    </div>
+
+    <div>
+      <span class="cachetype"><%= typeicon 13 %> CITO</span>
+      <span class="cachetype"><%= typeicon 6 %> event</span>
+      <span class="cachetype"><%= typeicon 453 %> mega event</span>
+      <span class="cachetype"><%= typeicon 7005 %> giga event</span>
+      <span class="cachetype"><%= typeicon 3653 %> Community Celebration Event</span>
+      <span class="cachetype"><%= typeicon 1304 %> GPS Adventures Exhibit</span>
+      <span class="cachetype"><%= typeicon 3773 %> Geocaching HQ</span>
+      <span class="cachetype"><%= typeicon 3774 %> Geocaching HQ Celebration</span>
+      <span class="cachetype"><%= typeicon 4738 %> Geocaching HQ Block Party</span>
+    </div>
+
+  </div>
+
+</div>

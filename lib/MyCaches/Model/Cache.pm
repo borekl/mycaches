@@ -37,12 +37,17 @@ sub new
   if(exists $arg{entry}) {
     my $e = $arg{entry};
     $arg{cacheid} = $e->{cacheid};
+    $arg{ctype} = $e->{ctype};
     $arg{name} = $e->{name};
     $arg{terrain} = $e->{terrain} / 2;
     $arg{difficulty} = $e->{difficulty} / 2;
     $arg{gallery} = $e->{gallery};
     $arg{archived} = $e->{archived};
   }
+
+  #--- values that are equal to empty strings are converted to undef
+
+  foreach my $k (keys %arg) { $arg{$k} = undef if $arg{$k} && $arg{$k} eq '' }
 
   #--- finish
 
@@ -53,19 +58,24 @@ sub new
 # Return data as hash
 #------------------------------------------------------------------------------
 
-sub to_hash($self)
-{{
-  id => $self->id,
-  cacheid => $self->cacheid,
-  name => $self->name,
-  difficulty => $self->difficulty,
-  terrain => $self->terrain,
-  ctype => $self->ctype,
-  gallery => $self->gallery,
-  archived => $self->archived,
-  now => $self->now,
-  tz => $self->tz,
-}}
+sub to_hash($self, %arg)
+{
+  my %re = (
+    cacheid => $self->cacheid,
+    name => $self->name,
+    difficulty => $self->difficulty,
+    terrain => $self->terrain,
+    ctype => $self->ctype,
+    gallery => $self->gallery,
+    archived => $self->archived,
+  );
+
+  $re{tz} = $self->tz unless $arg{db};
+  $re{difficulty} *= 2 if $arg{db};
+  $re{terrain} *= 2 if $arg{db};
+
+  return \%re;
+}
 
 #------------------------------------------------------------------------------
 # Receive date in ISO format and return Time::Moment object
@@ -76,6 +86,23 @@ sub tm_from_date($self, $date)
   my $now = Time::Moment->now;
   my $tz = $now->strftime('%:z');
   return Time::Moment->from_string($date . "T00:00$tz");
+}
+
+#------------------------------------------------------------------------------
+# Auxiliary function to get last rowid from a table. This is needed when adding
+# a new entry. We are not using sequences since our rowids actually have some
+# semantics to them. FIXME
+#------------------------------------------------------------------------------
+
+sub get_last_id($self, $table)
+{
+  my $db = $self->db;
+  my $rowid = "${table}_i";
+  my $re = $db->select($table, $rowid, undef, { -desc => $rowid });
+  my $row = $re->hash;
+  $re->finish;
+
+  return $row->{$rowid};
 }
 
 #------------------------------------------------------------------------------

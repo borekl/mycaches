@@ -1,0 +1,24 @@
+<!doctype html>
+
+<html>
+
+<head>
+  <title>MyCaches :: Entry was <%= $op %>d</title>
+  <link rel="stylesheet" href="/default.css" type="text/css">
+</head>
+
+<body>
+
+<h1>A <%= $entity %> was <%= $op %>d</h1>
+
+<ul>
+
+<li><a href="/<%= $entity %>s/<%= $id %>">View the <%= $entity %> entry <%= $id %></a></li>
+<li><a href="/<%= $entity %>s">View all <%= $entity %>s</a></li>
+<li><a href="/">View all finds and hides</a></li>
+
+</ul>
+
+</body>
+
+</html>

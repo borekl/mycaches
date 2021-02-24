@@ -99,5 +99,47 @@ sub hide($self)
 }
 
 #------------------------------------------------------------------------------
+# Create/update handler.
+#------------------------------------------------------------------------------
+
+sub save($self) {
+
+  # find
+  if($self->stash('entity') eq 'find') {
+    my $find = MyCaches::Model::Find->new(
+      %{$self->req->params->to_hash}, db => $self->sqlite->db
+    );
+    if($self->param('finds_i')) {
+      $find->update;
+      $self->stash('op' => 'update');
+    } else {
+      $find->create;
+      $self->stash('op' => 'create');
+    }
+    $self->render;
+  }
+
+  # hide
+  elsif($self->stash('entity') eq 'hide') {
+    my $hide = MyCaches::Model::Hide->new(
+      %{$self->req->params->to_hash}, db => $self->sqlite->db
+    );
+    if($self->param('hides_i')) {
+      $hide->update;
+      $self->stash('op' => 'update');
+    } else {
+      $hide->create;
+      $self->stash('op' => 'create');
+    }
+    $self->render;
+  }
+
+  # neither hide nor find
+  else {
+    die 'Entity not find nor hide';
+  }
+}
+
+#------------------------------------------------------------------------------
 
 1;
