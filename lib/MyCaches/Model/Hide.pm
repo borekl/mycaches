@@ -46,16 +46,32 @@ has 'age' => sub {
 sub new
 {
   my ($self, %arg) = @_;
+  my (@select, $val);
+
+  if(exists $arg{id}) {
+    if($arg{id} > 0) {
+      @select = ( 'hides', undef, { hides_i => $arg{id} } );
+    } else {
+      @select = ( 'hides', undef, undef, { -desc => 'hides_i' } );
+    }
+    $val = $arg{id};
+    delete $arg{id};
+  } elsif($arg{cacheid}) {
+    @select = ( 'hides', undef, { cacheid => $arg{cacheid} } );
+    $val = $arg{cacheid};
+    delete $arg{cacheid};
+  }
 
   #--- loading a database entry
 
-  if($arg{id}) {
+  if(@select) {
     my $db = $arg{db};
-    my $re = $db->select('hides', undef, { hides_i => $arg{id}});
+    my $re = $db->select(@select);
     my $entry = $re->hash;
     if($entry) {
-      delete $arg{id};
       $arg{entry} = $entry;
+    } else {
+      die "Hide $val not found";
     }
     $re->finish;
   }
