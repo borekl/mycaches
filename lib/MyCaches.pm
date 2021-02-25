@@ -17,6 +17,10 @@ sub startup($self)
     state $sql = Mojo::SQLite->new($self->config('dbfile') . '.sqlite')
   });
 
+  #--- custom commands
+
+  push @{$self->commands->namespaces}, 'MyCaches::Command';
+
   #--- register custom tag helpers
 
   MyCaches::Helpers->register($self);
