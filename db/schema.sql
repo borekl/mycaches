@@ -80,3 +80,9 @@ CREATE TABLE hides (
   -- 4-waiting to be placed,5-waiting for publication)
   status INTEGER
 );
+
+
+CREATE TABLE users (
+  userid TEXT PRIMARY KEY,
+  pw TEXT
+);
