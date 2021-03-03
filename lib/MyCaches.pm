@@ -11,6 +11,10 @@ sub startup($self)
 
   $self->plugin('Config', default => { dbfile => 'mycaches' });
 
+  #--- secrets
+
+  $self->secrets($self->config('secrets'));
+
   #--- database setup
 
   $self->helper(sqlite => sub {

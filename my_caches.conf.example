@@ -1,0 +1,3 @@
+{
+  secrets => [ 'MySecr3t!' ]
+}
