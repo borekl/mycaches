@@ -46,6 +46,14 @@ sub startup($self)
   #--- ROUTES -----------------------------------------------------------------
   #----------------------------------------------------------------------------
 
+  #--- authorized -------------------------------------------------------------
+
+  my $auth = $r->under('/' => sub ($c) {
+    return 1 if $c->session('user');
+    $c->render(text => "Unauthorized.", status => 401);
+    return undef;
+  });
+
   #--- front page -------------------------------------------------------------
 
   $r->get('/')->to('cachelist#list', finds => 1, hides => 1);
@@ -59,22 +67,26 @@ sub startup($self)
   #--- finds ------------------------------------------------------------------
 
   my $finds = $r->any('/finds')->to('cachelist#list', finds => 1);
+  my $finds_auth = $auth->any('/finds');
+
   $finds->get->to;
   $finds->get('/limit/:limit')->to;
   $finds->get('/archived')->to(archived => 1);
 
-  $finds->get('/:id')->to('cachelist#find');
-  $finds->post('/:id')->to('cachelist#save', entity => 'find');
-  $finds->post('/')->to('cachelist#save', entity => 'find');
+  $finds_auth->get('/:id')->to('cachelist#find');
+  $finds_auth->post('/:id')->to('cachelist#save', entity => 'find');
+  $finds_auth->post('/')->to('cachelist#save', entity => 'find');
 
   #--- hides ------------------------------------------------------------------
 
   my $hides = $r->any('/hides')->to('cachelist#list', hides => 1);
+  my $hides_auth = $auth->any('/hides');
+
   $hides->get->to;
 
-  $hides->get('/:id')->to('cachelist#hide');
-  $hides->post('/:id')->to('cachelist#save', entity => 'hide');
-  $hides->post('/')->to('cachelist#save', entity => 'hide');
+  $hides_auth->get('/:id')->to('cachelist#hide');
+  $hides_auth->post('/:id')->to('cachelist#save', entity => 'hide');
+  $hides_auth->post('/')->to('cachelist#save', entity => 'hide');
 
 }
 
