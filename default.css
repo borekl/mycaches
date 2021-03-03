@@ -190,7 +190,7 @@ a:hover {
 
 /*--- form ----------------------------------------------------------------*/
 
-input {
+form.cacheentry input {
   font-size: 100%;
   border: none;
   margin: 0;
@@ -218,7 +218,7 @@ input {
   EMOJI PSEUDO-BUTTON CUSTOM INPUT
  *==========================================================================*/
 
- .input-emoji {
+.input-emoji {
   user-select: none;
   cursor: pointer;
 }
