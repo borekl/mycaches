@@ -37,10 +37,67 @@
   color: #888;
 }
 
+input {
+  outline: none;
+  filter: none;
+}
+
 /*--- body ----------------------------------------------------------------*/
 
-body, input {
+body, input, button {
   font-family: 'Alegreya', sans-serif;
+}
+
+/*--- user info / access controls -----------------------------------------*/
+
+header {
+  text-align: right;
+}
+
+header span {
+  font-weight: bold;
+}
+
+/*--- login page ----------------------------------------------------------*/
+
+main.login {
+  height: 100vh;
+  align-items: center;
+  font-size: 100%;
+  flex-direction: column;
+}
+
+main.login input {
+  background: none;
+  border: 0.1em #888 solid;
+  margin: 0.2rem 0;
+  font-size: 200%;
+  padding: 0.3rem 0.8rem;
+}
+
+main.login button {
+  border: none;
+  margin: 0.2rem 0;
+  font-size: 150%;
+}
+
+main.login button:hover {
+  background: #ddd;
+}
+
+main.login header {
+  font-style: italic;
+  font-size: 200%;
+}
+
+main.login footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+main.login a.nav {
+  font-style: italic;
 }
 
 /*--- tables --------------------------------------------------------------*/

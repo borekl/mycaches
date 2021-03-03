@@ -82,7 +82,7 @@ sub _cachename
   $attr{class} = 'archived' if $item->{archived};
   $attr{class} = 'disabled' if defined $item->{status} && $item->{status} == 2;
 
-  if($item->{gallery}) {
+  if($item->{gallery} && $c->session('user')) {
     my $span = tag_to_html('span', class => 'emoji', '&#x1f4f7;');
     my $ahref = tag_to_html('a',
       target => '_blank',

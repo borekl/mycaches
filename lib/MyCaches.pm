@@ -50,6 +50,12 @@ sub startup($self)
 
   $r->get('/')->to('cachelist#list', finds => 1, hides => 1);
 
+  #--- login page -------------------------------------------------------------
+
+  $r->get('/login')->to('login#index');
+  $r->post('/login')->to('login#login');
+  $r->any('/logout')->to('login#logout');
+
   #--- finds ------------------------------------------------------------------
 
   my $finds = $r->any('/finds')->to('cachelist#list', finds => 1);

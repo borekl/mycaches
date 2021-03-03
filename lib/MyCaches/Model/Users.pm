@@ -1,4 +1,4 @@
-package MyCaches::Model::User;
+package MyCaches::Model::Users;
 
 use Mojo::Base -base, -signatures;
 
@@ -58,13 +58,13 @@ sub list ($self)
 # Check users password
 #------------------------------------------------------------------------------
 
-sub check ($self, %arg)
+sub check ($self)
 {
   my $re = $self->db->select('users', undef, { userid => $self->userid });
   my $e = $re->hash;
   $re->finish;
   return 0 unless $e;
-  return 1 if $arg{pw} eq $e->{pw};
+  return 1 if $self->pw eq $e->{pw};
   return 0;
 }
 

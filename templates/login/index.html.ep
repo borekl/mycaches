@@ -1,0 +1,38 @@
+<!doctype html>
+
+<html>
+
+<head>
+  <title>MyCaches :: Login</title>
+  <link rel="stylesheet" href="/default.css" type="text/css">
+</head>
+
+<body>
+
+<main class="flexcenter login">
+
+  <header>
+    Please log in…
+  </header>
+
+  <form method="post" action="/login">
+    <p>
+    <input type="text" name="user"><br>
+    <input type="password" name="pass">
+    </p>
+    <footer>
+      <div>
+        <button type="submit">Submit</button>
+        <button type="reset">Reset</button>
+      </div>
+      <div>
+        <a class="nav" href="/">Go back</a>
+      </div>
+    </footer>
+  </form>
+</main>
+
+</body>
+
+</html>
+

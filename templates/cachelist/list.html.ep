@@ -9,6 +9,14 @@
 
 <body>
 
+<header>
+% if(session 'user') {
+  logged in as <span><%= session 'user' %></span> | <a href="/logout">log out</a>
+% } else {
+  <a href="/login">log in</a>
+% }
+</header>
+
 <div class="flexcenter">
 
 <table>
@@ -41,7 +49,11 @@
         <tr>
 
           <td class="numeric">
-            <a href="/finds/<%= $item->{finds_i} %>"><%= $item->{finds_i} %></a>
+            % if(session 'user') {
+              <a href="/finds/<%= $item->{finds_i} %>"><%= $item->{finds_i} %></a>
+            % } else {
+              <%= $item->{finds_i} %>
+            % }
           </td>
 
           <td>
@@ -111,7 +123,11 @@
       <tr>
 
         <td class="numeric">
-          <a href="/hides/<%= $item->{hides_i} %>"><%= $item->{hides_i} %></a>
+          % if(session 'user') {
+            <a href="/hides/<%= $item->{hides_i} %>"><%= $item->{hides_i} %></a>
+          % } else {
+            <%= $item->{hides_i} %>
+          % }
         </td>
 
         <td>
