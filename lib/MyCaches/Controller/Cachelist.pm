@@ -111,10 +111,10 @@ sub save($self) {
     );
     if($self->param('finds_i')) {
       $find->update;
-      $self->stash('op' => 'update');
+      $self->stash(op => 'update');
     } else {
       $find->create;
-      $self->stash('op' => 'create');
+      $self->stash(op => 'create', id => $find->id);
     }
     $self->render;
   }
@@ -126,10 +126,10 @@ sub save($self) {
     );
     if($self->param('hides_i')) {
       $hide->update;
-      $self->stash('op' => 'update');
+      $self->stash(op => 'update');
     } else {
       $hide->create;
-      $self->stash('op' => 'create');
+      $self->stash(op => 'create', id => $hide->id);
     }
     $self->render;
   }
