@@ -67,26 +67,26 @@ sub startup($self)
   #--- finds ------------------------------------------------------------------
 
   my $finds = $r->any('/finds')->to('cachelist#list', finds => 1);
-  my $finds_auth = $auth->any('/finds');
+  my $finds_auth = $auth->any('/finds' => { entity => 'find'});
 
   $finds->get->to;
   $finds->get('/limit/:limit')->to;
   $finds->get('/archived')->to(archived => 1);
 
   $finds_auth->get('/:id')->to('cachelist#find');
-  $finds_auth->post('/:id')->to('cachelist#save', entity => 'find');
-  $finds_auth->post('/')->to('cachelist#save', entity => 'find');
+  $finds_auth->post('/:id')->to('cachelist#save');
+  $finds_auth->post('/')->to('cachelist#save');
 
   #--- hides ------------------------------------------------------------------
 
   my $hides = $r->any('/hides')->to('cachelist#list', hides => 1);
-  my $hides_auth = $auth->any('/hides');
+  my $hides_auth = $auth->any('/hides' => { entity => 'hide'});
 
   $hides->get->to;
 
   $hides_auth->get('/:id')->to('cachelist#hide');
-  $hides_auth->post('/:id')->to('cachelist#save', entity => 'hide');
-  $hides_auth->post('/')->to('cachelist#save', entity => 'hide');
+  $hides_auth->post('/:id')->to('cachelist#save');
+  $hides_auth->post('/')->to('cachelist#save');
 
 }
 
