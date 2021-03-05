@@ -48,25 +48,30 @@ sub new
   my ($self, %arg) = @_;
   my (@select, $val);
 
-  if(exists $arg{id}) {
-    if($arg{id} > 0) {
-      @select = ( 'hides', undef, { hides_i => $arg{id} } );
-    } else {
-      @select = ( 'hides', undef, undef, { -desc => 'hides_i' } );
+  #--- loading an entry from database -----------------------------------------
+  # keys load.id or load.cacheid will make the constructor to attempt loading
+  # single entry and use its contents to initialize the instance; when load.id
+  # is defined but false, the highest rowid entry is loaded
+
+  if(exists $arg{load}) {
+
+    if(exists $arg{load}{id}) {
+      if($arg{load}{id} > 0) {
+        @select = ( 'hides', undef, { hides_i => $arg{load}{id} } );
+      } else {
+        @select = ( 'hides', undef, undef, { -desc => 'hides_i' } );
+      }
+      $val = $arg{load}{id};
     }
-    $val = $arg{id};
-    delete $arg{id};
-  } elsif($arg{cacheid}) {
-    @select = ( 'hides', undef, { cacheid => $arg{cacheid} } );
-    $val = $arg{cacheid};
-    delete $arg{cacheid};
-  }
 
-  #--- loading a database entry
+    elsif(exists $arg{load}{cacheid}) {
+      @select = ( 'hides', undef, { cacheid => $arg{load}{cacheid} } );
+      $val = $arg{load}{cacheid};
+    }
 
-  if(@select) {
-    my $db = $arg{db};
-    my $re = $db->select(@select);
+    delete $arg{load};
+
+    my $re = $arg{db}->select(@select);
     my $entry = $re->hash;
     if($entry) {
       $arg{entry} = $entry;
@@ -74,6 +79,7 @@ sub new
       die "Hide $val not found";
     }
     $re->finish;
+
   }
 
   #--- initialization with a database entry

@@ -62,7 +62,7 @@ sub find($self)
     $self->stash(
       find => MyCaches::Model::Find->new(
         db => $self->sqlite->db,
-        id => $id
+        load => { id => $id }
       )->to_hash
     )
   }
@@ -87,7 +87,7 @@ sub hide($self)
     $self->stash(
       hide => MyCaches::Model::Hide->new(
         db => $self->sqlite->db,
-        id => $id
+        load => { id => $id }
       )->to_hash
     );
   }

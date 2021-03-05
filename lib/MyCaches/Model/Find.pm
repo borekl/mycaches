@@ -65,25 +65,30 @@ sub new
   my ($self, %arg) = @_;
   my (@select, $val);
 
-  if(exists $arg{id}) {
-    if($arg{id} > 0) {
-      @select = ( 'finds', undef, { finds_i => $arg{id} } );
-    } else {
-      @select = ( 'finds', undef, undef, { -desc => 'finds_i' } );
+  #--- loading an entry from database -----------------------------------------
+  # keys load.id or load.cacheid will make the constructor to attempt loading
+  # single entry and use its contents to initialize the instance; when load.id
+  # is defined but false, the highest rowid entry is loaded
+
+  if(exists $arg{load}) {
+
+    if(exists $arg{load}{id}) {
+      if($arg{load}{id} > 0) {
+        @select = ( 'finds', undef, { finds_i => $arg{load}{id} } );
+      } else {
+        @select = ( 'finds', undef, undef, { -desc => 'finds_i' } );
+      }
+      $val = $arg{load}{id};
     }
-    $val = $arg{id};
-    delete $arg{id};
-  } elsif($arg{cacheid}) {
-    @select = ( 'finds', undef, { cacheid => $arg{cacheid} } );
-    $val = $arg{cacheid};
-    delete $arg{cacheid};
-  }
 
-  #--- loading a database entry
+    elsif(exists $arg{load}{cacheid}) {
+      @select = ( 'finds', undef, { cacheid => $arg{load}{cacheid} } );
+      $val = $arg{load}{cacheid};
+    }
 
-  if(@select) {
-    my $db = $arg{db};
-    my $re = $db->select(@select);
+    delete $arg{load};
+
+    my $re = $arg{db}->select(@select);
     my $entry = $re->hash;
     if($entry) {
       $arg{entry} = $entry;
@@ -94,6 +99,8 @@ sub new
   }
 
   #--- initialization with a database entry
+  # if 'entry' hashref is passed as argument, use it to initialize the instance
+  # the contents is expected to be a verbatim database row
 
   if(exists $arg{entry}) {
     my $e = $arg{entry};

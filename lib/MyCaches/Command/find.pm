@@ -32,21 +32,29 @@ sub run ($self, @args)
 
   foreach my $cacheid (@caches) {
     my ($find, $hide);
-    try { $find = MyCaches::Model::Find->new(cacheid => $cacheid, db => $db) };
-    try { $hide = MyCaches::Model::Hide->new(cacheid => $cacheid, db => $db) };
+    try { $find = MyCaches::Model::Find->new(
+      load => { cacheid => $cacheid }, db => $db
+    ) };
+    try { $hide = MyCaches::Model::Hide->new(
+      load => { cacheid => $cacheid }, db => $db)
+    };
     push(@re, $find->to_hash) if $find;
     push(@re, $hide->to_hash) if $hide;
   }
 
   # load finds
   foreach my $finds_i (@finds) {
-    my $find = MyCaches::Model::Find->new(id => $finds_i, db => $db);
+    my $find = MyCaches::Model::Find->new(
+      load => { id => $finds_i }, db => $db
+    );
     push(@re, $find->to_hash);
   }
 
   # load hides
   foreach my $hides_i (@hides) {
-    my $hide = MyCaches::Model::Hide->new(id => $hides_i, db => $db);
+    my $hide = MyCaches::Model::Hide->new(
+      load => { id => $hides_i }, db => $db
+    );
     push(@re, $hide->to_hash);
   }
 
