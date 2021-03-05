@@ -1,3 +1,4 @@
 {
-  secrets => [ 'MySecr3t!' ]
+  secrets => [ 'MySecr3t!' ],
+  session_exp => 86400,
 }

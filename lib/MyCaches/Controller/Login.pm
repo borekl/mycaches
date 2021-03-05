@@ -22,7 +22,10 @@ sub login ($c)
   if($c->session('user')) {
     $c->render(text => 'Already logged in as ' . $c->session('user'));
   } elsif($usr->check) {
-    $c->session(user => $usr->userid);
+    $c->session(
+      user => $usr->userid,
+      expiration => $c->config('session_exp') // 86400
+    );
     # FIXME: We need to return to where the user came from
     $c->redirect_to('/');
   } else {
