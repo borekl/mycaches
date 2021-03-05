@@ -4,13 +4,13 @@
 
 <head>
   <title>MyCaches</title>
-  <link rel="stylesheet" href="/default.css" type="text/css">
-  <script type="text/javascript" src="/entry.js"></script>
+  <link rel="stylesheet" href="<%= url_for '/default.css' %>" type="text/css">
+  <script type="text/javascript" src="<%= url_for '/entry.js' %>"></script>
 </head>
 
 <body class="entry">
 
-  <form class="cacheentry" method="post" action="/hides/<%= $hide->{hides_i} %>">
+  <form class="cacheentry" method="post" action="<%= '/hides/' . $hide->{hides_i} %>">
     <div class="form form-hide">
 
       %#--- CACHETYPE ---------------------------------------------------------
@@ -107,7 +107,9 @@
 
       <div class="cell grid-foot">
         <button type="submit">Submit</button>
-        <a class="aux" href="/hides/<%= $find->{hides_i} %>/delete">Delete this entry</a>
+        % if($find->{finds_i}) {
+        <a class="aux" href="<%= '/hides/' . $hide->{hides_i} %>/delete">Delete this entry</a>
+        % }
       </div>
 
     </div>

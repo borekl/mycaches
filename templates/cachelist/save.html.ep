@@ -4,7 +4,7 @@
 
 <head>
   <title>MyCaches :: Entry was <%= $op %>d</title>
-  <link rel="stylesheet" href="/default.css" type="text/css">
+  <link rel="stylesheet" href="<%= url_for '/default.css' %>" type="text/css">
 </head>
 
 <body>
@@ -13,9 +13,9 @@
 
 <ul>
 
-<li><a href="/<%= $entity %>s/<%= $id %>">View the <%= $entity %> entry <%= $id %></a></li>
-<li><a href="/<%= $entity %>s">View all <%= $entity %>s</a></li>
-<li><a href="/">View all finds and hides</a></li>
+<li><a href="<%= url_for '/' . $entity %>s/<%= $id %>">View the <%= $entity %> entry <%= $id %></a></li>
+<li><a href="<%= url_for '/' . $entity %>s">View all <%= $entity %>s</a></li>
+<li><a href="<%= url_for '/' %>">View all finds and hides</a></li>
 
 </ul>
 

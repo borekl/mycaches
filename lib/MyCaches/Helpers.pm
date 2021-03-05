@@ -43,7 +43,7 @@ sub _typeicon
   my $icon = 'icon-' . $ctype;
   $icon .= '-disabled' if defined $status && $status != 1;
   _tag('svg',
-    _tag('use', 'xlink:href' => "/cache-types.svg#$icon")
+    _tag('use', 'xlink:href' => $c->url_for("/cache-types.svg#$icon"))
   );
 }
 

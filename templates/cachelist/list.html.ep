@@ -4,16 +4,17 @@
 
 <head>
   <title>MyCaches</title>
-  <link rel="stylesheet" href="/default.css" type="text/css">
+  <link rel="stylesheet" href="<%= url_for '/default.css' %>" type="text/css">
 </head>
 
 <body>
 
 <header>
 % if(session 'user') {
-  logged in as <span><%= session 'user' %></span> | <a href="/logout">log out</a>
+  logged in as <span><%= session 'user' %></span>
+  | <a href="<%= url_for '/logout' %>">log out</a>
 % } else {
-  <a href="/login">log in</a>
+  <a href="<%= url_for '/login' %>">log in</a>
 % }
 </header>
 
@@ -50,7 +51,7 @@
 
           <td class="numeric">
             % if(session 'user') {
-              <a href="/finds/<%= $item->{finds_i} %>"><%= $item->{finds_i} %></a>
+              <a href="<%= url_for '/finds/' . $item->{finds_i} %>"><%= $item->{finds_i} %></a>
             % } else {
               <%= $item->{finds_i} %>
             % }
@@ -124,7 +125,7 @@
 
         <td class="numeric">
           % if(session 'user') {
-            <a href="/hides/<%= $item->{hides_i} %>"><%= $item->{hides_i} %></a>
+            <a href="<%= url_for '/hides/' . $item->{hides_i} %>"><%= $item->{hides_i} %></a>
           % } else {
             <%= $item->{hides_i} %>
           % }
@@ -169,14 +170,14 @@
 
   <div class="filter">
     Showing only last <%= $limit %> finds
-    | <a href="/finds">show all</a>
+    | <a href="<%= url_for '/finds' %>">show all</a>
   </div>
 
 <% } elsif($archived) { %>
 
    <div class="filter">
      Showing only <%= @$finds %> archived finds
-     | <a href="/finds">show all</a>
+     | <a href="<%= url_for '/finds' %>">show all</a>
    </div>
 
 <% } elsif(!$hides) { %>
@@ -184,18 +185,18 @@
    <div class="filter">
       Showing all finds
       | show last
-      <a href="/finds/limit/10">10</a>,
-      <a href="/finds/limit/20">20</a>,
-      <a href="/finds/limit/50">50</a>,
-      <a href="/finds/limit/50">100</a>,
-      <a href="/finds/archived">archived</a>
-      | <a href="/finds/new">add new</a>
+      <a href="<%= url_for '/finds/limit/10' %>">10</a>,
+      <a href="<%= url_for '/finds/limit/20' %>">20</a>,
+      <a href="<%= url_for '/finds/limit/50' %>">50</a>,
+      <a href="<%= url_for '/finds/limit/50' %>">100</a>,
+      <a href="<%= url_for '/finds/archived' %>">archived</a>
+      | <a href="<%= url_for '/finds/new' %>">add new</a>
    </div>
 
 <% } elsif(!$finds) { %>
 
    <div class="filter">
-     <a href="/hides/new">add new</a>
+     <a href="<%= url_for '/hides/new' %>">add new</a>
    </div>
 
 <% } %>

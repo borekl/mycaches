@@ -4,7 +4,7 @@
 
 <head>
   <title>MyCaches :: Login</title>
-  <link rel="stylesheet" href="/default.css" type="text/css">
+  <link rel="stylesheet" href="<%= url_for '/default.css' %>" type="text/css">
 </head>
 
 <body>
@@ -15,7 +15,7 @@
     Please log in…
   </header>
 
-  <form method="post" action="/login">
+  <form method="post" action="<%= url_for '/login' %>">
     <p>
     <input type="text" name="user"><br>
     <input type="password" name="pass">
@@ -26,7 +26,7 @@
         <button type="reset">Reset</button>
       </div>
       <div>
-        <a class="nav" href="/">Go back</a>
+        <a class="nav" href="<%= url_for '/' %>">Go back</a>
       </div>
     </footer>
   </form>

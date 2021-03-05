@@ -27,7 +27,10 @@ sub login ($c)
       expiration => $c->config('session_exp') // 86400
     );
     # FIXME: We need to return to where the user came from
-    $c->redirect_to('/');
+    #$c->redirect_to($c->url_for('/'))
+    $c->redirect_to($c->url_for('/')->tap(sub ($url) {
+      $url->path->trailing_slash(1)
+    }));
   } else {
     $c->render(text => "Auth failed");
   }

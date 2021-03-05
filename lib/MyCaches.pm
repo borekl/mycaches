@@ -7,6 +7,15 @@ use Mojo::SQLite;
 
 sub startup($self)
 {
+
+  #--- hook to set url base for reverse proxied requests (thanks go to mst)
+
+  $self->hook(before_dispatch => sub ($c) {
+    if (my $path = $c->req->headers->header('X-Forwarded-Path')) {
+      $c->req->url->base->path->parse($path)->trailing_slash(1);
+    };
+  });
+
   #--- config defaults
 
   $self->plugin('Config', default => { dbfile => 'mycaches' });
