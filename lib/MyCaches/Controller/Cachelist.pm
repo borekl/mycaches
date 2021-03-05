@@ -141,5 +141,28 @@ sub save($self) {
 }
 
 #------------------------------------------------------------------------------
+# Delete handler
+#------------------------------------------------------------------------------
+
+sub delete ($self)
+{
+  if($self->stash('entity') eq 'find') {
+    my $find = MyCaches::Model::Find->new(
+      id => $self->stash('id'),
+      db => $self->sqlite->db
+    )->delete;
+  }
+
+  elsif($self->stash('entity') eq 'hide') {
+    my $hide = MyCaches::Model::Hide->new(
+      id => $self->stash('id'),
+      db => $self->sqlite->db
+    )->delete;
+  }
+
+  $self->render;
+}
+
+#------------------------------------------------------------------------------
 
 1;

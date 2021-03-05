@@ -73,6 +73,7 @@ sub startup($self)
   $finds->get('/limit/:limit')->to;
   $finds->get('/archived')->to(archived => 1);
 
+  $finds_auth->get('/:id/delete')->to('cachelist#delete');
   $finds_auth->get('/:id')->to('cachelist#find');
   $finds_auth->post('/:id')->to('cachelist#save');
   $finds_auth->post('/')->to('cachelist#save');
@@ -84,6 +85,7 @@ sub startup($self)
 
   $hides->get->to;
 
+  $hides_auth->get('/:id/delete')->to('cachelist#delete');
   $hides_auth->get('/:id')->to('cachelist#hide');
   $hides_auth->post('/:id')->to('cachelist#save');
   $hides_auth->post('/')->to('cachelist#save');

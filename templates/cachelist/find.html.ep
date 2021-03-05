@@ -120,6 +120,7 @@
 
       <div class="cell grid-foot">
         <button type="submit">Submit</button>
+        <a class="aux" href="/finds/<%= $find->{finds_i} %>/delete">Delete this entry</a>
       </div>
 
     </div>

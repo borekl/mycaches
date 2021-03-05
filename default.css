@@ -357,3 +357,7 @@ div.grid-foot {
   justify-content: space-between;
 }
 
+a.aux {
+  font-size: 66%;
+  font-style: italic;
+}
