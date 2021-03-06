@@ -1,3 +1,6 @@
 *~
 *.sqlite
 *.conf
+*.pid
+mycaches.sqlite-shm
+mycaches.sqlite-wal

@@ -1,4 +1,10 @@
 {
   secrets => [ 'MySecr3t!' ],
   session_exp => 86400,
+
+  hypnotoad => {
+    listen => [ 'http://*:30449' ],
+    workers => 2,
+    proxy => 1,
+  },
 }
