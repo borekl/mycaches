@@ -5,9 +5,13 @@ use Mojo::Util qw(getopt);
 use MyCaches::Model::Users;
 
 has description => 'Manage authorized users';
-has uage => <<EOHD;
+has usage => <<EOHD;
 Usage: APPLICATION users [OPTIONS]
--l,--list  list users
+-l,--list         list users
+-a,--add USER     add new user
+-u,--update USER  update existing user's password
+-d,--delete USER  remove existing user
+-p,--password PW  specify password
 EOHD
 
 sub run ($self, @args)
@@ -24,7 +28,7 @@ sub run ($self, @args)
 
   # show list of users
   if($cmd_list) {
-    my @list = MyCaches::Model::User->new(db => $db)->list;
+    my @list = MyCaches::Model::Users->new(db => $db)->list;
     if(@list) {
       say 'Authorized users:';
       say join(', ', @list);
@@ -35,7 +39,7 @@ sub run ($self, @args)
 
   # add new user
   if($cmd_add) {
-    MyCaches::Model::User->new(
+    MyCaches::Model::Users->new(
       db => $db,
       userid => $cmd_add,
       pw => $cmd_pw // ''
@@ -45,7 +49,7 @@ sub run ($self, @args)
 
   # update user
   if($cmd_update) {
-    MyCaches::Model::User->new(
+    MyCaches::Model::Users->new(
       db => $db,
       userid => $cmd_update,
       pw => $cmd_pw // ''
@@ -55,7 +59,7 @@ sub run ($self, @args)
 
   # delete user
   if($cmd_delete) {
-    MyCaches::Model::User->new(
+    MyCaches::Model::Users->new(
       db => $db,
       userid => $cmd_delete
     )->delete;
