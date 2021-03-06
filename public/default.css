@@ -1,1 +1,363 @@
-../default.css
+@import url('https://fonts.googleapis.com/css?family=Alegreya:400,400i');
+
+/*--- generic classes -----------------------------------------------------*/
+
+.flexcenter {
+  display: flex;
+  justify-content: center;
+}
+
+.numeric {
+  text-align: right;
+}
+
+.emoji {
+  font-size: 80%;
+  margin-left: 0.5em;
+}
+
+.archived {
+  color: #888;
+}
+
+.hlf {
+  color: #aaa;
+}
+
+.dimmed {
+  color: #888;
+}
+
+.held {
+  background-color: #adf;
+}
+
+.mycachestatus {
+  font-style: italic;
+  color: #888;
+}
+
+input {
+  outline: none;
+  filter: none;
+}
+
+/*--- body ----------------------------------------------------------------*/
+
+body, input, button {
+  font-family: 'Alegreya', sans-serif;
+}
+
+/*--- user info / access controls -----------------------------------------*/
+
+header {
+  text-align: right;
+}
+
+header span {
+  font-weight: bold;
+}
+
+/*--- login page ----------------------------------------------------------*/
+
+main.login {
+  height: 100vh;
+  align-items: center;
+  font-size: 100%;
+  flex-direction: column;
+}
+
+main.login input {
+  background: none;
+  border: 0.1em #888 solid;
+  margin: 0.2rem 0;
+  font-size: 200%;
+  padding: 0.3rem 0.8rem;
+}
+
+main.login button {
+  border: none;
+  margin: 0.2rem 0;
+  font-size: 150%;
+}
+
+main.login button:hover {
+  background: #ddd;
+}
+
+main.login header {
+  font-style: italic;
+  font-size: 200%;
+}
+
+main.login footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+main.login a.nav {
+  font-style: italic;
+}
+
+/*--- tables --------------------------------------------------------------*/
+
+table {
+  border-collapse: collapse;
+  margin: 1em;
+}
+
+th {
+  border: black 1px solid;
+}
+
+td {
+  border: black 1px solid;
+  padding: 0.4rem 0.5rem;
+  font-weight: 400;
+  font-size: 133%;
+}
+
+tr.descr {
+  text-transform: uppercase;
+  font-size: 166%;
+  letter-spacing: 0.2em;
+}
+
+tr.descr td {
+  border: none;
+  text-align: center;
+}
+
+/*--- options -------------------------------------------------------------*/
+
+div.filter {
+  text-align: center;
+  color: #777;
+}
+
+div.filter a {
+  text-decoration: underline;
+}
+
+/*--- cache rating --------------------------------------------------------*/
+
+.rating {
+ text-align: left;
+ font-size: 100%;
+ line-height: 90%;
+}
+
+/*--- cache name ----------------------------------------------------------*/
+
+div.cachename {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+div.disabled a {
+  color: #f00;
+  background-color: #ff0;
+}
+
+/*--- svg setup -----------------------------------------------------------*/
+
+svg {
+  height: 32px;
+  width: 32px;
+  vertical-align: middle;
+  margin: 0;
+  padding: 0;
+}
+
+/*--- links ---------------------------------------------------------------*/
+
+a:link {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+a:visited {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+a:hover {
+  color: blue;
+  text-decoration: underline;
+}
+
+/*--- form ----------------------------------------------------------------*/
+
+form.cacheentry input {
+  font-size: 100%;
+  border: none;
+  margin: 0;
+}
+
+/*==========================================================================*
+  RATING CUSTOM INPUT
+ *==========================================================================*/
+
+.input-rating .fivestar {
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+}
+
+.input-rating .fivestar .mask {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  background-color: rgba(255,255,255,0.9);
+}
+
+/*==========================================================================*
+  EMOJI PSEUDO-BUTTON CUSTOM INPUT
+ *==========================================================================*/
+
+.input-emoji {
+  user-select: none;
+  cursor: pointer;
+}
+
+.input-emoji-dimmed {
+  filter: grayscale(1) opacity(20%);
+}
+
+/*==========================================================================*
+  GENERIC POPUP
+ *==========================================================================*/
+
+ .popup {
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: none;
+}
+
+/*==========================================================================*
+  CACHE TYPES MENU
+ *==========================================================================*/
+
+.cachetypes {
+  display: inline-flex;
+  border: 4px solid #888;
+  background-color: white;
+}
+
+.cachetypes div {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+}
+
+.cachetypes div span {
+  margin: 0.5rem;
+}
+
+.cachetype {
+  user-select: none;
+}
+
+/*==========================================================================*
+  GRID LAYOUT FORM
+ *==========================================================================*/
+
+body.entry {
+  background-color: #ddd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+div.form {
+  border: 4px solid #333;
+  background-color: #333;
+  box-shadow: 5px 5px 16px 8px #bbb;
+  display: grid;
+  gap: 4px;
+}
+
+div.form-find {
+  grid-template-columns: repeat(6, 6rem);
+  grid-template-rows: repeat(7, 4rem);
+  grid-template-areas:
+    "rowid cacheid cacheid cacheid rating rating"
+    "icon cacheid cacheid cacheid rating rating"
+    "name name name name name name"
+    "prev prev found found next next"
+    "flags flags flags flags flags flags"
+    "logid logid logid logid logid logid"
+    "foot foot foot foot foot foot";
+}
+
+div.form-hide {
+  grid-template-columns: repeat(6, 6rem);
+  grid-template-rows: repeat(6, 4rem);
+  grid-template-areas:
+    "rowid cacheid cacheid cacheid rating rating"
+    "icon cacheid cacheid cacheid rating rating"
+    "name name name name name name"
+    "finds finds published published found found"
+    "flags flags flags flags flags flags"
+    "foot foot foot foot foot foot";
+}
+
+div.cell {
+  display: flex;
+  align-items: center;
+  font-size: 166%;
+  padding: 1rem;
+  background: white;
+}
+
+div.cell input {
+  width: 100%;
+  background: none;
+}
+
+div.cell input::placeholder {
+  color: #bbb;
+}
+
+div.fcenter {
+  justify-content: center;
+}
+
+div.fcenter input {
+  text-align: center;
+}
+
+div.grid-icon { grid-area: icon; }
+div.grid-cid { grid-area: cacheid; font-size: 250% }
+div.grid-id { grid-area: rowid; }
+div.grid-rating { grid-area: rating; flex-direction: column; }
+div.grid-name { grid-area: name; }
+div.grid-prev { grid-area: prev; }
+div.grid-found { grid-area: found; }
+div.grid-next { grid-area: next; }
+div.grid-published { grid-area: published; }
+div.grid-flags { grid-area: flags; justify-content: space-around; }
+div.grid-logid { grid-area: logid; }
+div.grid-finds { grid-area: finds; }
+div.grid-status { grid-area: status; }
+div.grid-foot {
+  grid-area: foot;
+  background-color: #eee;
+  justify-content: space-between;
+}
+
+a.aux {
+  font-size: 66%;
+  font-style: italic;
+}
