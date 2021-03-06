@@ -10,7 +10,7 @@
 
 <body class="entry">
 
-  <form class="cacheentry" method="post" action="<%= '/hides/' . $hide->{hides_i} %>">
+  <form class="cacheentry" method="post" action="<%= url_for '/hides/' . $hide->{hides_i} %>">
     <div class="form form-hide">
 
       %#--- CACHETYPE ---------------------------------------------------------
