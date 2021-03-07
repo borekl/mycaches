@@ -1,3 +1,5 @@
+![Screenshot](https://i.imgur.com/sYWJtrV.png)
+
 # MyCaches
 
 Simple web app for keeping track of my
