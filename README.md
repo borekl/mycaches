@@ -8,6 +8,16 @@ replace a manually maintained HTML page. Written in perl, it originally used
 Web::Simple micro-framework and then rewritten using Mojolicious web
 framework (primarly because I wanted to learn Mojolicious).
 
+* [Setup](#setup)
+    * [Configure the application](#configure-the-application)
+    * [Prepare the database](#prepare-the-database)
+    * [Create an admin user](#create-an-admin-user)
+    * [Verify setup](#verify-setup)
+* [Development](#development)
+* [Production](#production)
+
+-----
+
 ## Setup
 
 ### Configure the application
