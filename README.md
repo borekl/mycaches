@@ -46,8 +46,8 @@ leave it at default.
 
 Only logged in users can add, modify or delete caches. Therefore, you need
 to add at least one user. The app has built-in command-line tool `users`
-to manage users. Please note, that passwords are at the moment stored
-in plain-text, so don't share the password with anything!
+to manage users. Passwords are stored as
+[Argon2](https://en.wikipedia.org/wiki/Argon2) hashes in the database.
 
 You can use `users -h` to see help:
 
