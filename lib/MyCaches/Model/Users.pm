@@ -1,6 +1,7 @@
 package MyCaches::Model::Users;
 
 use Mojo::Base -base, -signatures;
+use Crypt::Passphrase;
 
 #------------------------------------------------------------------------------
 # ATTRIBUTES
@@ -8,7 +9,27 @@ use Mojo::Base -base, -signatures;
 
 has 'db';                  # ref to db connection
 has 'userid';              # user id (textual)
-has 'pw';                  # hashed/salted password
+has 'pw';                  # cleartext password
+
+# hashed password
+has 'hash' => sub {
+  $_[0]->authenticator->hash_password($_[0]->pw);
+};
+
+# Crypt::Passphrase encoding options (with a default)
+has 'auth_options' => sub {{
+  encoder => {
+    module => 'Argon2',
+    time_cost => 1,
+    memory_cost => "16M",
+    parallelism => 2,
+  }
+}};
+
+# Crypt::Passphrase::Encoder instance
+has 'authenticator' => sub {
+  Crypt::Passphrase->new($_[0]->auth_options->%*);
+};
 
 #------------------------------------------------------------------------------
 # Create user in backend db
@@ -16,7 +37,7 @@ has 'pw';                  # hashed/salted password
 
 sub create ($self)
 {
-  $self->db->insert('users', { userid => $self->userid, pw => $self->pw });
+  $self->db->insert('users', { userid => $self->userid, pw => $self->hash });
   return $self;
 }
 
@@ -26,7 +47,7 @@ sub create ($self)
 
 sub update ($self)
 {
-  $self->db->update('users', { pw => $self->pw }, { userid => $self->userid });
+  $self->db->update('users', { pw => $self->hash }, { userid => $self->userid });
   return $self
 }
 
@@ -64,7 +85,13 @@ sub check ($self)
   my $e = $re->hash;
   $re->finish;
   return 0 unless $e;
-  return 1 if $self->pw eq $e->{pw};
+  if($self->authenticator->verify_password($self->pw, $e->{pw})) {
+    if($self->authenticator->needs_rehash($e->{pw})) {
+      $self->hash($self->authenticator->hash_password($self->pw));
+      $self->update;
+    }
+    return 1;
+  }
   return 0;
 }
 
