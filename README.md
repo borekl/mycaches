@@ -1,3 +1,5 @@
+![Screenshot](https://i.imgur.com/sYWJtrV.png)
+
 # MyCaches
 
 Simple web app for keeping track of my
@@ -101,12 +103,9 @@ on your Apache web server. The configuration is as follows:
 
     Redirect /gc/mycaches /gc/mycaches/
     <Location "/gc/mycaches/">
-      ProxyHTMLEnable On
       ProxyPass "http://127.0.0.1:30449/"
       ProxyPassReverse "http://127.0.0.1:30449/"
       RequestHeader set X-Forwarded-Path /gc/mycaches/
-      ProxyHTMLDocType "<!doctype html>"
-      ProxyPreserveHost On
     </Location>
 
 Restart apache and start hypnotoad to verify the above setup works.
