@@ -30,6 +30,9 @@ sub startup($self)
     state $sql = Mojo::SQLite->new($self->config('dbfile') . '.sqlite')
   });
 
+  my $path = $self->home->child('migrations', 'mycaches.sql');
+  $self->sqlite->auto_migrate(1)->migrations->name('mycaches')->from_file($path);
+
   #--- custom commands
 
   push @{$self->commands->namespaces}, 'MyCaches::Command';

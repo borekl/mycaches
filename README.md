@@ -10,7 +10,6 @@ framework (primarly because I wanted to learn Mojolicious).
 
 * [Setup](#setup)
     * [Configure the application](#configure-the-application)
-    * [Prepare the database](#prepare-the-database)
     * [Create an admin user](#create-an-admin-user)
     * [Verify setup](#verify-setup)
 * [Development](#development)
@@ -39,18 +38,6 @@ configuration file, which has following default:
 
 The default should be fine, but you really need to change the secret to something
 else.
-
-### Prepare the database
-
-You need to instantiate the SQLite database. The database file default name is
-`mycaches.sqlite`; this can be changed in configuration with key `dbfile`. Let's
-leave it at default.
-
-    ~/dev/mycaches$ sqlite3 mycaches.sqlite
-    SQLite version 3.22.0 2018-01-22 18:45:57
-    Enter ".help" for usage hints.
-    sqlite> .read db/schema.sql
-    sqlite> .quit
 
 ### Create an admin user
 
