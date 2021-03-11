@@ -102,7 +102,7 @@ sub get_last_id($self, $table)
   my $row = $re->hash;
   $re->finish;
 
-  return $row->{$rowid};
+  return $row->{$rowid} // 0;
 }
 
 #------------------------------------------------------------------------------
