@@ -48,7 +48,7 @@ to manage users. Passwords are stored as
 
 You can use `users -h` to see help:
 
-    ~/dev/mycaches$ ./script/my_app users -h
+    ~/dev/mycaches$ ./script/my_caches users -h
     Usage: APPLICATION users [OPTIONS]
     -l,--list         list users
     -a,--add USER     add new user
@@ -58,12 +58,12 @@ You can use `users -h` to see help:
 
 Create a new user with the `-a` and `-p` options:
 
-    ~/dev/mycaches$ ./script/my_app users -a 'daniel' -p 'Pa$$w0rd'
+    ~/dev/mycaches$ ./script/my_caches users -a 'daniel' -p 'Pa$$w0rd'
     User daniel created
 
 You can list of known users with the `-l` option:
 
-    ~/dev/mycaches$ ./script/my_app users -l
+    ~/dev/mycaches$ ./script/my_caches users -l
     Authorized users:
     daniel
 
@@ -86,7 +86,7 @@ When the above works, proceed to the **Production** section of this README.
 To run the app for development, cd into the base directory and run it with
 Mojolicious's *morbo* server:
 
-    ~/dev/mycaches$ morbo script/my_app
+    ~/dev/mycaches$ morbo script/my_caches
     Web application available at http://127.0.0.1:3000
 
 ## Production
@@ -109,7 +109,7 @@ Restart apache and start hypnotoad to verify the above setup works.
 You should be access your application under `/gc/mycaches` path
 on your server.
 
-    ~/dev/mycaches$ hypnotoad -f ./script/my_app
+    ~/dev/mycaches$ hypnotoad -f ./script/my_caches
     [2021-03-07 11:28:47.37353] [11042] [info] Listening at "http://*:30449"
     Web application available at http://127.0.0.1:30449
     [2021-03-07 11:28:47.37409] [11042] [info] Manager 11042 started
@@ -132,8 +132,8 @@ your setup):
     Group=mycaches
     Type=forking
     PidFile=/opt/mycaches/script/hypnotoad.pid
-    ExecStart=/usr/local/bin/hypnotoad /opt/mycaches/script/my_app
-    ExecReload=/usr/local/bin/hypnotoad /opt/mycaches/script/my_app
+    ExecStart=/usr/local/bin/hypnotoad /opt/mycaches/script/my_caches
+    ExecReload=/usr/local/bin/hypnotoad /opt/mycaches/script/my_caches
     KillMode=process
     
     [Install]

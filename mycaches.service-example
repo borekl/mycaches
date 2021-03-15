@@ -8,8 +8,8 @@ User=mycaches
 Group=mycaches
 Type=forking
 PidFile=/opt/mycaches/script/hypnotoad.pid
-ExecStart=/usr/local/bin/hypnotoad /opt/mycaches/script/my_app
-ExecReload=/usr/local/bin/hypnotoad /opt/mycaches/script/my_app
+ExecStart=/usr/local/bin/hypnotoad /opt/mycaches/script/my_caches
+ExecReload=/usr/local/bin/hypnotoad /opt/mycaches/script/my_caches
 KillMode=process
 
 [Install]
