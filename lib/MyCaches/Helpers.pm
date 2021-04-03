@@ -20,6 +20,7 @@ sub register
   $app->helper( rating => sub { _rating(@_)} );
   $app->helper( cachename => sub { _cachename(@_)} );
   $app->helper( cachebadges => sub { _cachebadges(@_)} );
+  $app->helper( daycount => sub { _daycount(@_)} );
 }
 
 # Additional utility function that evaluates to 1 when argument has fractional
@@ -111,7 +112,29 @@ sub _cachebadges
   } else {
     '';
   }
+}
 
+# format count of days (days since something); if the number of days is less
+# than one full year, we just show number of days; if it is year or more, we
+# show it as YYyDDD (for example: 375 days would show as 1y10); if the latter
+# format is used, there's additional tooltip that contains the same day count
+# but in days only
+
+sub _daycount
+{
+  my ($c, $age) = @_;
+  my @age;
+
+  push(@age, $age->{years} . '<span class="year">y</span>')
+    if $age->{years};
+  push(@age, $age->{rdays})
+    if !$age->{years} || $age->{rdays};
+
+  if($age->{years}) {
+    return _tag('span', title => $age->{days}, _bs(join('', @age)));
+  } else {
+    return _bs(join('', @age));
+  }
 }
 
 

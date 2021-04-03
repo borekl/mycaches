@@ -20,7 +20,7 @@ has 'gallery' => 0;        # gallery available flag
 has 'archived' => 0;       # cache archived flag
 
 # loading time / timezone
-has 'now' => sub { Time::Moment->now };
+has 'now' => sub { Time::Moment->now->at_midnight };
 has 'tz' => sub { $_[0]->now->strftime('%:z') };
 
 
@@ -103,6 +103,27 @@ sub get_last_id($self, $table)
   $re->finish;
 
   return $row->{$rowid} // 0;
+}
+
+#------------------------------------------------------------------------------
+# Calculate time difference between two points of time (supplied as
+# Time::Moment instances) in years and days.
+#------------------------------------------------------------------------------
+
+sub calc_years_days($self, $tm1, $tm2 )
+{
+  my %re = ( years => 0, days => 0, rdays => 0 );
+
+  return undef if !$tm1 || !$tm2;
+
+  $re{days} = $tm1->delta_days($tm2);
+
+  if($re{years} = $tm1->delta_years($tm2)) {
+    $tm1 = $tm1->plus_years($re{years});
+  }
+  $re{rdays} = $tm1->delta_days($tm2);
+
+  return \%re;
 }
 
 #------------------------------------------------------------------------------

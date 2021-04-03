@@ -27,16 +27,11 @@ has 'found_tm' => sub {
   $self->found ? $self->tm_from_date($self->found) : undef;
 };
 
-# age, or days since last find
+# age, or days since last find (or publication date if unfound)
 has 'age' => sub {
   my $self = shift;
-  my $ref_date = $self->published;
-  $ref_date = $self->found_tm if $self->found_tm;
-  if($ref_date) {
-    return $ref_date->at_midnight->delta_days($self->now->at_midnight);
-  } else {
-    return undef;
-  }
+  my $ref1 = $self->found_tm // $self->published_tm;
+  return $self->calc_years_days($ref1, $self->now);
 };
 
 #------------------------------------------------------------------------------

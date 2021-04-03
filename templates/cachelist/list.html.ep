@@ -83,10 +83,10 @@
             % }
           </td>
 
-          <td class="numeric"><%= $item->{age} %></td>
+          <td class="numeric"><%= daycount $item->{age} %></td>
 
           <td class="numeric<%= $item->{next} ? '' : ' held' %>">
-            %= $item->{held}
+            %= daycount $item->{held}
           </td>
 
         </tr>
@@ -149,7 +149,7 @@
         </td>
 
         <td><%= $item->{published} %></td>
-        <td class="numeric"><%= $item->{age} %></td>
+        <td class="numeric"><%= daycount $item->{age} %></td>
         <td class="numeric"><%= $item->{finds} %></td>
 
       </tr>

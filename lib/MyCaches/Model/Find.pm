@@ -35,25 +35,13 @@ has 'next_tm' => sub {
 # age, or how many days since last find when I found the cache
 has 'age' => sub {
   my $self = shift;
-  if($self->prev && $self->found) {
-    return $self->prev_tm->delta_days($self->found_tm);
-  } else {
-    return undef;
-  }
+  $self->calc_years_days($self->prev_tm, $self->found_tm);
 };
 
 # held, or how many days I was the last finder
 has 'held' => sub {
   my $self = shift;
-  if($self->found) {
-    if($self->next) {
-      return $self->found_tm->delta_days($self->next_tm);
-    } else {
-      return $self->found_tm->delta_days($self->now);
-    }
-  } else {
-    return undef;
-  }
+  $self->calc_years_days($self->found_tm, $self->next_tm // $self->now);
 };
 
 #------------------------------------------------------------------------------
@@ -139,8 +127,12 @@ sub to_hash($self, %arg)
   $data->{favorite} = $self->favorite;
   $data->{xtf} = $self->xtf;
   $data->{logid} = $self->logid;
-  $data->{age} = $self->age unless $arg{db};
-  $data->{held} = $self->held unless $arg{db};
+  # following are computed fields, not relevant for instances used for saving
+  # to database
+  if(!$arg{db}) {
+    $data->{age} = $self->age;
+    $data->{held} = $self->held;
+  }
 
   return $data;
 }
