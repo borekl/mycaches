@@ -190,10 +190,12 @@
       <a href="<%= url_for '/finds/limit/50' %>">50</a>,
       <a href="<%= url_for '/finds/limit/50' %>">100</a>,
       <a href="<%= url_for '/finds/archived' %>">archived</a>
-      | <a href="<%= url_for '/finds/new' %>">add new</a>
+      % if(session 'user') {
+        | <a href="<%= url_for '/finds/new' %>">add new</a>
+      % }
    </div>
 
-<% } elsif(!$finds) { %>
+<% } elsif(!$finds && session 'user') { %>
 
    <div class="filter">
      <a href="<%= url_for '/hides/new' %>">add new</a>
