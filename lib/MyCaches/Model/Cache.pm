@@ -1,36 +1,47 @@
 package MyCaches::Model::Cache;
 
-use Mojo::Base -base, -signatures;
+use Moo;
+use experimental 'signatures';
 use Time::Moment;
 
 #------------------------------------------------------------------------------
 # ATTRIBUTES
 #------------------------------------------------------------------------------
 
-has 'db';                  # ref to db connection
-
-# common cache attributes (both hides and finds have them)
-has 'id';                  # row id
-has 'cacheid';             # cache id
-has 'name';                # cache name
-has 'difficulty' => 1;     # cache difficulty (1-5 in steps of 0.5)
-has 'terrain' => 1;        # cache terrain (1-5 in steps of 0.5)
-has 'ctype' => 2;          # cache type (as specified in icon SVG)
-has 'gallery' => 0;        # gallery available flag
-has 'archived' => 0;       # cache archived flag
-
-# loading time / timezone
-has 'now' => sub { Time::Moment->now->at_midnight };
-has 'tz' => sub { $_[0]->now->strftime('%:z') };
-
+# ref to db connection
+has 'db' => ( is => 'ro' );
+# row id
+has 'id' => ( is => 'rw' );
+# cache id (GC code)
+has 'cacheid' => ( is => 'ro' );
+# cache name
+has 'name'  => ( is => 'ro' );
+# cache difficulty (1-5 in steps of 0.5)
+has 'difficulty' => ( is => 'ro', default => 1 );
+# cache terrain (1-5 in steps of 0.5)
+has 'terrain' => ( is => 'ro', default => 1 );
+# cache type (as specified in icon SVG)
+has 'ctype' => ( is => 'ro', default => 2 );
+# gallery available flag
+has 'gallery' => ( is => 'ro', default => 0 );
+# cache archived flag
+has 'archived' => ( is => 'ro', default => 0 );
+# loading time
+has 'now' => (
+  is => 'ro',
+  default => sub { Time::Moment->now->at_midnight }
+);
+# local timezone
+has 'tz' => (
+  is => 'lazy',
+  default => sub ($self) { $self->now->strftime('%:z') }
+);
 
 #------------------------------------------------------------------------------
-# CONSTRUCTOR // we allow for alternate ways of initializing the instance
+# We allow for alternate ways of initializing the instance
 #------------------------------------------------------------------------------
 
-sub new
-{
-  my ($self, %arg) = @_;
+around BUILDARGS => sub ($orig, $class, %arg) {
 
   #--- initialization with a database entry
 
@@ -51,8 +62,8 @@ sub new
 
   #--- finish
 
-  $self->SUPER::new(%arg);
-}
+  return $class->$orig(%arg);
+};
 
 #------------------------------------------------------------------------------
 # Return data as hash

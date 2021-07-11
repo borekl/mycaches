@@ -1,46 +1,51 @@
 package MyCaches::Model::Hide;
 
-use Mojo::Base 'MyCaches::Model::Cache', -signatures;
-
+use Moo;
+extends 'MyCaches::Model::Cache';
+use experimental 'signatures';
 
 #------------------------------------------------------------------------------
 # ATTRIBUTES
 #------------------------------------------------------------------------------
 
-has 'published';     # publication date
-has 'finds' => 0;    # number of finds
-has 'found';         # last find date
-
+# publication date
+has 'published' => ( is => 'ro' );
+# number of finds
+has 'finds' => ( is => 'ro', default => 0 );
+# last find date
+has 'found' => ( is => 'ro' );
 # cache status (0-unspecified, 1-active, 2-disabled, 3-in development,
 # 4-waiting to be placed, 5-waiting for publication)
-has 'status' => 0;
-
+has 'status' => ( is => 'ro', default => 0 );
 # publication date as Time::Moment object
-has 'published_tm' => sub {
-  my $self = shift;
-  $self->published ? $self->tm_from_date($self->published) : undef;
-};
-
+has 'published_tm' => (
+  is => 'lazy',
+  default => sub ($self) {
+    $self->published ? $self->tm_from_date($self->published) : undef;
+  }
+);
 # last find date as Time::Moment object
-has 'found_tm' => sub {
-  my $self = shift;
-  $self->found ? $self->tm_from_date($self->found) : undef;
-};
-
+has 'found_tm' => (
+  is => 'lazy',
+  default => sub ($self) {
+    $self->found ? $self->tm_from_date($self->found) : undef;
+  }
+);
 # age, or days since last find (or publication date if unfound)
-has 'age' => sub {
-  my $self = shift;
-  my $ref1 = $self->found_tm // $self->published_tm;
-  return $self->calc_years_days($ref1, $self->now);
-};
+has 'age' => (
+  is => 'lazy',
+  default => sub ($self) {
+    my $ref1 = $self->found_tm // $self->published_tm;
+    return $self->calc_years_days($ref1, $self->now);
+  }
+);
 
 #------------------------------------------------------------------------------
 # CONSTRUCTOR // we allow for alternate ways of initializing the instance
 #------------------------------------------------------------------------------
 
-sub new
-{
-  my ($self, %arg) = @_;
+around BUILDARGS => sub ($orig, $class, %arg) {
+
   my (@select, $val);
 
   #--- loading an entry from database -----------------------------------------
@@ -96,8 +101,8 @@ sub new
 
   #--- finish
 
-  $self->SUPER::new(%arg);
-}
+  return $class->$orig(%arg);
+};
 
 #------------------------------------------------------------------------------
 # Return data as hash

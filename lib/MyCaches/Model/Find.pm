@@ -1,56 +1,67 @@
 package MyCaches::Model::Find;
 
-use Mojo::Base 'MyCaches::Model::Cache', -signatures;
-
+use Moo;
+extends 'MyCaches::Model::Cache';
+use experimental 'signatures';
 
 #------------------------------------------------------------------------------
 # ATTRIBUTES
 #------------------------------------------------------------------------------
 
-has 'prev';                 # previous find date
-has 'found';                # my find date
-has 'next';                 # next find date
-has 'favorite' => 0;        # cache favorited by me flag
-has 'xtf' => 0;             # ftf/stf/ttf flag
-has 'logid';                # log id string ('LUID')
-
+# previous find date
+has 'prev' => ( is => 'ro' );
+# my find date
+has 'found' => ( is => 'ro' );
+# next find date
+has 'next' => ( is => 'ro' );
+# cache favorited by me flag
+has 'favorite' => ( is => 'ro', default => 0 );
+# ftf/stf/ttf flag
+has 'xtf' => ( is => 'ro', default => 0 );
+# log id string ('LUID')
+has 'logid' => ( is => 'ro' );
 # previous find date as Time::Moment object
-has 'prev_tm' => sub {
-  my $self = shift;
-  $self->prev ? $self->tm_from_date($self->prev) : undef;
-};
-
+has 'prev_tm' => (
+  is => 'lazy',
+  default => sub ($self) {
+    $self->prev ? $self->tm_from_date($self->prev) : undef;
+  }
+);
 # my find date as Time::Moment object
-has 'found_tm' => sub {
-  my $self = shift;
-  $self->found ? $self->tm_from_date($self->found) : undef;
-};
-
+has 'found_tm' => (
+  is =>'lazy',
+  default => sub ($self) {
+    $self->found ? $self->tm_from_date($self->found) : undef;
+  }
+);
 # next find date as Time::Moment object
-has 'next_tm' => sub {
-  my $self = shift;
-  $self->next ? $self->tm_from_date($self->next) : undef;
-};
-
+has 'next_tm' => (
+  is => 'lazy',
+  default => sub ($self) {
+    $self->next ? $self->tm_from_date($self->next) : undef;
+  }
+);
 # age, or how many days since last find when I found the cache
-has 'age' => sub {
-  my $self = shift;
-  $self->calc_years_days($self->prev_tm, $self->found_tm);
-};
-
+has 'age' => (
+  is => 'lazy',
+  default => sub ($self) {
+    $self->calc_years_days($self->prev_tm, $self->found_tm);
+  }
+);
 # held, or how many days I was the last finder
-has 'held' => sub {
-  my $self = shift;
-  $self->calc_years_days($self->found_tm, $self->next_tm // $self->now);
-};
+has 'held' => (
+  is => 'lazy',
+  default => sub ($self) {
+    $self->calc_years_days($self->found_tm, $self->next_tm // $self->now);
+  }
+);
 
 #------------------------------------------------------------------------------
-# CONSTRUCTOR // we allow for alternate ways of initializing the instance
+# We allow for alternate ways of initializing the instance
 #------------------------------------------------------------------------------
 
-sub new
-{
-  my ($self, %arg) = @_;
+around BUILDARGS => sub ($orig, $class, %arg) {
+
   my (@select, $val);
 
   #--- loading an entry from database -----------------------------------------
@@ -109,8 +120,8 @@ sub new
 
   #--- finish
 
-  $self->SUPER::new(%arg);
-}
+  return $class->$orig(%arg);
+};
 
 #------------------------------------------------------------------------------
 # Return data as hash
