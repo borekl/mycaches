@@ -12,7 +12,7 @@ use Time::Moment;
 sub ingest($date)
 {
   # undefined, just return
-  return undef if !defined $date;
+  return undef if !defined $date || $date eq '';
 
   # already a Time::Moment instance, just return
   return $date if blessed $date && $date->isa('Time::Moment');
