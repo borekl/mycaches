@@ -3,56 +3,45 @@ package MyCaches::Model::Find;
 use Moo;
 extends 'MyCaches::Model::Cache';
 use experimental 'signatures';
+use MyCaches::Types::Date;
 
 #------------------------------------------------------------------------------
 # ATTRIBUTES
 #------------------------------------------------------------------------------
 
 # previous find date
-has 'prev' => ( is => 'ro' );
+has 'prev' => (
+  is => 'ro',
+  coerce => sub ($v) { MyCaches::Types::Date::ingest($v) }
+);
 # my find date
-has 'found' => ( is => 'ro' );
+has 'found' => (
+  is => 'ro',
+  coerce => sub ($v) { MyCaches::Types::Date::ingest($v) }
+);
 # next find date
-has 'next' => ( is => 'ro' );
+has 'next' => (
+  is => 'ro',
+  coerce => sub ($v) { MyCaches::Types::Date::ingest($v) }
+);
 # cache favorited by me flag
 has 'favorite' => ( is => 'ro', default => 0 );
 # ftf/stf/ttf flag
 has 'xtf' => ( is => 'ro', default => 0 );
 # log id string ('LUID')
 has 'logid' => ( is => 'ro' );
-# previous find date as Time::Moment object
-has 'prev_tm' => (
-  is => 'lazy',
-  default => sub ($self) {
-    $self->prev ? $self->tm_from_date($self->prev) : undef;
-  }
-);
-# my find date as Time::Moment object
-has 'found_tm' => (
-  is =>'lazy',
-  default => sub ($self) {
-    $self->found ? $self->tm_from_date($self->found) : undef;
-  }
-);
-# next find date as Time::Moment object
-has 'next_tm' => (
-  is => 'lazy',
-  default => sub ($self) {
-    $self->next ? $self->tm_from_date($self->next) : undef;
-  }
-);
 # age, or how many days since last find when I found the cache
 has 'age' => (
   is => 'lazy',
   default => sub ($self) {
-    $self->calc_years_days($self->prev_tm, $self->found_tm);
+    $self->calc_years_days($self->prev, $self->found);
   }
 );
 # held, or how many days I was the last finder
 has 'held' => (
   is => 'lazy',
   default => sub ($self) {
-    $self->calc_years_days($self->found_tm, $self->next_tm // $self->now);
+    $self->calc_years_days($self->found, $self->next // $self->now);
   }
 );
 
@@ -132,9 +121,9 @@ sub to_hash($self, %arg)
   my $data = $self->SUPER::to_hash(%arg);
 
   $data->{finds_i} = $self->id;
-  $data->{prev} = $self->prev;
-  $data->{found} = $self->found;
-  $data->{next} = $self->next;
+  $data->{prev} = $self->prev ? $self->prev->strftime('%F') : undef;
+  $data->{found} = $self->found ? $self->found->strftime('%F') : undef;
+  $data->{next} = $self->next ? $self->next->strftime('%F') : undef;
   $data->{favorite} = $self->favorite;
   $data->{xtf} = $self->xtf;
   $data->{logid} = $self->logid;

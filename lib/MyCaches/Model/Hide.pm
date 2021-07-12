@@ -3,39 +3,35 @@ package MyCaches::Model::Hide;
 use Moo;
 extends 'MyCaches::Model::Cache';
 use experimental 'signatures';
+use MyCaches::Types::Date;
 
 #------------------------------------------------------------------------------
 # ATTRIBUTES
 #------------------------------------------------------------------------------
 
 # publication date
-has 'published' => ( is => 'ro' );
+has 'published' => (
+  is => 'ro',
+  required => 1,
+  coerce => sub ($v) { MyCaches::Types::Date::ingest($v) }
+);
 # number of finds
-has 'finds' => ( is => 'ro', default => 0 );
+has 'finds' => (
+  is => 'ro', default => 0
+);
 # last find date
-has 'found' => ( is => 'ro' );
+has 'found' => (
+  is => 'ro',
+  coerce => sub ($v) { MyCaches::Types::Date::ingest($v) }
+);
 # cache status (0-unspecified, 1-active, 2-disabled, 3-in development,
 # 4-waiting to be placed, 5-waiting for publication)
 has 'status' => ( is => 'ro', default => 0 );
-# publication date as Time::Moment object
-has 'published_tm' => (
-  is => 'lazy',
-  default => sub ($self) {
-    $self->published ? $self->tm_from_date($self->published) : undef;
-  }
-);
-# last find date as Time::Moment object
-has 'found_tm' => (
-  is => 'lazy',
-  default => sub ($self) {
-    $self->found ? $self->tm_from_date($self->found) : undef;
-  }
-);
 # age, or days since last find (or publication date if unfound)
 has 'age' => (
   is => 'lazy',
   default => sub ($self) {
-    my $ref1 = $self->found_tm // $self->published_tm;
+    my $ref1 = $self->found // $self->published;
     return $self->calc_years_days($ref1, $self->now);
   }
 );
@@ -113,9 +109,9 @@ sub to_hash($self, %arg)
   my $data = $self->SUPER::to_hash(%arg);
 
   $data->{hides_i} = $self->id;
-  $data->{published} = $self->published;
+  $data->{published} = $self->published->strftime('%F');
   $data->{finds} = $self->finds;
-  $data->{found} = $self->found;
+  $data->{found} = $self->found ? $self->found->strftime('%F') : undef;
   $data->{age} = $self->age unless $arg{db};
 
   return $data;
