@@ -6,7 +6,7 @@ use Time::Moment;
 
 #------------------------------------------------------------------------------
 # Convert input dates into Time::Moment instances if necessary; supports
-# an additional format of date for user convenience
+# an additional formats of date for user convenience
 #------------------------------------------------------------------------------
 
 sub ingest($date)
@@ -22,9 +22,16 @@ sub ingest($date)
     $date = sprintf('%04d-%02d-%02d', $3, $2, $1);
   }
 
-  # convert into Time::Moment;
-  my $now = Time::Moment->now;
+  # get current date/timezone
+  my $now = Time::Moment->now->at_midnight;
   my $tz = $now->strftime('%:z');
+
+  # date specified as relative offset in days
+  if($date =~ /^-?\d+$/) {
+    return $now->plus_days($date);
+  }
+
+  # convert into Time::Moment;
   return Time::Moment->from_string($date . "T00:00$tz");
 }
 
