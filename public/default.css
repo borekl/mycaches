@@ -161,6 +161,18 @@ div.disabled a {
   background-color: #ff0;
 }
 
+div.devel a {
+  background-color: #abf;
+}
+
+div.waitplace a {
+  background-color: #8f8;
+}
+
+div.waitpub a {
+  background-color: #f8f;
+}
+
 /*--- cache day counts ----------------------------------------------------*/
 
 span.year {

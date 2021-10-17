@@ -80,8 +80,14 @@ sub _cachename
   my ($c, $item) = @_;
   my %attr;
 
-  $attr{class} = 'archived' if $item->{archived};
-  $attr{class} = 'disabled' if defined $item->{status} && $item->{status} == 2;
+  if($item->{archived}) {
+    $attr{class} = 'archived';
+  } elsif(defined $item->{status}) {
+    $attr{class} = 'disabled' if $item->{status} == 2;
+    $attr{class} = 'devel' if $item->{status} == 3;
+    $attr{class} = 'waitplace' if $item->{status} == 4;
+    $attr{class} = 'waitpub' if $item->{status} == 5;
+  }
 
   if($item->{gallery} && $c->session('user')) {
     my $span = tag_to_html('span', class => 'emoji', '&#x1f4f7;');
