@@ -156,20 +156,20 @@ div.cachename {
   align-items: center;
 }
 
-div.disabled a {
+div.disabled {
   color: #f00;
   background-color: #ff0;
 }
 
-div.devel a {
+div.devel {
   background-color: #abf;
 }
 
-div.waitplace a {
+div.waitplace {
   background-color: #8f8;
 }
 
-div.waitpub a {
+div.waitpub {
   background-color: #f8f;
 }
 
