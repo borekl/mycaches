@@ -125,15 +125,19 @@ sub _daycount
   my ($c, $age) = @_;
   my @age;
 
-  push(@age, $age->{years} . '<span class="year">y</span>')
-    if $age->{years};
-  push(@age, $age->{rdays})
-    if !$age->{years} || $age->{rdays};
+  if($age) {
+    push(@age, $age->{years} . '<span class="year">y</span>')
+      if $age->{years};
+    push(@age, $age->{rdays})
+      if !$age->{years} || $age->{rdays};
 
-  if($age->{years}) {
-    return _tag('span', title => $age->{days}, _bs(join('', @age)));
+    if($age->{years}) {
+      return _tag('span', title => $age->{days}, _bs(join('', @age)));
+    } else {
+      return _bs(join('', @age));
+    }
   } else {
-    return _bs(join('', @age));
+    return _bs('');
   }
 }
 
