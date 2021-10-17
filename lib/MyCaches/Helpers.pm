@@ -57,7 +57,7 @@ sub _rating
   my $asterisk = '★';
   my $r = '';
 
-  if(($item->{status} // 0) < 3 && ($item->{difficulty} || $item->{terrain})) {
+  if($item->{difficulty} && $item->{terrain}) {
     $r .= $asterisk x int($item->{difficulty});
     $r .= tag_to_html(
       'span', class => 'hlf',
