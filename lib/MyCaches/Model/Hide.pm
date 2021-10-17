@@ -4,6 +4,7 @@ use Moo;
 extends 'MyCaches::Model::Cache';
 use experimental 'signatures';
 use MyCaches::Types::Date;
+use POSIX qw(strftime);
 
 #------------------------------------------------------------------------------
 # ATTRIBUTES
@@ -12,7 +13,6 @@ use MyCaches::Types::Date;
 # publication date
 has 'published' => (
   is => 'ro',
-  required => 1,
   coerce => sub ($v) { MyCaches::Types::Date::ingest($v) }
 );
 # number of finds
@@ -109,10 +109,11 @@ sub to_hash($self, %arg)
   my $data = $self->SUPER::to_hash(%arg);
 
   $data->{hides_i} = $self->id;
-  $data->{published} = $self->published->strftime('%F');
+  $data->{published} = $self->published->strftime('%F') if $self->published;
   $data->{finds} = $self->finds;
   $data->{found} = $self->found ? $self->found->strftime('%F') : undef;
   $data->{age} = $self->age unless $arg{db};
+  $data->{status} = $self->status;
 
   return $data;
 }

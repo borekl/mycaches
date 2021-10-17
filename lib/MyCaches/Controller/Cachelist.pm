@@ -16,16 +16,25 @@ sub list($self)
   my $finds = MyCaches::Model::Cachelist->new(db => $self->sqlite->db);
   my $hides = MyCaches::Model::Cachelist->new(db => $self->sqlite->db);
 
-  # filtering
-  my %where;
-  $where{archived} = 1 if $self->stash('archived');
+  # filtering finds/hides
+  my (%where_finds, %where_hides);
+
+  # only list archived if the 'archived' option is selected
+  if($self->stash('archived')) {
+    $where_hides{archived} = $where_finds{archived} = 1;
+  }
+
+  # do not list unpublished caches to anonymous viewers
+  if(!$self->session('user')) {
+    $where_hides{status} = { '!=', [ -and => (3, 4, 5) ] };
+  }
 
   # get finds list
   if($self->stash('finds')) {
     $json_result{finds} = $finds->load(
       table => 'finds',
       tail => $self->stash('limit') // 0,
-      where => \%where,
+      where => \%where_finds,
     )->to_hash;
     $self->stash(finds => $json_result{finds});
   }
@@ -35,7 +44,7 @@ sub list($self)
     $json_result{hides} = $hides->load(
       table => 'hides',
       tail => $self->stash('limit') // 0,
-      where => \%where,
+      where => \%where_hides,
     )->to_hash;
     $self->stash(hides => $json_result{hides});
   }
