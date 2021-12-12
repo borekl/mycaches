@@ -3,7 +3,7 @@
 package MyCaches::Command::find;
 use Mojo::Base 'Mojolicious::Command', -signatures;
 use Mojo::Util qw(getopt);
-use Data::Printer;
+use Data::Printer output => 'stdout';
 use Try::Tiny;
 
 use MyCaches::Model::Find;
@@ -21,6 +21,9 @@ sub run ($self, @args)
 {
   my $db = $self->app->sqlite->db;
   my @re;
+
+  # set output encoding
+  binmode(STDOUT, ':encoding(UTF-8)');
 
   # parse arguments
   getopt \@args,
