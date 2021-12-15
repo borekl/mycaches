@@ -58,7 +58,9 @@ around BUILDARGS => sub ($orig, $class, %arg) {
 
   #--- values that are equal to empty strings are converted to undef
 
-  foreach my $k (keys %arg) { $arg{$k} = undef if $arg{$k} && $arg{$k} eq '' }
+  foreach my $k (keys %arg) {
+    $arg{$k} = undef if exists $arg{$k} && $arg{$k} eq ''
+  }
 
   #--- finish
 
