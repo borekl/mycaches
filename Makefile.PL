@@ -4,6 +4,8 @@ use warnings;
 use ExtUtils::MakeMaker;
 
 WriteMakefile(
+  ABSTRACT  => 'Geocaching personal finds and hides database',
+  AUTHOR    => 'Borek Lupomesky <borek@lupomesky.cz>',
   VERSION   => '0.01',
   PREREQ_PM => {
     'Mojolicious' => '9.0'

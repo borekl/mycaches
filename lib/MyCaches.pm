@@ -1,5 +1,7 @@
 package MyCaches;
 
+our $VERSION = '0.01';
+
 use Mojo::Base 'Mojolicious', -signatures;
 use MyCaches::Helpers;
 use Mojo::SQLite;
