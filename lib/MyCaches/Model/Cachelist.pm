@@ -18,7 +18,7 @@ sub load($self, %arg)
 {
   my $db = $self->db;
   my $where = $arg{where} // undef;
-  my $order = { -asc => $arg{table} . '_i' };
+  my $order = { -desc => $arg{table} . '_i' };
 
   my $result = $db->select($arg{table}, undef, $where, $order);
 
