@@ -17,5 +17,9 @@ WriteMakefile(
     'Crypt::Passphrase' => '0.001',
     'Crypt::Passphrase::Argon2' => '0.002',
   },
-  test => {TESTS => 't/*.t'}
+  TEST_REQUIRES => {
+    'Path::Tiny' => '0.108',
+    'Test::Most' => '0.37',
+  },
+  test => { TESTS => 't/*.t' }
 );
