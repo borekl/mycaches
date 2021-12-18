@@ -56,10 +56,9 @@ around BUILDARGS => sub ($orig, $class, %arg) {
     $arg{archived} = $e->{archived};
   }
 
-  #--- values that are equal to empty strings are converted to undef
-
-  foreach my $k (keys %arg) {
-    $arg{$k} = undef if exists $arg{$k} && $arg{$k} eq ''
+  # values that are equal to empty strings are converted to undef
+  foreach my $v (values %arg) {
+    undef $v unless length $v;
   }
 
   #--- finish
