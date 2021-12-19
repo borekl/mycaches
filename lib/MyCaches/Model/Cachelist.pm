@@ -32,7 +32,7 @@ sub load($self, %arg)
   }
 
   if($arg{tail}) {
-    @caches = @caches[$#caches-$arg{tail}+1 .. $#caches];
+    @caches = @caches[0 .. $arg{tail}-1]
   }
 
   $self->caches(\@caches);

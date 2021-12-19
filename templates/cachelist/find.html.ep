@@ -103,8 +103,8 @@
         </div>
 
         <div>
-          <span class="input-emoji" data-emojis="❌"></span><input
-          type="hidden" name="archived" value="<%= $find->{archived} %>">
+          <span class="input-emoji" data-emojis="🗑️"></span><input
+          type="hidden" name="archived" value="<%= $find->{status} == 6 %>">
         </div>
 
       </div>

@@ -52,7 +52,7 @@ CREATE TABLE hides (
   -- archived
   archived INTEGER,
   -- status (0-unspecified, 1-active, 2-disabled, 3-in development,
-  -- 4-waiting to be placed, 5-waiting for publication)
+  -- 4-waiting to be placed, 5-waiting for publication, 6-archived)
   status INTEGER
 );
 
@@ -67,3 +67,21 @@ CREATE TABLE users (
 drop table if exists finds;
 drop table if exists hides;
 drop table if exists users;
+
+-- 2 up / replace 'archived' with 'status' value of 6
+UPDATE hides SET status = 6 WHERE archived = 1;
+ALTER TABLE hides DROP COLUMN archived;
+
+ALTER TABLE finds ADD COLUMN status INTEGER;
+UPDATE finds SET status = 1;
+UPDATE finds SET status = 6 WHERE archived = 1;
+ALTER TABLE finds DROP COLUMN archived;
+
+-- 2 down
+ALTER TABLE hides ADD COLUMN archived INTEGER;
+UPDATE hides SET archived = 1 WHERE status = 6;
+UPDATE hides SET status = 0 WHERE status = 6;
+
+ALTER TABLE finds ADD COLUMN archived INTEGER;
+UPDATE finds SET archived = 1 WHERE status = 6;
+ALTER TABLE finds DROP COLUMN status;

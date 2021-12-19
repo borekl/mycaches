@@ -3,6 +3,7 @@ use Mojo::Base 'Mojolicious::Plugin';
 
 use Mojo::DOM::HTML qw(tag_to_html);
 use Mojo::ByteStream;
+use MyCaches::Model::Const;
 use utf8;
 
 # This module defines few tag helper functions for use in templates; the
@@ -39,10 +40,10 @@ sub _typeicon
   my ($c, $item) = @_;
 
   my $ctype = ref $item ? $item->{ctype} : $item;
-  my $status = ref $item ? $item->{status} : 1;
+  my $status = ref $item ? $item->{status} : ST_ACTIVE;
 
   my $icon = 'icon-' . $ctype;
-  $icon .= '-disabled' if defined $status && $status != 1;
+  $icon .= '-disabled' if defined $status && $status != ST_ACTIVE;
   _tag('svg',
     _tag('use', 'xlink:href' => $c->url_for("/cache-types.svg#$icon"))
   );
@@ -80,14 +81,11 @@ sub _cachename
   my ($c, $item) = @_;
   my %attr;
 
-  if($item->{archived}) {
-    $attr{class} = 'archived';
-  } elsif(defined $item->{status}) {
-    $attr{class} = 'disabled' if $item->{status} == 2;
-    $attr{class} = 'devel' if $item->{status} == 3;
-    $attr{class} = 'waitplace' if $item->{status} == 4;
-    $attr{class} = 'waitpub' if $item->{status} == 5;
-  }
+  $attr{class} = 'archived' if $item->{status} == ST_ARCHIVED;
+  $attr{class} = 'disabled' if $item->{status} == ST_DISABLED;
+  $attr{class} = 'devel' if $item->{status} == ST_DEVEL;
+  $attr{class} = 'waitplace' if $item->{status} == ST_WT_PLACE;
+  $attr{class} = 'waitpub' if $item->{status} == ST_WT_PUBLISH;
 
   if($item->{gallery} && $c->session('user')) {
     my $span = tag_to_html('span', class => 'emoji', '&#x1f4f7;');

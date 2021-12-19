@@ -24,9 +24,6 @@ has 'found' => (
   is => 'ro',
   coerce => sub ($v) { MyCaches::Types::Date::ingest($v) }
 );
-# cache status (0-unspecified, 1-active, 2-disabled, 3-in development,
-# 4-waiting to be placed, 5-waiting for publication)
-has 'status' => ( is => 'ro', default => 0 );
 # age, or days since last find (or publication date if unfound)
 has 'age' => (
   is => 'lazy',
@@ -86,7 +83,6 @@ around BUILDARGS => sub ($orig, $class, %arg) {
     $arg{published} = $e->{published};
     $arg{finds} = $e->{finds};
     $arg{found} = $e->{found};
-    $arg{status} = $e->{status};
   }
 
   #--- map rowid
@@ -113,7 +109,6 @@ sub to_hash($self, %arg)
   $data->{finds} = $self->finds;
   $data->{found} = $self->found ? $self->found->strftime('%F') : undef;
   $data->{age} = $self->age unless $arg{db};
-  $data->{status} = $self->status;
 
   return $data;
 }

@@ -51,7 +51,6 @@ $c = MyCaches::Model::Hide->new(
     terrain => 9,
     ctype => 4,
     gallery => 1,
-    archived => 1,
     published => '2018-12-18',
     found => $today,
     finds => 321,
@@ -107,7 +106,6 @@ $c = MyCaches::Model::Hide->new(
   terrain => 4.5,
   ctype => 4,
   gallery => 1,
-  archived => 0,
   status => 1,
   published => '2018-12-08',
   found => '2019-01-19',
@@ -132,7 +130,6 @@ cmp_deeply($d, methods(
   terrain => 4.5,
   ctype => 4,
   gallery => 1,
-  archived => 0,
   status => 1,
   finds => 123,
 ), 'Load entry by id (1)');
@@ -153,7 +150,6 @@ cmp_deeply($d, methods(
   terrain => 4.5,
   ctype => 4,
   gallery => 1,
-  archived => 0,
   status => 1,
   finds => 123,
 ), 'Load entry by id (1)');

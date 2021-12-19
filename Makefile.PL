@@ -16,6 +16,8 @@ WriteMakefile(
     'Moo' => '2.003004',
     'Crypt::Passphrase' => '0.001',
     'Crypt::Passphrase::Argon2' => '0.002',
+    'DBD::SQLite' => '1.70',
+    'DBI' => 0,
   },
   TEST_REQUIRES => {
     'Path::Tiny' => '0.108',

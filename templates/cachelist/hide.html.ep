@@ -87,18 +87,13 @@
       <div class="cell grid-flags">
 
         <div>
-          <span class="input-emoji" data-emojis="☀️|🌥️|🛠️|⛏️|🏁"></span><input
+          <span class="input-emoji" data-emojis="☀️|🌥️|✏️|⛏️|🏁|🗑️"></span><input
           type="hidden" name="status" value="<%= $hide->{status} %>">
         </div>
 
         <div>
           <span class="input-emoji" data-emojis="📷"></span><input
           type="hidden" name="gallery" value="<%= $hide->{gallery} %>">
-        </div>
-
-        <div>
-          <span class="input-emoji" data-emojis="❌"></span><input
-          type="hidden" name="archived" value="<%= $hide->{archived} %>">
         </div>
 
       </div>

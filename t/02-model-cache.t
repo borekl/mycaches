@@ -22,7 +22,7 @@ cmp_deeply($c, methods(
   terrain => 1,
   ctype => 2,
   gallery => 0,
-  archived => 0,
+  status => 0,
   now => isa('Time::Moment'),
   now => Time::Moment->now->at_midnight,
   tz => $c->now->strftime('%:z')
@@ -38,7 +38,7 @@ $c = MyCaches::Model::Cache->new(
   terrain => 4.5,
   ctype => 4,
   gallery => 1,
-  archived => 1,
+  status => 1,
 );
 isa_ok($c, 'MyCaches::Model::Cache');
 cmp_deeply($c, methods(
@@ -49,7 +49,7 @@ cmp_deeply($c, methods(
   terrain => 4.5,
   ctype => 4,
   gallery => 1,
-  archived => 1,
+  status => 1,
   now => isa('Time::Moment'),
   now => Time::Moment->now->at_midnight,
   tz => $c->now->strftime('%:z')
@@ -65,7 +65,7 @@ $c = MyCaches::Model::Cache->new(
     terrain => 9,
     ctype => 4,
     gallery => 1,
-    archived => 1,
+    status => 1,
   }
 );
 isa_ok($c, 'MyCaches::Model::Cache');
@@ -76,7 +76,7 @@ cmp_deeply($c, methods(
   terrain => 4.5,
   ctype => 4,
   gallery => 1,
-  archived => 1,
+  status => 1,
 ));
 
 # export attributes as hash
@@ -89,7 +89,7 @@ cmp_deeply($c, methods(
     terrain => 4.5,
     ctype => 4,
     gallery => 1,
-    archived => 1,
+    status => 1,
     tz => $c->now->strftime('%:z'),
   });
 }

@@ -4,7 +4,7 @@ use Mojo::Base 'Mojolicious::Controller', -signatures;
 use MyCaches::Model::Cachelist;
 use MyCaches::Model::Find;
 use MyCaches::Model::Hide;
-
+use MyCaches::Model::Const;
 
 #------------------------------------------------------------------------------
 # Generate cache list
@@ -21,12 +21,14 @@ sub list($self)
 
   # only list archived if the 'archived' option is selected
   if($self->stash('archived')) {
-    $where_hides{archived} = $where_finds{archived} = 1;
+    $where_hides{status} = $where_finds{status} = ST_ARCHIVED;
   }
 
   # do not list unpublished caches to anonymous viewers
   if(!$self->session('user')) {
-    $where_hides{status} = { '!=', [ -and => (3, 4, 5) ] };
+    $where_hides{status} = {
+      '!=', [ -and => (ST_DEVEL, ST_WT_PLACE, ST_WT_PUBLISH) ]
+    };
   }
 
   # get finds list

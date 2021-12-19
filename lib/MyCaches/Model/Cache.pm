@@ -24,8 +24,8 @@ has 'terrain' => ( is => 'ro', default => 1 );
 has 'ctype' => ( is => 'ro', default => 2 );
 # gallery available flag
 has 'gallery' => ( is => 'ro', default => 0 );
-# cache archived flag
-has 'archived' => ( is => 'ro', default => 0 );
+# cache status
+has 'status' => ( is => 'ro', default => 0 );
 # loading time
 has 'now' => (
   is => 'ro',
@@ -53,7 +53,7 @@ around BUILDARGS => sub ($orig, $class, %arg) {
     $arg{terrain} = $e->{terrain} / 2;
     $arg{difficulty} = $e->{difficulty} / 2;
     $arg{gallery} = $e->{gallery};
-    $arg{archived} = $e->{archived};
+    $arg{status} = $e->{status};
   }
 
   # values that are equal to empty strings are converted to undef
@@ -79,7 +79,7 @@ sub to_hash($self, %arg)
     terrain => $self->terrain,
     ctype => $self->ctype,
     gallery => $self->gallery,
-    archived => $self->archived,
+    status => $self->status,
   );
 
   $re{tz} = $self->tz unless $arg{db};

@@ -4,6 +4,7 @@ use Moo;
 extends 'MyCaches::Model::Cache';
 use experimental 'signatures';
 use MyCaches::Types::Date;
+use MyCaches::Model::Const;
 
 #------------------------------------------------------------------------------
 # ATTRIBUTES
@@ -106,6 +107,11 @@ around BUILDARGS => sub ($orig, $class, %arg) {
   else {
     $arg{id} = $arg{finds_i} if exists $arg{finds_i}
   }
+
+  # archived flag mapping; if we receve archived = 1 from the frontend, we map
+  # this to status = 6
+  $arg{status} = ST_ARCHIVED if $arg{archived};
+  delete $arg{archived} if exists $arg{archived};
 
   #--- finish
 
