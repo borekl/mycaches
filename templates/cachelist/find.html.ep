@@ -10,7 +10,7 @@
 
 <body class="entry">
 
-  <form class="cacheentry" method="post" action="<%= url_for '/finds/' . $find->{finds_i} %>">
+  <form class="cacheentry" method="post" action="<%= url_for '/finds/' . ($find->{finds_i} // '') %>">
     <div class="form form-find">
 
       %#--- CACHETYPE ---------------------------------------------------------
