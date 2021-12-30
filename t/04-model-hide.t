@@ -116,7 +116,6 @@ lives_ok { $c->create } 'Create entry';
 is($c->id, 1, 'New entry row id');
 
 # load the entry by row id
-# load the entry by row id
 my $d = MyCaches::Model::Hide->new(
   db => $t->app->sqlite->db,
   load => { id => $c->id }
