@@ -68,6 +68,7 @@ drop table if exists finds;
 drop table if exists hides;
 drop table if exists users;
 
+
 -- 2 up / replace 'archived' with 'status' value of 6
 UPDATE hides SET status = 6 WHERE archived = 1;
 ALTER TABLE hides DROP COLUMN archived;
@@ -85,3 +86,26 @@ UPDATE hides SET status = 0 WHERE status = 6;
 ALTER TABLE finds ADD COLUMN archived INTEGER;
 UPDATE finds SET archived = 1 WHERE status = 6;
 ALTER TABLE finds DROP COLUMN status;
+
+
+-- 3 up / add new table for tracking log entries
+CREATE TABLE logs (
+  logs_i INTEGER PRIMARY KEY,
+  -- sequence number for ordering the log in case of ties
+  seq INTEGER DEFAULT 0,
+  -- date of the log entry
+  date TEXT NOT NULL,
+  -- cache id
+  cacheid TEXT NOT NULL,
+  -- geocaching nickname of the player
+  player TEXT NOT NULL,
+  -- log type (1-found it, 2-owner visit, 3-disable, 4-enable, 5-archive)
+  logtype INTEGER NOT NULL,
+  -- log LUUID
+  logid TEXT,
+  ---
+  FOREIGN KEY (cacheid) REFERENCES hides(cacheid)
+);
+
+-- 3 down
+DROP TABLE logs;
