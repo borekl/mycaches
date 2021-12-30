@@ -26,12 +26,18 @@ sub startup($self)
 
   $self->secrets($self->config('secrets'));
 
-  #--- database setup
-
+  # database connection setup
   $self->helper(sqlite => sub {
     state $sql = Mojo::SQLite->new($self->config('dbfile') . '.sqlite')
   });
 
+  # enable foreign keys feature (in SQLite off by default)
+  $self->sqlite->on(connection => sub ($sql, $dbh) {
+    $dbh->do('pragma foreign_keys = on');
+  });
+
+  # perform migrations (ie. upgrade the database schema to the most recent
+  # version)
   my $path = $self->home->child('migrations', 'mycaches.sql');
   $self->sqlite->auto_migrate(1)->migrations->name('mycaches')->from_file($path);
 
