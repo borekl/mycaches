@@ -1,6 +1,7 @@
 package MyCaches::Model::Cache;
 
 use Moo;
+with 'MyCaches::Roles::LocalTZ';
 use experimental 'signatures';
 use Time::Moment;
 
@@ -26,16 +27,6 @@ has 'ctype' => ( is => 'ro', default => 2 );
 has 'gallery' => ( is => 'ro', default => 0 );
 # cache status
 has 'status' => ( is => 'ro', default => 0 );
-# loading time
-has 'now' => (
-  is => 'ro',
-  default => sub { Time::Moment->now->at_midnight }
-);
-# local timezone
-has 'tz' => (
-  is => 'lazy',
-  default => sub ($self) { $self->now->strftime('%:z') }
-);
 
 #------------------------------------------------------------------------------
 # We allow for alternate ways of initializing the instance
