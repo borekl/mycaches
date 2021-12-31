@@ -17,14 +17,14 @@ sub startup($self)
   });
 
   # config defaults
-  $self->plugin('Config', default => { dbfile => 'mycaches' });
+  $self->plugin('Config', default => { dbfile => 'mycaches.sqlite' });
 
   # secrets
   $self->secrets($self->config('secrets'));
 
   # database connection setup
   $self->helper(sqlite => sub {
-    state $sql = Mojo::SQLite->new($self->config('dbfile') . '.sqlite')
+    state $sql = Mojo::SQLite->new($self->config('dbfile'))
   });
 
   # enable foreign keys feature (in SQLite off by default)
