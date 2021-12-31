@@ -30,7 +30,7 @@ sub login ($c)
     $there .= '/' if !$there =~ /\/$/;
     $c->redirect_to($c->url_for($there));
   } else {
-    $c->render(text => "Auth failed");
+    $c->render(text => 'Auth failed', status => 401);
   }
 }
 
