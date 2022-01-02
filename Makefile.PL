@@ -20,8 +20,8 @@ WriteMakefile(
     'DBI' => 0,
   },
   TEST_REQUIRES => {
-    'Path::Tiny' => '0.108',
-    'Test::Most' => '0.37',
+    'Test2::V0' => '0.000144',
+    'Test2::MojoX' => '0.07',
   },
   test => { TESTS => 't/*.t' }
 );
