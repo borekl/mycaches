@@ -4,85 +4,37 @@
 
 use utf8;
 use Mojo::Base -strict;
-use Test::Mojo;
-use Test::Most;
-use Path::Tiny qw(tempfile);
+use Test2::V0;
+use Test2::MojoX;
 use MyCaches::Model::Cache;
 
-my $t = Test::Mojo->new('MyCaches', { dbfile => tempfile });
+my $t = Test2::MojoX->new('MyCaches', { dbfile => ':temp:' });
+my $db = $t->app->sqlite->db;
 
-# instance creation, default
-my $c = MyCaches::Model::Cache->new(db => $t->app->sqlite->db);
-isa_ok($c, 'MyCaches::Model::Cache');
-cmp_deeply($c, methods(
-  id => undef,
-  cacheid => undef,
-  name => undef,
-  difficulty => 1,
-  terrain => 1,
-  ctype => 2,
-  gallery => 0,
-  status => 0,
-  now => isa('Time::Moment'),
-  now => Time::Moment->now->at_midnight,
-  tz => $c->now->strftime('%:z')
-));
+#--- instance creation ---------------------------------------------------------
 
-# non-default instance from direct arguments
-$c = MyCaches::Model::Cache->new(
-  db => $t->app->sqlite->db,
-  id => 123,
-  cacheid => 'GC9ABCD',
-  name => 'Žluťoučký kůň 🐴',
-  difficulty => 5,
-  terrain => 4.5,
-  ctype => 4,
-  gallery => 1,
-  status => 1,
-);
-isa_ok($c, 'MyCaches::Model::Cache');
-cmp_deeply($c, methods(
-  id => 123,
-  cacheid => 'GC9ABCD',
-  name => 'Žluťoučký kůň 🐴',
-  difficulty => 5,
-  terrain => 4.5,
-  ctype => 4,
-  gallery => 1,
-  status => 1,
-  now => isa('Time::Moment'),
-  now => Time::Moment->now->at_midnight,
-  tz => $c->now->strftime('%:z')
-));
+{ # instance creation, default
+  my $c = MyCaches::Model::Cache->new(db => $db);
+  is($c, object {
+    prop blessed => 'MyCaches::Model::Cache';
+    call id => U();
+    call cacheid => U();
+    call name => U();
+    call difficulty => 1;
+    call terrain => 1;
+    call ctype => 2;
+    call gallery => 0;
+    call status => 0;
+    call now => object { prop blessed => 'Time::Moment' };
+    call now => Time::Moment->now->at_midnight;
+    call tz => $c->now->strftime('%:z');
+  }, 'Default instance check');
+}
 
-# non-default instance from database entry
-$c = MyCaches::Model::Cache->new(
-  db => $t->app->sqlite->db,
-  entry => {
-    cacheid => 'GC9ABCD',
-    name => 'Žluťoučký kůň 🐴',
-    difficulty => 10,
-    terrain => 9,
-    ctype => 4,
-    gallery => 1,
-    status => 1,
-  }
-);
-isa_ok($c, 'MyCaches::Model::Cache');
-cmp_deeply($c, methods(
-  cacheid => 'GC9ABCD',
-  name => 'Žluťoučký kůň 🐴',
-  difficulty => 5,
-  terrain => 4.5,
-  ctype => 4,
-  gallery => 1,
-  status => 1,
-));
-
-# export attributes as hash
-{
-  my $h = $c->to_hash;
-  cmp_deeply($h, {
+{ # non-default instance from direct arguments
+  my $c = MyCaches::Model::Cache->new(
+    db => $db,
+    id => 123,
     cacheid => 'GC9ABCD',
     name => 'Žluťoučký kůň 🐴',
     difficulty => 5,
@@ -90,51 +42,116 @@ cmp_deeply($c, methods(
     ctype => 4,
     gallery => 1,
     status => 1,
-    tz => $c->now->strftime('%:z'),
-  });
+  );
+  is($c, object {
+    prop blessed => 'MyCaches::Model::Cache';
+    call id => 123;
+    call cacheid => 'GC9ABCD';
+    call name => 'Žluťoučký kůň 🐴';
+    call difficulty => 5;
+    call terrain => 4.5;
+    call ctype => 4;
+    call gallery => 1;
+    call status => 1;
+    call now => object { prop blessed => 'Time::Moment' };
+    call now => Time::Moment->now->at_midnight;
+    call tz => $c->now->strftime('%:z');
+  }, 'Non-default instance check (direct)');
 }
 
-# export attributes as hash for db
-{
-  my $h = $c->to_hash(db => 1);
-  cmp_deeply($h, superhashof ({
-    difficulty => 10,
-    terrain => 9,
-  }));
+{ # empty strings converted to undefs in attributes
+  my $c = MyCaches::Model::Cache->new(
+    db => $db,
+    cacheid => '',
+  );
+  is($c, object {
+    prop blessed => 'MyCaches::Model::Cache';
+    call cacheid => U();
+  }, 'Empty strings to undefs');
 }
 
-# empty strings converted to undefs in attributes
-$c = MyCaches::Model::Cache->new(
-  db => $t->app->sqlite->db,
-  cacheid => '',
-);
-isa_ok($c, 'MyCaches::Model::Cache');
-is($c->cacheid, undef, q{Attribute 'cacheid' empty string});
+{ # non-default instance from database entry
+  my $c = MyCaches::Model::Cache->new(
+    db => $db,
+    entry => {
+      cacheid => 'GC9ABCD',
+      name => 'Žluťoučký kůň 🐴',
+      difficulty => 10,
+      terrain => 9,
+      ctype => 4,
+      gallery => 1,
+      status => 1,
+    }
+  );
+  is($c, object {
+    prop blessed => 'MyCaches::Model::Cache';
+    call cacheid => 'GC9ABCD';
+    call name => 'Žluťoučký kůň 🐴';
+    call difficulty => 5;
+    call terrain => 4.5;
+    call ctype => 4;
+    call gallery => 1;
+    call status => 1;
+    call now => object { prop blessed => 'Time::Moment' };
+    call now => Time::Moment->now->at_midnight;
+    call tz => $c->now->strftime('%:z');
+  }, 'Non-default instance check (db entry)');
 
-# last row id
-is($c->get_last_id('hides'), 0, 'Last row id on empty hides table');
-is($c->get_last_id('finds'), 0, 'Last row id on empty finds table');
+#--- data export ---------------------------------------------------------------
 
-# difference between two dates
-{
+  { # export attributes as hash
+    my $h = $c->to_hash;
+    is($h, hash {
+      field cacheid => 'GC9ABCD';
+      field name => 'Žluťoučký kůň 🐴';
+      field difficulty => 5;
+      field terrain => 4.5;
+      field ctype => 4;
+      field gallery => 1;
+      field status => 1;
+      field tz => $c->now->strftime('%:z');
+      etc();
+    }, 'Data export');
+  }
+
+  { # export attributes as hash for db
+    my $h = $c->to_hash(db => 1);
+    is($h, hash {
+      field difficulty => 10;
+      field terrain => 9;
+      etc();
+    }, 'Data export (for db)');
+  }
+
+#--- getting last id -----------------------------------------------------------
+
+  is($c->get_last_id('hides'), 0, 'Last row id on empty hides table');
+  is($c->get_last_id('finds'), 0, 'Last row id on empty finds table');
+
+
+#--- date arithmetic -----------------------------------------------------------
+
   my $tm1 = Time::Moment->from_string('2020-01-01T00Z');
   my $tm2 = Time::Moment->from_string('2020-01-01T00Z');
 
-  cmp_deeply(
+  is(
     $c->calc_years_days($tm1, $tm2),
-    { years => 0, days => 0, rdays => 0 }
+    hash { field years => 0; field days => 0; field rdays => 0; end() },
+    'Date difference (1)'
   );
 
   $tm2 = $tm2->plus_days(1);
-  cmp_deeply(
+  is(
     $c->calc_years_days($tm1, $tm2),
-    { years => 0, days => 1, rdays => 1 }
+    hash { field years => 0; field days => 1; field rdays => 1; end() },
+    'Date difference (2)'
   );
 
   $tm2 = $tm2->plus_years(1);
-  cmp_deeply(
+  is(
     $c->calc_years_days($tm1, $tm2),
-    { years => 1, days => 367, rdays => 1 }
+    hash { field years => 1; field days => 367; field rdays => 1; end() },
+    'Date difference (3)'
   );
 }
 
