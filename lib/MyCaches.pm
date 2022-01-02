@@ -72,7 +72,6 @@ sub startup($self)
 
   my $finds_auth = $auth->any('/finds' => { entity => 'find'});
   my $hides_auth = $auth->any('/hides' => { entity => 'hide'});
-  my $api = $auth->any('/api/v1');
 
   # login page
   $r->get('/login')->to('login#index');
@@ -97,7 +96,21 @@ sub startup($self)
   $hides_auth->post('/')->to('cachelist#save');
 
   # API routes
+  my $api = $auth->any('/api/v1')->to(controller => 'API');
   $api->get->to('API#api');
+
+  my $api_hides = $api->any('/hides')->to(table => 'hides');
+  $api_hides->post('/')->to('API#add');
+  $api_hides->get('/:id')->to('API#load');
+  $api_hides->put('/:id')->to('API#update');
+  $api_hides->delete('/:id')->to('API#delete');
+
+  my $api_finds = $api->any('/finds')->to(table => 'finds');
+  $api_finds->post('/')->to('API#add');
+  $api_finds->get('/:id')->to('API#load');
+  $api_finds->put('/:id')->to('API#update');
+  $api_finds->delete('/:id')->to('API#delete');
+
 }
 
 
