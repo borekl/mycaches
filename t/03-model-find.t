@@ -317,6 +317,16 @@ my $db = $t->app->sqlite->db;
   like(dies {
     MyCaches::Model::Find->new(db => $db, load => { cacheid => 'GC9ABCD' });
   }, qr/Find \w+ not found/, 'Deleted entry retrieval');
+
+  # delete this entry again, this should fail
+  like(dies {
+    $c->delete
+  }, qr/Find \d+ not found/, 'Deleting non-existent entry');
+
+  # updating non-existent entry should fail too
+  like(dies {
+    $c->update
+  }, qr/Find \d+ not found/, 'Updating non-existent entry');
 }
 
 #--- finish --------------------------------------------------------------------

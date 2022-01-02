@@ -171,11 +171,13 @@ sub create($self)
 
 sub update($self)
 {
-  $self->db->update(
+  my $id = $self->id;
+  my $r = $self->db->update(
     'finds',
     $self->to_hash(db => 1),
     { finds_i => $self->id }
   );
+  die "Find $id not found" unless $r->rows;
   return $self;
 }
 
@@ -185,7 +187,9 @@ sub update($self)
 
 sub delete($self)
 {
-  $self->db->delete('finds', { finds_i => $self->id });
+  my $id = $self->id;
+  my $r = $self->db->delete('finds', { finds_i => $id });
+  die "Find $id not found" unless $r->rows;
   return $self;
 }
 

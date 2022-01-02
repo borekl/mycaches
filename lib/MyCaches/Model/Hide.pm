@@ -141,11 +141,13 @@ sub create($self)
 
 sub update($self)
 {
-  $self->db->update(
+  my $id = $self->id;
+  my $r = $self->db->update(
     'hides',
     $self->to_hash(db => 1),
-    { hides_i => $self->id }
+    { hides_i => $id }
   );
+  die "Hide $id not found" unless $r->rows;
   return $self;
 }
 
@@ -155,7 +157,9 @@ sub update($self)
 
 sub delete($self)
 {
-  $self->db->delete('hides', { hides_i => $self->id });
+  my $id = $self->id;
+  my $r = $self->db->delete('hides', { hides_i => $id });
+  die "Hide $id not found" unless $r->rows;
   return $self;
 }
 

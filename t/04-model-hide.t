@@ -184,13 +184,23 @@ my $db = $t->app->sqlite->db;
     }, 'Check updated entry');
   }
 
-  # delete entry frm db
+  # delete entry from db
   ok(lives { $c->delete }, 'Delete entry') or diag($@);
   like(dies {
     MyCaches::Model::Hide->new(
       db => $db, load => { cacheid => 'GC9ABCD' }
     )
   }, qr/Hide \w+ not found/, 'Deleted entry retrieval');
+
+  # delete this entry again, this should fail
+  like(dies {
+    $c->delete
+  }, qr/Hide \d+ not found/, 'Deleting non-existent entry');
+
+  # updating non-existent entry should fail too
+  like(dies {
+    $c->update
+  }, qr/Hide \d+ not found/, 'Updating non-existent entry');
 }
 
 #--- finish --------------------------------------------------------------------
