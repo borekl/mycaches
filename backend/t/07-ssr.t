@@ -54,6 +54,13 @@ $t->get_ok('/logout' => { Referer => '/' })
   ->status_is(200)
   ->text_unlike('header', qr/logged in as/);
 
+#--- finds/hides ---------------------------------------------------------------
+
+# at this moment just test that the basic pages load
+$t->get_ok('/')->status_is(200);
+$t->get_ok('/hides')->status_is(200);
+$t->get_ok('/finds')->status_is(200);
+
 #--- finish --------------------------------------------------------------------
 
 done_testing();
