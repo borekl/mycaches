@@ -7,7 +7,7 @@ use Crypt::Passphrase;
 # ATTRIBUTES
 #------------------------------------------------------------------------------
 
-has 'db';                  # ref to db connection
+has 'sqlite';              # Mojo::SQLite instance
 has 'userid';              # user id (textual)
 has 'pw';                  # cleartext password
 
@@ -37,7 +37,7 @@ has 'authenticator' => sub {
 
 sub create ($self)
 {
-  $self->db->insert('users', { userid => $self->userid, pw => $self->hash });
+  $self->sqlite->db->insert('users', { userid => $self->userid, pw => $self->hash });
   return $self;
 }
 
@@ -47,7 +47,7 @@ sub create ($self)
 
 sub update ($self)
 {
-  $self->db->update('users', { pw => $self->hash }, { userid => $self->userid });
+  $self->sqlite->db->update('users', { pw => $self->hash }, { userid => $self->userid });
   return $self
 }
 
@@ -57,7 +57,7 @@ sub update ($self)
 
 sub delete ($self)
 {
-  $self->db->delete('users', { userid => $self->userid });
+  $self->sqlite->db->delete('users', { userid => $self->userid });
   return $self;
 }
 
@@ -67,7 +67,7 @@ sub delete ($self)
 
 sub list ($self)
 {
-  my $re = $self->db->select(
+  my $re = $self->sqlite->db->select(
     'users', undef, undef, { -asc => 'userid'}
   )->hashes;
   my $users = $re->sort(sub { $a->{userid} cmp $b->{userid} })->to_array;
@@ -81,7 +81,7 @@ sub list ($self)
 
 sub check ($self)
 {
-  my $re = $self->db->select('users', undef, { userid => $self->userid });
+  my $re = $self->sqlite->db->select('users', undef, { userid => $self->userid });
   my $e = $re->hash;
   $re->finish;
   return 0 unless $e;

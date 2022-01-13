@@ -7,7 +7,6 @@ use strict;
 use warnings;
 use Test2::V0;
 use Test2::MojoX;
-use MyCaches::Model::Users;
 use experimental 'signatures';
 
 my $user = 'testuser',
@@ -51,10 +50,9 @@ my $check_find_upd = checker(my %find_upd = (
 my $t = Test2::MojoX->new('MyCaches', {
   dbfile => ':temp:', secrets => [ 'abc123']
 });
-my $db = $t->app->sqlite->db;
 
 # create test user
-my $u = MyCaches::Model::Users->new(db => $db, userid => $user, pw => $pw);
+my $u = $t->app->user(userid => $user, pw => $pw);
 ok(lives { $u->create }, 'User creation') or diag($@);
 
 #--- API authorization ---------------------------------------------------------

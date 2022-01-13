@@ -10,7 +10,10 @@ use Time::Moment;
 #------------------------------------------------------------------------------
 
 # ref to db connection
-has 'db' => ( is => 'ro' );
+has 'sqlite' => (
+  is => 'ro',
+  isa => sub { die 'Need sqlite' unless $_[0]->isa('Mojo::SQLite')}
+);
 # row id
 has 'id' => ( is => 'rw' );
 # cache id (GC code)
@@ -99,7 +102,7 @@ sub tm_from_date($self, $date)
 
 sub get_last_id($self, $table)
 {
-  my $db = $self->db;
+  my $db = $self->sqlite->db;
   my $rowid = "${table}_i";
   my $re = $db->select($table, $rowid, undef, { -desc => $rowid });
   my $row = $re->hash;

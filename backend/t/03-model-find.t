@@ -6,17 +6,16 @@ use utf8;
 use Mojo::Base -strict;
 use Test2::V0;
 use Test2::MojoX;
-use MyCaches::Model::Cache;
 
 my $t = Test2::MojoX->new('MyCaches', { dbfile => ':temp:' });
-my $db = $t->app->sqlite->db;
 
 #--- instance creation ---------------------------------------------------------
 
 { # instance creation, default
-  my $c = MyCaches::Model::Find->new;
+  my $c = $t->app->find;
   is($c, object {
     prop blessed => 'MyCaches::Model::Find';
+    call sqlite => check_isa 'Mojo::SQLite';
     call prev => U();
     call found => U();
     call next => U();
@@ -28,8 +27,11 @@ my $db = $t->app->sqlite->db;
   }, 'Default instance check');
 }
 
+done_testing;
+exit;
+
 { # instance creation, non-default
-  my $c = MyCaches::Model::Find->new(
+  my $c = $t->app->find(
     prev => '2019-01-19',
     found => '2019-01-19',
     next => '2019-01-19',
@@ -55,7 +57,7 @@ my $db = $t->app->sqlite->db;
 }
 
 { # instance creation, non-default, from db entry
-  my $c = MyCaches::Model::Find->new(
+  my $c = $t->app->find(
     entry => {
       cacheid => 'GC9ABCD',
       name => 'Žluťoučký kůň 🐴',
@@ -117,7 +119,7 @@ my $db = $t->app->sqlite->db;
 }
 
 { # instance creation, ingestion of alternate date format
-  my $c = MyCaches::Model::Find->new(
+  my $c = $t->app->find(
     prev => '1/1/2019',
     found => '19/10/2019',
     next => '01/01/2020',
@@ -133,7 +135,7 @@ my $db = $t->app->sqlite->db;
 #--- date arithmetic -----------------------------------------------------------
 
 { # testing date arithmetic (1)
-  my $c = MyCaches::Model::Find->new(
+  my $c = $t->app->find(
     prev => '2019-01-19',
     found => '2019-01-20',
     next => '2019-01-21',
@@ -150,7 +152,7 @@ my $db = $t->app->sqlite->db;
 }
 
 { # testing date arithmetic (2)
-  my $c = MyCaches::Model::Find->new(
+  my $c = $t->app->find(
     prev => '2019-12-31',
     found => '2020-12-31',
     next => '2022-01-01',
@@ -169,7 +171,7 @@ my $db = $t->app->sqlite->db;
 #--- special cases -------------------------------------------------------------
 
 { # special cases: FTF today; age should be undefined and held should be 0
-  my $c = MyCaches::Model::Find->new(
+  my $c = $t->app->find(
     found => Time::Moment->now->at_midnight,
   );
   is($c, object {
@@ -183,7 +185,7 @@ my $db = $t->app->sqlite->db;
 
 { # special cases: FTF 100 days ago; age should be undefined and held should be
   # 100
-  my $c = MyCaches::Model::Find->new(
+  my $c = $t->app->find(
     found => Time::Moment->now->at_midnight->plus_days(-100),
   );
   is($c, object {
@@ -196,7 +198,7 @@ my $db = $t->app->sqlite->db;
 }
 
 { # special cases: no next find ("held")
-  my $c = MyCaches::Model::Find->new(
+  my $c = $t->app->find(
     prev => Time::Moment->now->at_midnight->plus_days(-200),
     found => Time::Moment->now->at_midnight->plus_days(-100),
   );
@@ -213,8 +215,7 @@ my $db = $t->app->sqlite->db;
 #--- database operations -------------------------------------------------------
 
 { # create an entry
-  my $c = MyCaches::Model::Find->new(
-    db => $db,
+  my $c = $t->app->find(
     cacheid => 'GC9ABCD',
     name => 'Žluťoučký kůň 🐴',
     difficulty => 5,
@@ -234,8 +235,7 @@ my $db = $t->app->sqlite->db;
   is($c->id, 1, 'New entry row id');
 
   { # load the entry by row id
-    my $d = MyCaches::Model::Find->new(
-      db => $db,
+    my $d = $t->app->find(
       load => { id => $c->id }
     );
     is($d, object {
@@ -264,8 +264,7 @@ my $db = $t->app->sqlite->db;
   }
 
   { # load the entry by cacheid
-    my $d = MyCaches::Model::Find->new(
-      db => $db,
+    my $d = $t->app->find(
       load => { cacheid => 'GC9ABCD' }
     );
     is($d, object {
@@ -302,8 +301,7 @@ my $db = $t->app->sqlite->db;
   ok(lives { $c->update }, 'Update entry') or diag($@);
 
   { # check updated entry
-    my $e = MyCaches::Model::Find->new(
-      db => $db,
+    my $e = $t->app->find(
       load => { id => $c->id }
     );
     is($e, object {
@@ -315,7 +313,7 @@ my $db = $t->app->sqlite->db;
   # delete entry
   ok(lives { $c->delete }, 'Delete entry') or diag($@);
   like(dies {
-    MyCaches::Model::Find->new(db => $db, load => { cacheid => 'GC9ABCD' });
+    $t->app->find(load => { cacheid => 'GC9ABCD' });
   }, qr/Find \w+ not found/, 'Deleted entry retrieval');
 
   # delete this entry again, this should fail

@@ -1,6 +1,5 @@
 package MyCaches::Controller::Login;
 use Mojo::Base 'Mojolicious::Controller', -signatures;
-use MyCaches::Model::Users;
 
 sub index ($c)
 {
@@ -13,8 +12,7 @@ sub index ($c)
 
 sub login ($c)
 {
-  my $usr = MyCaches::Model::Users->new(
-    db => $c->sqlite->db,
+  my $usr = $c->user(
     userid => $c->param('user'),
     pw => $c->param('pass')
   );

@@ -9,14 +9,14 @@ use Test2::MojoX;
 use MyCaches::Model::Hide;
 
 my $t = Test2::MojoX->new('MyCaches', { dbfile => ':temp:' });
-my $db = $t->app->sqlite->db;
 
 #--- instance creation ---------------------------------------------------------
 
 { # instance creation, default
-  my $c = MyCaches::Model::Hide->new;
+  my $c = $t->app->hide;
   is($c, object {
     prop blessed => 'MyCaches::Model::Hide';
+    call sqlite => check_isa 'Mojo::SQLite';
     call published => U();
     call finds => 0;
     call found => U();
@@ -26,7 +26,7 @@ my $db = $t->app->sqlite->db;
 }
 
 { # instance creation, non-default
-  my $c = MyCaches::Model::Hide->new(
+  my $c = $t->app->hide(
     published => '2018-12-18',
     finds => 123,
     found => Time::Moment->now->at_midnight,
@@ -47,7 +47,7 @@ my $db = $t->app->sqlite->db;
 }
 
 { # instance creation, non-default, from db entry
-  my $c = MyCaches::Model::Hide->new(
+  my $c = $t->app->hide(
     entry => {
       hides_i => 123,
       cacheid => 'GC9ABCD',
@@ -96,7 +96,7 @@ my $db = $t->app->sqlite->db;
 }
 
 { # instance creation, ingestion of alternate date format
-  my $c = MyCaches::Model::Hide->new(
+  my $c = $t->app->hide(
     published => '18/12/2018',
     found => '17/12/2021',
   );
@@ -112,8 +112,7 @@ my $db = $t->app->sqlite->db;
 #--- database operations -------------------------------------------------------
 
 { # create an entry in db
-  my $c = MyCaches::Model::Hide->new(
-    db => $db,
+  my $c = $t->app->hide(
     cacheid => 'GC9ABCD',
     name => 'Žluťoučký kůň 🐴',
     difficulty => 5,
@@ -130,8 +129,7 @@ my $db = $t->app->sqlite->db;
   is($c->id, 1, 'New entry rowid');
 
   { # load the entry by row id
-    my $d = MyCaches::Model::Hide->new(
-      db => $db,
+    my $d = $t->app->hide(
       load => { id => $c->id }
     );
     is($d, object {
@@ -149,8 +147,8 @@ my $db = $t->app->sqlite->db;
   }
 
   { # load the entry by cache id
-    my $d = MyCaches::Model::Hide->new(
-      db => $db, load => { cacheid => 'GC9ABCD' }
+    my $d = $t->app->hide(
+      load => { cacheid => 'GC9ABCD' }
     );
     is($d, object {
       prop blessed => 'MyCaches::Model::Hide';
@@ -175,8 +173,8 @@ my $db = $t->app->sqlite->db;
   ok(lives { $c->update }, 'Update entry') or diag($@);
 
   { # check the updated entry
-    my $e = MyCaches::Model::Hide->new(
-      db => $db, load => { id => $c->id }
+    my $e = $t->app->hide(
+      load => { id => $c->id }
     );
     is($e, object {
       prop blessed => 'MyCaches::Model::Hide';
@@ -187,8 +185,8 @@ my $db = $t->app->sqlite->db;
   # delete entry from db
   ok(lives { $c->delete }, 'Delete entry') or diag($@);
   like(dies {
-    MyCaches::Model::Hide->new(
-      db => $db, load => { cacheid => 'GC9ABCD' }
+    $t->app->hide(
+      load => { cacheid => 'GC9ABCD' }
     )
   }, qr/Hide \w+ not found/, 'Deleted entry retrieval');
 

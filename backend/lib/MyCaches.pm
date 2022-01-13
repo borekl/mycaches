@@ -4,6 +4,9 @@ our $VERSION = '0.01';
 
 use Mojo::Base 'Mojolicious', -signatures;
 use MyCaches::Helpers;
+use MyCaches::Model::Users;
+use MyCaches::Model::Find;
+use MyCaches::Model::Hide;
 use Mojo::SQLite;
 
 sub startup($self)
@@ -51,10 +54,24 @@ sub startup($self)
     hides => undef,
   );
 
-  # get route object
-  my $r = $self->routes;
+  #--- MODEL -------------------------------------------------------------------
+
+  $self->helper(user => sub {
+    MyCaches::Model::Users->new(sqlite => shift->sqlite, @_)
+  });
+
+  $self->helper(find => sub {
+    MyCaches::Model::Find->new(sqlite => shift->sqlite, @_)
+  });
+
+  $self->helper(hide => sub {
+    MyCaches::Model::Hide->new(sqlite => shift->sqlite, @_)
+  });
 
   #--- ROUTES ------------------------------------------------------------------
+
+  # get route object
+  my $r = $self->routes;
 
   # front page
   $r->get('/')->to('cachelist#list', finds => 1, hides => 1);
@@ -104,6 +121,10 @@ sub startup($self)
   $api_hides->get('/:id')->to('API#load');
   $api_hides->put('/:id')->to('API#update');
   $api_hides->delete('/:id')->to('API#delete');
+
+  $api_hides->post('/:id/logs/')->to('API#add_log');
+  $api_hides->put('/:id/logs/:logid')->to('API#update_log');
+  $api_hides->delete('/:id/logs/:logid')->to('API#delete_log');
 
   my $api_finds = $api->any('/finds')->to(table => 'finds');
   $api_finds->post('/')->to('API#add');

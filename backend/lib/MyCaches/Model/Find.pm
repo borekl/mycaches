@@ -77,7 +77,7 @@ around BUILDARGS => sub ($orig, $class, %arg) {
 
     delete $arg{load};
 
-    my $re = $arg{db}->select(@select);
+    my $re = $arg{sqlite}->db->select(@select);
     my $entry = $re->hash;
     if($entry) {
       $arg{entry} = $entry;
@@ -159,7 +159,7 @@ sub get_new_id($self)
 
 sub create($self)
 {
-  my $db = $self->db;
+  my $db = $self->sqlite->db;
   my $entry = $self->get_new_id->to_hash(db => 1);
   $db->insert('finds', $entry);
   return $self;
@@ -172,7 +172,7 @@ sub create($self)
 sub update($self)
 {
   my $id = $self->id;
-  my $r = $self->db->update(
+  my $r = $self->sqlite->db->update(
     'finds',
     $self->to_hash(db => 1),
     { finds_i => $self->id }
@@ -188,7 +188,7 @@ sub update($self)
 sub delete($self)
 {
   my $id = $self->id;
-  my $r = $self->db->delete('finds', { finds_i => $id });
+  my $r = $self->sqlite->db->delete('finds', { finds_i => $id });
   die "Find $id not found" unless $r->rows;
   return $self;
 }

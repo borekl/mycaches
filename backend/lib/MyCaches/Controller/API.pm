@@ -1,7 +1,6 @@
 package MyCaches::Controller::API;
 
 use Mojo::Base 'Mojolicious::Controller', -signatures;
-use MyCaches::Model::Hide;
 use Feature::Compat::Try;
 
 #-------------------------------------------------------------------------------
@@ -10,9 +9,9 @@ sub _inst ($c, @args)
 {
   my $table = $c->stash('table');
   if($table eq 'hides') {
-    return MyCaches::Model::Hide->new(db => $c->sqlite->db, @args);
+    return $c->hide(@args);
   } elsif($table eq 'finds') {
-    return MyCaches::Model::Find->new(db => $c->sqlite->db, @args);
+    return $c->find(@args);
   } else {
     die 'Wrong db table specified';
   }

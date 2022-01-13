@@ -63,8 +63,7 @@ my %entry = (
 #--- prepare testing entry in hides --------------------------------------------
 
 {
-  my $hide = MyCaches::Model::Hide->new(
-    db => $db,
+  my $hide = $t->app->hide(
     cacheid => 'GC9ABCD',
     name => 'Žluťoučký kůň 🐴',
     difficulty => 5,

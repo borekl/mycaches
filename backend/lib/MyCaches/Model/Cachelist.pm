@@ -5,7 +5,7 @@ use MyCaches::Model::Find;
 use MyCaches::Model::Hide;
 
 has 'caches' => sub {[]};
-has 'db';
+has 'sqlite';
 
 #------------------------------------------------------------------------------
 # Get a cache list; additional arguments accepted for additional filtering:
@@ -16,7 +16,7 @@ has 'db';
 
 sub load($self, %arg)
 {
-  my $db = $self->db;
+  my $db = $self->sqlite->db;
   my $where = $arg{where} // undef;
   my $order = { -desc => $arg{table} . '_i' };
 
@@ -26,8 +26,12 @@ sub load($self, %arg)
 
   while(my $row = $result->hash) {
     my $cache;
-    $cache = MyCaches::Model::Find->new(entry => $row) if exists $row->{finds_i};
-    $cache = MyCaches::Model::Hide->new(entry => $row) if exists $row->{hides_i};
+    $cache = MyCaches::Model::Find->new(
+      sqlite => $self->sqlite, entry => $row
+    ) if exists $row->{finds_i};
+    $cache = MyCaches::Model::Hide->new(
+      sqlite => $self->sqlite, entry => $row
+    ) if exists $row->{hides_i};
     push(@caches, $cache);
   }
 

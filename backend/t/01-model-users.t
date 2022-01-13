@@ -5,19 +5,18 @@
 use Mojo::Base -strict;
 use Test2::V0;
 use Test2::MojoX;
-use MyCaches::Model::Users;
 
 my $t = Test2::MojoX->new('MyCaches', { dbfile => ':temp:' });
-my $db = $t->app->sqlite->db;
 
 # test instance creation
-my $u = MyCaches::Model::Users->new(
-  db => $db,
+my $u = $t->app->user(
   userid => 'testuser',
   pw => 'testPa$$w0rd',
 );
-
 isa_ok($u, 'MyCaches::Model::Users');
+
+# do we have database instance
+isa_ok($u->sqlite, 'Mojo::SQLite');
 
 # test if hash was created successfully
 like($u->hash, qr/\$argon2/, 'Hash generation');
@@ -35,8 +34,7 @@ $u->pw('SomethingElse');
 is($u->check, 0, 'User check negative match');
 
 # update user in database
-my $v = MyCaches::Model::Users->new(
-  db => $t->app->sqlite->db,
+my $v = $t->app->user(
   userid => 'testuser',
   pw => $u->pw,
 );

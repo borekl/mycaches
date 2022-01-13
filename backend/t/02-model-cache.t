@@ -9,14 +9,15 @@ use Test2::MojoX;
 use MyCaches::Model::Cache;
 
 my $t = Test2::MojoX->new('MyCaches', { dbfile => ':temp:' });
-my $db = $t->app->sqlite->db;
+my $db = $t->app->sqlite;
 
 #--- instance creation ---------------------------------------------------------
 
 { # instance creation, default
-  my $c = MyCaches::Model::Cache->new(db => $db);
+  my $c = MyCaches::Model::Cache->new(sqlite => $db);
   is($c, object {
     prop blessed => 'MyCaches::Model::Cache';
+    call sqlite => check_isa 'Mojo::SQLite';
     call id => U();
     call cacheid => U();
     call name => U();
@@ -33,7 +34,7 @@ my $db = $t->app->sqlite->db;
 
 { # non-default instance from direct arguments
   my $c = MyCaches::Model::Cache->new(
-    db => $db,
+    sqlite => $db,
     id => 123,
     cacheid => 'GC9ABCD',
     name => 'Žluťoučký kůň 🐴',
@@ -61,7 +62,7 @@ my $db = $t->app->sqlite->db;
 
 { # empty strings converted to undefs in attributes
   my $c = MyCaches::Model::Cache->new(
-    db => $db,
+    sqlite => $db,
     cacheid => '',
   );
   is($c, object {
@@ -72,7 +73,7 @@ my $db = $t->app->sqlite->db;
 
 { # non-default instance from database entry
   my $c = MyCaches::Model::Cache->new(
-    db => $db,
+    sqlite => $db,
     entry => {
       cacheid => 'GC9ABCD',
       name => 'Žluťoučký kůň 🐴',
