@@ -79,9 +79,7 @@ sub list ($c)
   }
 
   # form the response
-  $c->respond_to(
-    html => sub { $c->render }
-  );
+  $c->render;
 }
 
 #------------------------------------------------------------------------------
@@ -97,14 +95,11 @@ sub find($self)
     $self->stash(find => $self->find->to_hash);
   } else {
     $self->stash(
-      find => $self->find(load => { id => $id })->to_hash
+      find => $self->myfind(load => { id => $id })->to_hash
     )
   }
 
-  $self->respond_to(
-    json => { json => $self->stash('find') },
-    html => sub { $self->render }
-  );
+  $self->render;
 }
 
 #------------------------------------------------------------------------------
@@ -119,14 +114,11 @@ sub hide($self)
     $self->stash(hide => $self->hide->to_hash);
   } else {
     $self->stash(
-      hide => $self->hide(load => { id => $id })->to_hash
+      hide => $self->myhide(load => { id => $id })->to_hash
     );
   }
 
-  $self->respond_to(
-    json => { json => $self->stash('hide') },
-    html => sub { $self->render }
-  );
+  $self->render;
 }
 
 #------------------------------------------------------------------------------

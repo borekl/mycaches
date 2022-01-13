@@ -6,9 +6,6 @@ use Mojo::Util qw(getopt);
 use Data::Printer output => 'stdout';
 use Try::Tiny;
 
-use MyCaches::Model::Find;
-use MyCaches::Model::Hide;
-
 has description => 'Display selected cache';
 has usage => <<EOHD;
 Usage: APPLICATION find [OPTIONS]
@@ -19,7 +16,6 @@ EOHD
 
 sub run ($self, @args)
 {
-  my $db = $self->app->sqlite->db;
   my @re;
 
   # set output encoding
@@ -35,28 +31,28 @@ sub run ($self, @args)
 
   foreach my $cacheid (@caches) {
     my ($find, $hide);
-    try { $find = MyCaches::Model::Find->new(
-      load => { cacheid => $cacheid }, db => $db
+    try { $find = $self->app->myfind(
+      load => { cacheid => $cacheid },
     ) };
-    try { $hide = MyCaches::Model::Hide->new(
-      load => { cacheid => $cacheid }, db => $db)
-    };
+    try { $hide = $self->app->myhide(
+      load => { cacheid => $cacheid }
+    ) };
     push(@re, $find->to_hash) if $find;
     push(@re, $hide->to_hash) if $hide;
   }
 
   # load finds
   foreach my $finds_i (@finds) {
-    my $find = MyCaches::Model::Find->new(
-      load => { id => $finds_i }, db => $db
+    my $find = $self->app->myfind(
+      load => { id => $finds_i }
     );
     push(@re, $find->to_hash);
   }
 
   # load hides
   foreach my $hides_i (@hides) {
-    my $hide = MyCaches::Model::Hide->new(
-      load => { id => $hides_i }, db => $db
+    my $hide = $self->app->myhide(
+      load => { id => $hides_i }
     );
     push(@re, $hide->to_hash);
   }

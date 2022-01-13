@@ -2,8 +2,6 @@ package MyCaches::Command::users;
 use Mojo::Base 'Mojolicious::Command', -signatures;
 use Mojo::Util qw(getopt);
 
-use MyCaches::Model::Users;
-
 has description => 'Manage authorized users';
 has usage => <<EOHD;
 Usage: APPLICATION users [OPTIONS]
@@ -28,7 +26,7 @@ sub run ($self, @args)
 
   # show list of users
   if($cmd_list) {
-    my @list = MyCaches::Model::Users->new(db => $db)->list;
+    my @list = $self->app->user->list;
     if(@list) {
       say 'Authorized users:';
       say join(', ', @list);
@@ -39,30 +37,19 @@ sub run ($self, @args)
 
   # add new user
   if($cmd_add) {
-    MyCaches::Model::Users->new(
-      db => $db,
-      userid => $cmd_add,
-      pw => $cmd_pw // ''
-    )->create;
+    $self->app->user(userid => $cmd_add, pw => $cmd_pw // '')->create;
     say "User $cmd_add created";
   }
 
   # update user
   if($cmd_update) {
-    MyCaches::Model::Users->new(
-      db => $db,
-      userid => $cmd_update,
-      pw => $cmd_pw // ''
-    )->update;
+    $self->app->user(userid => $cmd_update, pw => $cmd_pw // '')->update;
     say "User $cmd_update updated";
   }
 
   # delete user
   if($cmd_delete) {
-    MyCaches::Model::Users->new(
-      db => $db,
-      userid => $cmd_delete
-    )->delete;
+    $self->app->user(userid => $cmd_delete)->delete;
     say "User $cmd_delete deleted";
   }
 }
