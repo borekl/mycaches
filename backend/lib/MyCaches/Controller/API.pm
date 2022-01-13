@@ -9,9 +9,9 @@ sub _inst ($c, @args)
 {
   my $table = $c->stash('table');
   if($table eq 'hides') {
-    return $c->hide(@args);
+    return $c->myhide(@args);
   } elsif($table eq 'finds') {
-    return $c->find(@args);
+    return $c->myfind(@args);
   } else {
     die 'Wrong db table specified';
   }

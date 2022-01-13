@@ -60,11 +60,11 @@ sub startup($self)
     MyCaches::Model::Users->new(sqlite => shift->sqlite, @_)
   });
 
-  $self->helper(find => sub {
+  $self->helper(myfind => sub {
     MyCaches::Model::Find->new(sqlite => shift->sqlite, @_)
   });
 
-  $self->helper(hide => sub {
+  $self->helper(myhide => sub {
     MyCaches::Model::Hide->new(sqlite => shift->sqlite, @_)
   });
 
@@ -74,11 +74,11 @@ sub startup($self)
   my $r = $self->routes;
 
   # front page
-  $r->get('/')->to('cachelist#list', finds => 1, hides => 1);
+  $r->get('/')->to('caches#list', finds => 1, hides => 1);
 
   # finds/hides section (unauthorized)
-  my $finds = $r->any('/finds')->to('cachelist#list', finds => 1);
-  my $hides = $r->any('/hides')->to('cachelist#list', hides => 1);
+  my $finds = $r->any('/finds')->to('caches#list', finds => 1);
+  my $hides = $r->any('/hides')->to('caches#list', hides => 1);
 
   # authorized
   my $auth = $r->under('/' => sub ($c) {
@@ -100,17 +100,17 @@ sub startup($self)
   $finds->get('/limit/:limit')->to;
   $finds->get('/archived')->to(archived => 1);
 
-  $finds_auth->get('/:id/delete')->to('cachelist#delete');
-  $finds_auth->get('/:id')->to('cachelist#find');
-  $finds_auth->post('/:id')->to('cachelist#save');
-  $finds_auth->post('/')->to('cachelist#save');
+  $finds_auth->get('/:id/delete')->to('caches#delete');
+  $finds_auth->get('/:id')->to('caches#find');
+  $finds_auth->post('/:id')->to('caches#save');
+  $finds_auth->post('/')->to('caches#save');
 
   # hides
   $hides->get->to;
   $hides_auth->get('/:id/delete')->to('cachelist#delete');
-  $hides_auth->get('/:id')->to('cachelist#hide');
-  $hides_auth->post('/:id')->to('cachelist#save');
-  $hides_auth->post('/')->to('cachelist#save');
+  $hides_auth->get('/:id')->to('caches#hide');
+  $hides_auth->post('/:id')->to('caches#save');
+  $hides_auth->post('/')->to('caches#save');
 
   # API routes
   my $api = $auth->any('/api/v1')->to(controller => 'API');

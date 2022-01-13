@@ -63,7 +63,7 @@ my %entry = (
 #--- prepare testing entry in hides --------------------------------------------
 
 {
-  my $hide = $t->app->hide(
+  my $hide = $t->app->myhide(
     cacheid => 'GC9ABCD',
     name => 'Žluťoučký kůň 🐴',
     difficulty => 5,

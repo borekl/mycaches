@@ -12,7 +12,7 @@ my $t = Test2::MojoX->new('MyCaches', { dbfile => ':temp:' });
 #--- instance creation ---------------------------------------------------------
 
 { # instance creation, default
-  my $c = $t->app->find;
+  my $c = $t->app->myfind;
   is($c, object {
     prop blessed => 'MyCaches::Model::Find';
     call sqlite => check_isa 'Mojo::SQLite';
@@ -31,7 +31,7 @@ done_testing;
 exit;
 
 { # instance creation, non-default
-  my $c = $t->app->find(
+  my $c = $t->app->myfind(
     prev => '2019-01-19',
     found => '2019-01-19',
     next => '2019-01-19',
@@ -57,7 +57,7 @@ exit;
 }
 
 { # instance creation, non-default, from db entry
-  my $c = $t->app->find(
+  my $c = $t->app->myfind(
     entry => {
       cacheid => 'GC9ABCD',
       name => 'Žluťoučký kůň 🐴',
@@ -119,7 +119,7 @@ exit;
 }
 
 { # instance creation, ingestion of alternate date format
-  my $c = $t->app->find(
+  my $c = $t->app->myfind(
     prev => '1/1/2019',
     found => '19/10/2019',
     next => '01/01/2020',
@@ -135,7 +135,7 @@ exit;
 #--- date arithmetic -----------------------------------------------------------
 
 { # testing date arithmetic (1)
-  my $c = $t->app->find(
+  my $c = $t->app->myfind(
     prev => '2019-01-19',
     found => '2019-01-20',
     next => '2019-01-21',
@@ -152,7 +152,7 @@ exit;
 }
 
 { # testing date arithmetic (2)
-  my $c = $t->app->find(
+  my $c = $t->app->myfind(
     prev => '2019-12-31',
     found => '2020-12-31',
     next => '2022-01-01',
@@ -171,7 +171,7 @@ exit;
 #--- special cases -------------------------------------------------------------
 
 { # special cases: FTF today; age should be undefined and held should be 0
-  my $c = $t->app->find(
+  my $c = $t->app->myfind(
     found => Time::Moment->now->at_midnight,
   );
   is($c, object {
@@ -185,7 +185,7 @@ exit;
 
 { # special cases: FTF 100 days ago; age should be undefined and held should be
   # 100
-  my $c = $t->app->find(
+  my $c = $t->app->myfind(
     found => Time::Moment->now->at_midnight->plus_days(-100),
   );
   is($c, object {

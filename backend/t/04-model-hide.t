@@ -13,7 +13,7 @@ my $t = Test2::MojoX->new('MyCaches', { dbfile => ':temp:' });
 #--- instance creation ---------------------------------------------------------
 
 { # instance creation, default
-  my $c = $t->app->hide;
+  my $c = $t->app->myhide;
   is($c, object {
     prop blessed => 'MyCaches::Model::Hide';
     call sqlite => check_isa 'Mojo::SQLite';
@@ -26,7 +26,7 @@ my $t = Test2::MojoX->new('MyCaches', { dbfile => ':temp:' });
 }
 
 { # instance creation, non-default
-  my $c = $t->app->hide(
+  my $c = $t->app->myhide(
     published => '2018-12-18',
     finds => 123,
     found => Time::Moment->now->at_midnight,
@@ -47,7 +47,7 @@ my $t = Test2::MojoX->new('MyCaches', { dbfile => ':temp:' });
 }
 
 { # instance creation, non-default, from db entry
-  my $c = $t->app->hide(
+  my $c = $t->app->myhide(
     entry => {
       hides_i => 123,
       cacheid => 'GC9ABCD',
@@ -96,7 +96,7 @@ my $t = Test2::MojoX->new('MyCaches', { dbfile => ':temp:' });
 }
 
 { # instance creation, ingestion of alternate date format
-  my $c = $t->app->hide(
+  my $c = $t->app->myhide(
     published => '18/12/2018',
     found => '17/12/2021',
   );
@@ -112,7 +112,7 @@ my $t = Test2::MojoX->new('MyCaches', { dbfile => ':temp:' });
 #--- database operations -------------------------------------------------------
 
 { # create an entry in db
-  my $c = $t->app->hide(
+  my $c = $t->app->myhide(
     cacheid => 'GC9ABCD',
     name => 'Žluťoučký kůň 🐴',
     difficulty => 5,
@@ -129,7 +129,7 @@ my $t = Test2::MojoX->new('MyCaches', { dbfile => ':temp:' });
   is($c->id, 1, 'New entry rowid');
 
   { # load the entry by row id
-    my $d = $t->app->hide(
+    my $d = $t->app->myhide(
       load => { id => $c->id }
     );
     is($d, object {
@@ -147,7 +147,7 @@ my $t = Test2::MojoX->new('MyCaches', { dbfile => ':temp:' });
   }
 
   { # load the entry by cache id
-    my $d = $t->app->hide(
+    my $d = $t->app->myhide(
       load => { cacheid => 'GC9ABCD' }
     );
     is($d, object {
@@ -173,7 +173,7 @@ my $t = Test2::MojoX->new('MyCaches', { dbfile => ':temp:' });
   ok(lives { $c->update }, 'Update entry') or diag($@);
 
   { # check the updated entry
-    my $e = $t->app->hide(
+    my $e = $t->app->myhide(
       load => { id => $c->id }
     );
     is($e, object {
@@ -185,7 +185,7 @@ my $t = Test2::MojoX->new('MyCaches', { dbfile => ':temp:' });
   # delete entry from db
   ok(lives { $c->delete }, 'Delete entry') or diag($@);
   like(dies {
-    $t->app->hide(
+    $t->app->myhide(
       load => { cacheid => 'GC9ABCD' }
     )
   }, qr/Hide \w+ not found/, 'Deleted entry retrieval');

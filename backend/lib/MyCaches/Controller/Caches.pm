@@ -1,60 +1,86 @@
-package MyCaches::Controller::Cachelist;
+package MyCaches::Controller::Caches;
 
 use Mojo::Base 'Mojolicious::Controller', -signatures;
-use MyCaches::Model::Cachelist;
-use MyCaches::Model::Find;
-use MyCaches::Model::Hide;
 use MyCaches::Model::Const;
+
+#-------------------------------------------------------------------------------
+# load list of caches
+sub load($c, %arg)
+{
+  my $db = $c->sqlite->db;
+  my $where = $arg{where} // undef;
+  my $order = { -desc => $arg{table} . '_i' };
+
+  my $result = $db->select($arg{table}, undef, $where, $order);
+
+  my @caches;
+
+  while(my $row = $result->hash) {
+    my $cache;
+    $cache = $c->myfind(entry => $row) if exists $row->{finds_i};
+    $cache = $c->myhide(entry => $row) if exists $row->{hides_i};
+    push(@caches, $cache);
+  }
+
+  if($arg{tail}) {
+    @caches = @caches[0 .. $arg{tail}-1]
+  }
+
+  return \@caches;
+}
+
+#-------------------------------------------------------------------------------
+# Convert an array of cache instances to an array of hashes
+sub to_hash($caches)
+{
+  my @data;
+  push(@data, $_->to_hash) foreach (@$caches);
+  return \@data;
+}
 
 #------------------------------------------------------------------------------
 # Generate cache list
 #------------------------------------------------------------------------------
 
-sub list($self)
+sub list ($c)
 {
-  my %json_result;
-  my $finds = MyCaches::Model::Cachelist->new(sqlite => $self->sqlite);
-  my $hides = MyCaches::Model::Cachelist->new(sqlite => $self->sqlite);
-
-  # filtering finds/hides
   my (%where_finds, %where_hides);
 
   # only list archived if the 'archived' option is selected
-  if($self->stash('archived')) {
+  if($c->stash('archived')) {
     $where_hides{status} = $where_finds{status} = ST_ARCHIVED;
   }
 
   # do not list unpublished caches to anonymous viewers
-  if(!$self->session('user')) {
+  if(!$c->session('user')) {
     $where_hides{status} = {
       '!=', [ -and => (ST_DEVEL, ST_WT_PLACE, ST_WT_PUBLISH) ]
     };
   }
 
   # get finds list
-  if($self->stash('finds')) {
-    $json_result{finds} = $finds->load(
+  if($c->stash('finds')) {
+    my $finds = $c->load(
       table => 'finds',
-      tail => $self->stash('limit') // 0,
+      tail => $c->stash('limit') // 0,
       where => \%where_finds,
-    )->to_hash;
-    $self->stash(finds => $json_result{finds});
+    );
+    $c->stash(finds => to_hash($finds));
   }
 
   # get hides list
-  if($self->stash('hides')) {
-    $json_result{hides} = $hides->load(
+  if($c->stash('hides')) {
+    my $hides = $c->load(
       table => 'hides',
-      tail => $self->stash('limit') // 0,
+      tail => $c->stash('limit') // 0,
       where => \%where_hides,
-    )->to_hash;
-    $self->stash(hides => $json_result{hides});
+    );
+    $c->stash(hides => to_hash($hides));
   }
 
   # form the response
-  $self->respond_to(
-    json => { json => \%json_result },
-    html => sub { $self->render }
+  $c->respond_to(
+    html => sub { $c->render }
   );
 }
 
