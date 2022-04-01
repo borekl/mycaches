@@ -107,7 +107,7 @@ sub startup($self)
 
   # hides
   $hides->get->to;
-  $hides_auth->get('/:id/delete')->to('cachelist#delete');
+  $hides_auth->get('/:id/delete')->to('caches#delete');
   $hides_auth->get('/:id')->to('caches#hide');
   $hides_auth->post('/:id')->to('caches#save');
   $hides_auth->post('/')->to('caches#save');
