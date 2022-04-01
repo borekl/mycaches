@@ -80,12 +80,13 @@ sub _cachename
 {
   my ($c, $item) = @_;
   my %attr;
+  my $status = $item->{status} // ST_ACTIVE;
 
-  $attr{class} = 'archived' if $item->{status} == ST_ARCHIVED;
-  $attr{class} = 'disabled' if $item->{status} == ST_DISABLED;
-  $attr{class} = 'devel' if $item->{status} == ST_DEVEL;
-  $attr{class} = 'waitplace' if $item->{status} == ST_WT_PLACE;
-  $attr{class} = 'waitpub' if $item->{status} == ST_WT_PUBLISH;
+  $attr{class} = 'archived' if $status == ST_ARCHIVED;
+  $attr{class} = 'disabled' if $status == ST_DISABLED;
+  $attr{class} = 'devel' if $status == ST_DEVEL;
+  $attr{class} = 'waitplace' if $status == ST_WT_PLACE;
+  $attr{class} = 'waitpub' if $status == ST_WT_PUBLISH;
 
   if($item->{gallery} && $c->session('user')) {
     my $span = tag_to_html('span', class => 'emoji', '&#x1f4f7;');
