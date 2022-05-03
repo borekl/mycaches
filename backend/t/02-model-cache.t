@@ -7,6 +7,7 @@ use Mojo::Base -strict;
 use Test2::V0;
 use Test2::MojoX;
 use MyCaches::Model::Cache;
+use MyCaches::Model::Const;
 
 my $t = Test2::MojoX->new('MyCaches', { dbfile => ':temp:' });
 my $db = $t->app->sqlite;
@@ -25,7 +26,7 @@ my $db = $t->app->sqlite;
     call terrain => 1;
     call ctype => 2;
     call gallery => 0;
-    call status => 0;
+    call status => ST_UNDEF;
     call now => object { prop blessed => 'Time::Moment' };
     call now => Time::Moment->now->at_midnight;
     call tz => $c->now->strftime('%:z');
@@ -42,7 +43,7 @@ my $db = $t->app->sqlite;
     terrain => 4.5,
     ctype => 4,
     gallery => 1,
-    status => 1,
+    status => ST_DISABLED,
   );
   is($c, object {
     prop blessed => 'MyCaches::Model::Cache';
@@ -53,7 +54,7 @@ my $db = $t->app->sqlite;
     call terrain => 4.5;
     call ctype => 4;
     call gallery => 1;
-    call status => 1;
+    call status => ST_DISABLED;
     call now => object { prop blessed => 'Time::Moment' };
     call now => Time::Moment->now->at_midnight;
     call tz => $c->now->strftime('%:z');
@@ -81,7 +82,7 @@ my $db = $t->app->sqlite;
       terrain => 9,
       ctype => 4,
       gallery => 1,
-      status => 1,
+      status => ST_ACTIVE,
     }
   );
   is($c, object {
@@ -92,7 +93,7 @@ my $db = $t->app->sqlite;
     call terrain => 4.5;
     call ctype => 4;
     call gallery => 1;
-    call status => 1;
+    call status => ST_ACTIVE;
     call now => object { prop blessed => 'Time::Moment' };
     call now => Time::Moment->now->at_midnight;
     call tz => $c->now->strftime('%:z');
@@ -109,7 +110,7 @@ my $db = $t->app->sqlite;
       field terrain => 4.5;
       field ctype => 4;
       field gallery => 1;
-      field status => 1;
+      field status => ST_ACTIVE;
       field tz => $c->now->strftime('%:z');
       etc();
     }, 'Data export');

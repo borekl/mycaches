@@ -132,7 +132,8 @@ sub save($self) {
   # find
   if($self->stash('entity') eq 'find') {
     my $find = MyCaches::Model::Find->new(
-      entry => $self->req->params->to_hash, sqlite => $self->sqlite
+      $self->req->params->to_hash->%*, sqlite => $self->sqlite,
+      status => ST_ACTIVE
     );
     if($self->param('finds_i')) {
       $find->update;

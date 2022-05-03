@@ -4,6 +4,7 @@ use Moo;
 with 'MyCaches::Roles::LocalTZ';
 use experimental 'signatures';
 use Time::Moment;
+use MyCaches::Model::Const;
 
 #------------------------------------------------------------------------------
 # ATTRIBUTES
@@ -29,7 +30,11 @@ has 'ctype' => ( is => 'ro', default => 2 );
 # gallery available flag
 has 'gallery' => ( is => 'ro', default => 0 );
 # cache status
-has 'status' => ( is => 'ro', default => 0 );
+has 'status' => (
+  is => 'ro',
+  default => ST_UNDEF,
+  coerce => sub { $_[0] // ST_UNDEF }
+);
 
 #------------------------------------------------------------------------------
 # We allow for alternate ways of initializing the instance
