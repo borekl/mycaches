@@ -148,7 +148,7 @@ sub save($self) {
   # hide
   elsif($self->stash('entity') eq 'hide') {
     my $hide = MyCaches::Model::Hide->new(
-      entry => $self->req->params->to_hash, sqlite => $self->sqlite
+      $self->req->params->to_hash->%*, sqlite => $self->sqlite
     );
     if($self->param('hides_i')) {
       $hide->update;
