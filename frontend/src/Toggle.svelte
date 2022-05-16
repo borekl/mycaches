@@ -18,10 +18,12 @@
   let n; // position in the options array
 
   // based on supplied 'value' prop find option entry with index 'n'
-  for(let i = 0; i < options.length; i++) {
-    if(options[i].value == value) { n = i; break; }
+  $: {
+    for(let i = 0; i < options.length; i++) {
+      if(options[i].value == value) { n = i; break; }
+    }
+    if(typeof n == 'undefined') throw Error('Unknown value');
   }
-  if(typeof n == 'undefined') throw Error('Unknown value');
 
   // cycling function, get and apply the next option
   function toggle() {
@@ -42,10 +44,18 @@
 
 <style>
   .toggle {
+    position: relative;
     user-select: none;
     cursor: pointer;
   }
-  .toggle .label { display: none; }
+  .toggle .label {
+    background-color: rgba(255,255,255,0.6);
+    position: absolute;
+    display: none;
+    left: 1.5em;
+    padding: 0 0.3em;
+    width: 10em;
+  }
   .toggle:hover .label { display: inline; }
   .disabled {
     filter: grayscale(1) opacity(30%);
