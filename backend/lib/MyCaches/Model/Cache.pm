@@ -159,5 +159,45 @@ sub _db_table($self) {
 }
 
 #------------------------------------------------------------------------------
+# Create new entry in the database
+sub create($self)
+{
+  my $db = $self->sqlite->db;
+  my $entry = $self->get_new_id->to_hash(db => 1);
+  $db->insert($self->_db_table, $entry);
+  return $self;
+}
+
+#------------------------------------------------------------------------------
+# Update existing entry in the database
+sub update($self)
+{
+  my $table = $self->_db_table;
+  my $label = ucfirst(substr($table, 0, length($table) - 1));
+  my $id = $self->id;
+  my $r = $self->sqlite->db->update(
+    $table,
+    $self->to_hash(db => 1),
+    { "${table}_i" => $id }
+  );
+  die "$label $id not found" unless $r->rows;
+  return $self;
+}
+
+#------------------------------------------------------------------------------
+# Delete existing entry in the database
+sub delete($self)
+{
+  my $table = $self->_db_table;
+  my $label = ucfirst(substr($table, 0, length($table) - 1));
+  my $id = $self->id;
+  my $r = $self->sqlite->db->delete(
+    $table, { "${table}_i" => $id }
+  );
+  die "$label $id not found" unless $r->rows;
+  return $self;
+}
+
+#------------------------------------------------------------------------------
 
 1;

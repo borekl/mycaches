@@ -114,45 +114,5 @@ sub to_hash($self, %arg)
 }
 
 #------------------------------------------------------------------------------
-# Create new entry in the database
-#------------------------------------------------------------------------------
-
-sub create($self)
-{
-  my $db = $self->sqlite->db;
-  my $entry = $self->get_new_id->to_hash(db => 1);
-  $db->insert('hides', $entry);
-  return $self;
-}
-
-#------------------------------------------------------------------------------
-# Update existing entry in the database
-#------------------------------------------------------------------------------
-
-sub update($self)
-{
-  my $id = $self->id;
-  my $r = $self->sqlite->db->update(
-    'hides',
-    $self->to_hash(db => 1),
-    { hides_i => $id }
-  );
-  die "Hide $id not found" unless $r->rows;
-  return $self;
-}
-
-#------------------------------------------------------------------------------
-# Delete existing entry in the database
-#------------------------------------------------------------------------------
-
-sub delete($self)
-{
-  my $id = $self->id;
-  my $r = $self->sqlite->db->delete('hides', { hides_i => $id });
-  die "Hide $id not found" unless $r->rows;
-  return $self;
-}
-
-#------------------------------------------------------------------------------
 
 1;
