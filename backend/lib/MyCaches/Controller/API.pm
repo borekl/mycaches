@@ -37,11 +37,26 @@ sub add ($c)
 }
 
 #-------------------------------------------------------------------------------
+# load single 'find' or 'hide' entry specified by stash value 'id'; special
+# value of 'new' will make this function return default instance instead of
+# loading anything from the database; for entries loaded from database, this
+# function also supplies 'last' key, which lets the client know whether the
+# entry returned is the last one
 sub load ($c)
 {
   try {
-    my $inst = $c->_inst(load => { id => $c->stash('id') });
-    $c->render(status => 200, json => $inst->to_hash);
+    my ($inst, $last_id, $h);
+    if($c->stash('id') == 0 || $c->stash('id') eq 'new') {
+      $inst = $c->_inst();
+    } else {
+      $inst = $c->_inst(load => { id => $c->stash('id') });
+      $last_id = $inst->get_last_id;
+    }
+    $h = $inst->to_hash;
+    # 'last' key indicates whether the entry loaded from the database is the
+    # last one; this requires strict ordering of the rowid fields
+    if(defined $last_id) { $h->{last} = ($inst->id == $last_id ? \1 : \0) }
+    $c->render(status => 200, json => $h);
   } catch($e) {
     my $code = 500;
     $code = 404 if $e =~ /\w+ \d+ not found/;

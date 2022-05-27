@@ -7,6 +7,7 @@ use strict;
 use warnings;
 use Test2::V0;
 use Test2::MojoX;
+use Mojo::JSON qw(true false);
 use experimental 'signatures';
 
 my $user = 'testuser',
@@ -81,21 +82,40 @@ $t->get_ok('/api/v1/hides/1')
 $t->delete_ok('/api/v1/hides/1')
   ->status_is(404);
 
-# create new entry
+# create new entry #1
 $t->post_ok('/api/v1/hides', json => \%hide)
   ->status_is(201)
   ->json_is('/id' => 1);
 
-# retrieve the entry
+# create new entry #2
+$t->post_ok('/api/v1/hides', json => { %hide, cacheid => 'GC9FFFF' })
+  ->status_is(201)
+  ->json_is('/id' => 2);
+
+# retrieve the entry #1, check content and being NOT marked as last
 $t->get_ok('/api/v1/hides/1')
   ->status_is(200);
 is($t->tx->res->json, $check_hide, 'Verify created entry');
+is(
+  $t->tx->res->json,
+  hash { field last => false; etc() },
+  'Created entry has last flag clear'
+);
 
-# update the entry
+# retrieve entry #2, check it's marked as last
+$t->get_ok('/api/v1/hides/2')
+  ->status_is(200);
+is(
+  $t->tx->res->json,
+  hash { field last => true; etc() },
+  'Created entry has last flag set'
+);
+
+# update entry #1
 $t->put_ok('/api/v1/hides/1', json => \%hide_upd)
   ->status_is(204);
 
-# retrieve and check updated entry
+# retrieve and check updated entry #1
 $t->get_ok('/api/v1/hides/1')
   ->status_is(200);
 is($t->tx->res->json, $check_hide_upd, 'Verify updated entry');
