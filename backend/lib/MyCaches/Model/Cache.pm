@@ -105,8 +105,9 @@ sub tm_from_date($self, $date)
 # semantics to them. FIXME
 #------------------------------------------------------------------------------
 
-sub get_last_id($self, $table)
+sub get_last_id($self)
 {
+  my $table = $self->_db_table;
   my $db = $self->sqlite->db;
   my $rowid = "${table}_i";
   my $re = $db->select($table, $rowid, undef, { -desc => $rowid });
@@ -114,6 +115,14 @@ sub get_last_id($self, $table)
   $re->finish;
 
   return $row->{$rowid} // 0;
+}
+
+#------------------------------------------------------------------------------
+# set new id for this instance
+sub get_new_id($self)
+{
+  $self->id($self->get_last_id + 1);
+  return $self;
 }
 
 #------------------------------------------------------------------------------
@@ -135,6 +144,18 @@ sub calc_years_days($self, $tm1, $tm2 )
   $re{rdays} = $tm1->delta_days($tm2);
 
   return \%re;
+}
+
+#------------------------------------------------------------------------------
+# Return backend database table for the instance.
+sub _db_table($self) {
+  if($self->isa('MyCaches::Model::Find')) {
+    return 'finds';
+  } elsif($self->isa('MyCaches::Model::Hide')) {
+    return 'hides';
+  } else {
+    die "Unrecognized cache instance type '$self'";
+  }
 }
 
 #------------------------------------------------------------------------------

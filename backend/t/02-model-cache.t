@@ -125,12 +125,6 @@ my $db = $t->app->sqlite;
     }, 'Data export (for db)');
   }
 
-#--- getting last id -----------------------------------------------------------
-
-  is($c->get_last_id('hides'), 0, 'Last row id on empty hides table');
-  is($c->get_last_id('finds'), 0, 'Last row id on empty finds table');
-
-
 #--- date arithmetic -----------------------------------------------------------
 
   my $tm1 = Time::Moment->from_string('2020-01-01T00Z');
@@ -155,6 +149,15 @@ my $db = $t->app->sqlite;
     hash { field years => 1; field days => 367; field rdays => 1; end() },
     'Date difference (3)'
   );
+
+#--- backend table check -------------------------------------------------------
+
+  like(
+    dies { $c->_db_table },
+    qr/Unrecognized cache instance type/,
+    'Backend table check'
+  );
+
 }
 
 # finish

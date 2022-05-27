@@ -23,6 +23,9 @@ my $t = Test2::MojoX->new('MyCaches', { dbfile => ':temp:' });
     call status => 0;
     call age => U();
   }, 'Default instance check');
+
+  # backend table check
+  is($c->_db_table, 'hides', 'Backend table check');
 }
 
 { # instance creation, non-default
