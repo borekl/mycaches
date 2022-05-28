@@ -46,8 +46,12 @@ sub load ($c)
 {
   try {
     my ($inst, $last_id, $h);
-    if($c->stash('id') == 0 || $c->stash('id') eq 'new') {
+    if($c->stash('id') eq 'new') {
       $inst = $c->_inst();
+    } elsif($c->stash('id') eq 'last') {
+      my $temp_inst = $c->_inst();
+      $last_id = $temp_inst->get_last_id;
+      $inst = $c->_inst(load => { id => $last_id });
     } else {
       $inst = $c->_inst(load => { id => $c->stash('id') });
       $last_id = $inst->get_last_id;

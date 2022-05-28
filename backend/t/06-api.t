@@ -102,12 +102,12 @@ is(
   'Created entry has last flag clear'
 );
 
-# retrieve entry #2, check it's marked as last
-$t->get_ok('/api/v1/hides/2')
+# retrieve last entry, check it's marked as last
+$t->get_ok('/api/v1/hides/last')
   ->status_is(200);
 is(
   $t->tx->res->json,
-  hash { field last => true; etc() },
+  hash { field last => true; field id => 2; etc() },
   'Created entry has last flag set'
 );
 
