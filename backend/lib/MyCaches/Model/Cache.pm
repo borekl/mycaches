@@ -81,6 +81,7 @@ sub to_hash($self, %arg)
     status => $self->status,
   );
 
+  $re{id} = $self->id unless $arg{db};
   $re{tz} = $self->tz unless $arg{db};
   $re{difficulty} *= 2 if $arg{db};
   $re{terrain} *= 2 if $arg{db};
