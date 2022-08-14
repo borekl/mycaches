@@ -103,7 +103,7 @@
       <div class="cell grid-foot">
         <button type="submit">Submit</button>
         % if($hide->{hides_i}) {
-        <a class="aux" href="<%= '/hides/' . $hide->{hides_i} %>/delete">Delete this entry</a>
+        <a class="aux" href="<%= url_for '/hides/' . $hide->{hides_i} %>/delete">Delete this entry</a>
         % }
       </div>
 
