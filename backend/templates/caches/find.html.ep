@@ -1,135 +1,24 @@
 <!doctype html>
 
-<html>
+<html lang="en">
 
 <head>
-  <title>MyCaches</title>
-  <link rel="stylesheet" href="<%= url_for '/default.css' %>" type="text/css">
-  <script type="text/javascript" src="<%= url_for '/entry.js' %>"></script>
+	<meta charset='utf-8'>
+	<meta name='viewport' content='width=device-width,initial-scale=1'>
+
+	<title>MyCaches::Find</title>
+
+	<link rel='stylesheet' href="<%= url_for '/app/global.css' %>">
+	<link rel='stylesheet' href="<%= url_for '/app/build/bundle.css' %>">
+
+	<script defer src="<%= url_for '/app/build/bundle.js' %>"></script>
 </head>
 
-<body class="entry">
-
-  <form class="cacheentry" method="post" action="<%= url_for '/finds/' . ($find->{finds_i} // '') %>">
-    <div class="form form-find">
-
-      %#--- CACHETYPE ---------------------------------------------------------
-
-      <div class="cell grid-icon fcenter">
-        <span class="input-cachetype"><%= typeicon $find->{ctype} // 2 %></span>
-        <input type="hidden" name="ctype" value="<%= $find->{ctype} // 2 %>">
-      </div>
-
-      %#--- ROW IDENTIFIER ----------------------------------------------------
-
-      <div class="cell grid-id fcenter">
-        <%= $find->{finds_i} %>
-        <input type="hidden" name="finds_i" value="<%= $find->{finds_i} %>">
-      </div>
-
-      %#--- CACHE ID ----------------------------------------------------------
-
-      <div class="cell grid-cid fcenter">
-        <input name="cacheid" value="<%= $find->{cacheid} %>"
-        placeholder="GC code" size="7" maxlength="7">
-      </div>
-
-      %#--- DIFFICULTY/TERRAIN ------------------------------------------------
-
-      <div class="cell grid-rating fcenter">
-
-        <% my $diff_def = $find->{difficulty} // 1; %>
-        <% my $terr_def = $find->{terrain} // 1; %>
-
-        <div class="input-rating">
-          <div class="fivestar">★★★★★<div class="mask"
-          style="width:<%= 100 - $diff_def * 20 %>%"></div></div>
-          <input type="hidden" name="difficulty" value="<%= $diff_def %>">
-        </div>
-
-        <div class="input-rating">
-          <div class="fivestar">★★★★★<div class="mask"
-          style="width:<%= 100 - $terr_def * 20 %>%"></div></div>
-          <input type="hidden" name="terrain" value="<%= $terr_def %>">
-        </div>
-
-      </div>
-
-      %#--- CACHE NAME --------------------------------------------------------
-
-      <div class="cell grid-name">
-        <input name="name" value="<%= $find->{name} %>"
-        placeholder="cache name">
-      </div>
-
-      %#--- FIND DATE ---------------------------------------------------------
-
-      <div class="cell grid-found fcenter">
-        <input name="found" value="<%= $find->{found} %>"
-        placeholder="date found">
-      </div>
-
-      %#--- PREVIOUS FIND DATE ------------------------------------------------
-
-      <div class="cell grid-prev fcenter">
-        <input name="prev" value="<%= $find->{prev} %>"
-        placeholder="prev find">
-      </div>
-
-      %#--- NEXT FIND DATE ----------------------------------------------------
-
-      <div class="cell grid-next fcenter">
-        <input name="next" value="<%= $find->{next} %>"
-        placeholder="next find">
-      </div>
-
-      %#--- FLAGS -------------------------------------------------------------
-
-      <div class="cell grid-flags">
-
-        <div>
-          <span class="input-emoji" data-emojis="📷"></span><input
-          type="hidden" name="gallery" value="<%= $find->{gallery} %>">
-        </div>
-
-        <div>
-          <span class="input-emoji" data-emojis="💙"></span><input
-          type="hidden" name="favorite" value="<%= $find->{favorite} %>">
-        </div>
-
-        <div>
-          <span class="input-emoji" data-emojis="🥇|🥈|🥉"></span><input
-          type="hidden" name="xtf" value="<%= $find->{xtf} %>">
-        </div>
-
-        <div>
-          <span class="input-emoji" data-emojis="🗑️"></span><input
-          type="hidden" name="archived" value="<%= $find->{status} == 6 %>">
-        </div>
-
-      </div>
-
-      %#--- LOG UUID ----------------------------------------------------------
-
-      <div class="cell grid-logid">
-        <input name="logid" value="<%= $find->{logid} %>"
-        placeholder="log uuid">
-      </div>
-
-      %#--- FORM CONTROLS -----------------------------------------------------
-
-      <div class="cell grid-foot">
-        <button type="submit">Submit</button>
-        % if($find->{finds_i}) {
-        <a class="aux" href="<%= url_for '/finds/' . $find->{finds_i} %>/delete">Delete this entry</a>
-        % }
-      </div>
-
-    </div>
-  </form>
-
-<%= include 'cachetypes' %>
-
-</body>
+<body
+  id="app"
+  data-id="<%= $find->{finds_i} // 'new' %>"
+  data-prefix="<%= url_for '/' %>"
+  data-type="find"
+></body>
 
 </html>

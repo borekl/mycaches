@@ -16,10 +16,10 @@
   bind:this={ratebox}
   class="fivestar"
   on:click={rate}
->★★★★★<div
+>★★★★★<span
   class="mask"
   style="width:{mask_width+'%'}"
-></div></span>
+></span></span>
 
 <style>
 .fivestar {
@@ -28,6 +28,7 @@
   user-select: none;
 }
 .mask {
+  display: inline-block;
   position: absolute;
   top: 0;
   right: 0;

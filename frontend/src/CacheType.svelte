@@ -1,6 +1,7 @@
 <script>
   import CacheIcon from './CacheIcon.svelte';
   export let type;
+  export let size = 32;
   let show = false;
 
   function togglePopup() {
@@ -25,7 +26,7 @@
 </script>
 
 <span on:click="{togglePopup}">
-<CacheIcon type={type}/>
+<CacheIcon size="{size}" type="{type}"/>
 </span>
 
 {#if show}
