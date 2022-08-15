@@ -39,7 +39,8 @@ sub add ($c)
 #-------------------------------------------------------------------------------
 # load single 'find' or 'hide' entry specified by stash value 'id'; special
 # value of 'new' will make this function return default instance instead of
-# loading anything from the database; for entries loaded from database, this
+# loading anything from the database; special value of 'last' will make this
+# function return the last entry; for entries loaded from database, this
 # function also supplies 'last' key, which lets the client know whether the
 # entry returned is the last one
 sub load ($c)
