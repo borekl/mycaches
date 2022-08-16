@@ -18,6 +18,7 @@
   id="app"
   data-id="<%= $find->{finds_i} // 'new' %>"
   data-prefix="<%= url_for '/' %>"
+  data-backref="<%= url_for '/finds' %>"
   data-type="find"
 ></body>
 

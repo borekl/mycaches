@@ -13,6 +13,8 @@
   // rowid of entry we are asked to load (special value of 'new' is passed
   // to backend which provides default entry)
   export let id;
+  // reference for going back to a SSR page
+  export let backref;
   // data loaded via the API
   let curr;
   // is current entry the last one?
@@ -154,6 +156,7 @@
       case 'deleteItem': deleteItem(); break;
       case 'saveItemAsNew': saveNewItem(); break;
       case 'updateItem': updateCurrentItem(); break;
+      case 'exitPage': window.location.href = backref; break;
     }
   }
 

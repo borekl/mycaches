@@ -7,11 +7,12 @@
 	  main = document.getElementById('app'),
 	  type = main.getAttribute('data-type'),
 	  id = main.getAttribute('data-id'),
-		prefix_src = main.getAttribute('data-prefix');
+		prefix_src = main.getAttribute('data-prefix'),
+		backref = main.getAttribute('data-backref');
 
 	if(prefix_src == '/') prefix_src = '';
 	prefix.set(prefix_src);
 
 </script>
 
-{#if type == 'find'}<Find id={id} prefix={prefix}/>{/if}
+{#if type == 'find'}<Find id={id} backref={backref}/>{/if}

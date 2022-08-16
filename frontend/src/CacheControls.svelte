@@ -109,7 +109,9 @@
     ></button>
     {/if}
 
-    <button class="cancel"
+    <button
+      class="cancel"
+      on:click="{() => dispatch('dispatch', { action: 'exitPage'})}"
     ><img src="{$prefix}/cross.svg" alt="Cancel"
     ></button>
 
