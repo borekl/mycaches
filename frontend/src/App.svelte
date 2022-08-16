@@ -6,9 +6,11 @@
   let
 	  main = document.getElementById('app'),
 	  type = main.getAttribute('data-type'),
-	  id = main.getAttribute('data-id');
+	  id = main.getAttribute('data-id'),
+		prefix_src = main.getAttribute('data-prefix');
 
-	prefix.set(main.getAttribute('data-prefix'));
+	if(prefix_src == '/') prefix_src = '';
+	prefix.set(prefix_src);
 
 </script>
 
