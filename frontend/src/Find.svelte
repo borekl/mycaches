@@ -186,42 +186,26 @@
     </div>
 
     <div class="main">
-      <table>
-        <tr>
-          <th>difficulty</th>
-          <td class="rating"><FiveStars bind:value="{curr.difficulty}"/></td>
-          <th>previous find</th>
-          <td><input class="date" size=4 bind:value={curr.prev}></td>
-        </tr>
-        <tr>
-          <th>terrain</th>
-          <td class="rating"><FiveStars bind:value="{curr.terrain}"/></td>
-          <th>my find</th>
-          <td><input class="date" size=4 bind:value={curr.found}></td>
-        </tr>
-        <tr>
-          <th>status</th>
-          <td><StatusFind bind:value="{curr.status}"/></td>
-          <th>next find</th>
-          <td><input class="date" size=4 bind:value={curr.next}></td>
-        </tr>
-        <tr>
-          <th>xtf</th>
-          <td><Xtf bind:value={curr.xtf}/></td>
-        </tr>
-        <tr>
-          <th>favorite</th>
-          <td><Favorite bind:value={curr.favorite}/></td>
-        </tr>
-        <tr>
-          <th>gallery</th>
-          <td><Gallery bind:value={curr.gallery}/></td>
-        </tr>
-        <tr>
-          <th>log uuid</th>
-          <td colspan=3><input size=40 bind:value={curr.logid}></td>
-        </tr>
-      </table>
+      <div class="label lbl_diff">difficulty</div>
+      <div class="rating val_diff"><FiveStars bind:value="{curr.difficulty}"/></div>
+      <div class="label lbl_terr">terrain</div>
+      <div class="rating val_terr"><FiveStars bind:value="{curr.terrain}"/></div>
+      <div class="label lbl_prev">previous find</div>
+      <div class="val_prev"><input class="date" size=4 bind:value={curr.prev}></div>
+      <div class="label lbl_found">my find</div>
+      <div class="val_found"><input class="date" size=4 bind:value={curr.found}></div>
+      <div class="label lbl_next">next find</div>
+      <div class="val_next"><input class="date" size=4 bind:value={curr.next}></div>
+      <div class="label lbl_status">status</div>
+      <div class="val_status vcenter"><StatusFind bind:value="{curr.status}"/></div>
+      <div class="label lbl_xtf">xtf</div>
+      <div class="val_xtf vcenter"><Xtf bind:value={curr.xtf}/></div>
+      <div class="label lbl_favorite">favorite</div>
+      <div class="val_favorite vcenter"><Favorite bind:value={curr.favorite}/></div>
+      <div class="label lbl_gallery">gallery</div>
+      <div class="val_gallery vcenter"><Gallery bind:value={curr.gallery}/></div>
+      <div class="label lbl_logid">log uuid</div>
+      <div class="val_logid"><input size=40 bind:value={curr.logid}></div>
     </div>
 
     <CacheControls
@@ -286,23 +270,42 @@
   /*--- main */
 
   div.main {
-    display: flex;
 		padding: 1em;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: repeat(6, 2rem);
+    column-gap: 1rem;
+    row-gap: 0.3rem;
+    grid-template-areas:
+      "lbl-diff val-diff lbl-prev val-prev"
+      "lbl-terr val-terr lbl-found val-found"
+      "lbl-xtf val-xtf lbl-next val-next"
+      "lbl-favorite val-favorite . ."
+      "lbl-gallery val-gallery lbl-status val-status"
+      "lbl-logid val-logid val-logid val-logid";
   }
 
-  .rating {
-    font-size: 133%;
-  }
+  .lbl_diff { grid-area: lbl-diff }
+  .val_diff { grid-area: val-diff }
+  .lbl_terr { grid-area: lbl-terr }
+  .val_terr { grid-area: val-terr }
+  .lbl_favorite { grid-area: lbl-favorite }
+  .val_favorite { grid-area: val-favorite }
+  .lbl_xtf { grid-area: lbl-xtf }
+  .val_xtf { grid-area: val-xtf }
+  .lbl_found { grid-area: lbl-found }
+  .val_found { grid-area: val-found }
+  .lbl_gallery { grid-area: lbl-gallery }
+  .val_gallery { grid-area: val-gallery }
+  .lbl_status { grid-area: lbl-status }
+  .val_status { grid-area: val-status }
+  .lbl_logid { grid-area: lbl-logid }
+  .val_logid { grid-area: val-logid }
 
-  th,td {
-    height: 2rem;
-    vertical-align: baseline;
-  }
-  th { text-align: right; padding-right: 0.5rem; }
-  td { text-align: left; }
-
-  input.date { font-size: 133%; }
+  div.main input { font-size: 133%; }
+  div.main .vcenter { align-self: center; }
+  div.main .label { font-weight: bold; text-align: right; align-self: center; }
+  .rating { font-size: 133%; }
 
   /*--- controls */
 
