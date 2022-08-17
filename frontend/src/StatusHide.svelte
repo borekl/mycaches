@@ -3,7 +3,6 @@
   export let value;
 
   let options = [
-    { value: 0, icon: '⚠️', label: 'undefined' },
 		{ value: 1, icon: '☀️', label: 'active' },
     { value: 2, icon: '⛅', label: 'disabled' },
     { value: 3, icon: '✏️', label: 'in development' },

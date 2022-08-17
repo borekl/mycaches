@@ -2,7 +2,7 @@
   Toggle UI element
 
   User interface element that cycles between two or more labels. The labels,
-  values etc. are defind in the options array. Each element of the options
+  values etc. are defined in the options array. Each element of the options
   array is a hash with following keys:
 
    - value, this is returned in the 'value' prop
@@ -19,6 +19,7 @@
 
   // based on supplied 'value' prop find option entry with index 'n'
   $: {
+    if(!value) value = options[0].value;
     for(let i = 0; i < options.length; i++) {
       if(options[i].value == value) { n = i; break; }
     }
