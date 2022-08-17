@@ -22,7 +22,7 @@
     for(let i = 0; i < options.length; i++) {
       if(options[i].value == value) { n = i; break; }
     }
-    if(typeof n == 'undefined') throw Error('Unknown value');
+    if(typeof n == 'undefined') throw Error('Unknown value: ' + value);
   }
 
   // cycling function, get and apply the next option
