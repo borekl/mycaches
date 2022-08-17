@@ -2,6 +2,7 @@
 
   import { prefix } from './store.js';
   import Find from './Find.svelte';
+  import Hide from './Hide.svelte';
 
   let
 	  main = document.getElementById('app'),
@@ -16,3 +17,4 @@
 </script>
 
 {#if type == 'find'}<Find id={id} backref={backref}/>{/if}
+{#if type == 'hide'}<Hide id={id} backref={backref}/>{/if}

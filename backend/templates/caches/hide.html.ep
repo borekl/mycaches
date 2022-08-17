@@ -1,117 +1,25 @@
 <!doctype html>
 
-<html>
+<html lang="en">
 
 <head>
-  <title>MyCaches</title>
-  <link rel="stylesheet" href="<%= url_for '/default.css' %>" type="text/css">
-  <script type="text/javascript" src="<%= url_for '/entry.js' %>"></script>
+	<meta charset='utf-8'>
+	<meta name='viewport' content='width=device-width,initial-scale=1'>
+
+	<title>MyCaches::Hide</title>
+
+	<link rel='stylesheet' href="<%= url_for '/app/global.css' %>">
+	<link rel='stylesheet' href="<%= url_for '/app/build/bundle.css' %>">
+
+	<script defer src="<%= url_for '/app/build/bundle.js' %>"></script>
 </head>
 
-<body class="entry">
-
-  <form class="cacheentry" method="post" action="<%= url_for '/hides/' . ($hide->{hides_i} // '') %>">
-    <div class="form form-hide">
-
-      %#--- CACHETYPE ---------------------------------------------------------
-
-      <div class="cell grid-icon fcenter">
-        <span class="input-cachetype"><%= typeicon $hide->{ctype} // 2 %></span>
-        <input type="hidden" name="ctype" value="<%= $hide->{ctype} // 2 %>">
-      </div>
-
-      %#--- ROW IDENTIFIER ----------------------------------------------------
-
-      <div class="cell grid-id fcenter">
-        <%= $hide->{hides_i} %>
-        <input type="hidden" name="hides_i" value="<%= $hide->{hides_i} %>">
-      </div>
-
-      %#--- CACHE ID ----------------------------------------------------------
-
-      <div class="cell grid-cid fcenter">
-        <input name="cacheid" value="<%= $hide->{cacheid} %>"
-        placeholder="GC code" size="7" maxlength="7">
-      </div>
-
-      %#--- DIFFICULTY/TERRAIN ------------------------------------------------
-
-      <div class="cell grid-rating fcenter">
-
-        <% my $diff_def = $hide->{difficulty} // 1; %>
-        <% my $terr_def = $hide->{terrain} // 1; %>
-
-        <div class="input-rating">
-          <div class="fivestar">★★★★★<div class="mask"
-          style="width:<%= 100 - $diff_def * 20 %>%"></div></div>
-          <input type="hidden" name="difficulty" value="<%= $diff_def %>">
-        </div>
-
-        <div class="input-rating">
-          <div class="fivestar">★★★★★<div class="mask"
-          style="width:<%= 100 - $terr_def * 20 %>%"></div></div>
-          <input type="hidden" name="terrain" value="<%= $terr_def %>">
-        </div>
-
-      </div>
-
-      %#--- CACHE NAME --------------------------------------------------------
-
-      <div class="cell grid-name">
-        <input name="name" value="<%= $hide->{name} %>"
-        placeholder="cache name">
-      </div>
-
-      %#--- FIND DATE ---------------------------------------------------------
-
-      <div class="cell grid-found fcenter">
-        <input name="found" value="<%= $hide->{found} %>"
-        placeholder="date found">
-      </div>
-
-      %#--- PUBLISHED DATE ----------------------------------------------------
-
-      <div class="cell grid-published fcenter">
-        <input name="published" value="<%= $hide->{published} %>"
-        placeholder="published">
-      </div>
-
-      %#--- FINDS -------------------------------------------------------------
-
-      <div class="cell grid-finds fcenter">
-        <input name="finds" value="<%= $hide->{finds} %>" placeholder="finds">
-      </div>
-
-      %#--- FLAGS -------------------------------------------------------------
-
-      <div class="cell grid-flags">
-
-        <div>
-          <span class="input-emoji" data-emojis="☀️|🌥️|✏️|⛏️|🏁|🗑️"></span><input
-          type="hidden" name="status" value="<%= $hide->{status} %>">
-        </div>
-
-        <div>
-          <span class="input-emoji" data-emojis="📷"></span><input
-          type="hidden" name="gallery" value="<%= $hide->{gallery} %>">
-        </div>
-
-      </div>
-
-      %#--- FORM CONTROLS -----------------------------------------------------
-
-      <div class="cell grid-foot">
-        <button type="submit">Submit</button>
-        % if($hide->{hides_i}) {
-        <a class="aux" href="<%= url_for '/hides/' . $hide->{hides_i} %>/delete">Delete this entry</a>
-        % }
-      </div>
-
-    </div>
-  </form>
-
-<%= include 'cachetypes' %>
-
-</body>
+<body
+  id="app"
+  data-id="<%= $hide->{hides_i} // 'new' %>"
+  data-prefix="<%= url_for '/' %>"
+  data-backref="<%= url_for '/hides' %>"
+  data-type="hide"
+></body>
 
 </html>
