@@ -16,6 +16,10 @@
   // status message (user feedback after saving/deleting)
   export let status;
 
+  // id of current entry, if null we are creating new entry and some of the
+  // controls are not available
+  export let id;
+
   // state variable for the yes/no confirmation subdialog
   let yesno = false;
 
@@ -44,7 +48,7 @@
 
   // save or update current item
   function saveOrUpdateItem() {
-    if(shift) {
+    if(shift || !id) {
       dispatch('dispatch', { action: 'saveItemAsNew' });
     } else {
       dispatch('dispatch', { action: 'updateItem' });
@@ -79,6 +83,7 @@
   <!-- left side buttons -->
 
   <div>
+    {#if id}
     <button on:click="{prevItem}"
     ><img class="rotleft" src="{$prefix}/pyramid.svg" alt="Previous"
     ></button>
@@ -91,6 +96,7 @@
     <button on:click="{retrieveItem}"
     ><img src="{$prefix}/rotate-right.svg" alt="Reload"
     ></button>
+    {/if}
   </div>
 
   <!-- optional center status message -->
@@ -116,11 +122,11 @@
     ></button>
 
     <button
-      class:save="{!shift}"
-      class:savenew="{shift}"
+      class:save="{!shift || !id}"
+      class:savenew="{shift && id}"
       on:click="{saveOrUpdateItem}"
-    >{#if shift}<img src="{$prefix}/add-document.svg" alt="Save">
-    {:else}<img src="{$prefix}/check.svg" alt="Save">{/if}
+    >{#if shift && id}<img src="{$prefix}/add-document.svg" alt="Submit">
+    {:else}<img src="{$prefix}/check.svg" alt="Submit">{/if}
     </button>
 
   </div>

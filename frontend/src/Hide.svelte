@@ -159,7 +159,7 @@
   }
 
   // initialization code
-  if(id != 'new' || id != 'last') id = parseInt(id);
+  if(id != 'new' && id != 'last') id = parseInt(id);
   retrieve();
 
 </script>
@@ -178,7 +178,7 @@
     </div>
 
     <div class="info">
-      <span class="days">#{id}</span>
+      {#if id}<span class="days">#{id}</span>{:else}<span>new entry</span>{/if}
       {#if curr.age} · unfound for <span class="days"><Days d="{curr.age}"/></span>{/if}
       {#if curr.held} · held for <span class="days"><Days d="{curr.held}"/></span>{/if}
     </div>
@@ -204,6 +204,7 @@
       on:dispatch="{dispatch}"
       bind:is_last="{is_last}"
       bind:status="{status}"
+      bind:id="{id}"
     />
 
   </div>
