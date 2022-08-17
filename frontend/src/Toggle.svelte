@@ -49,7 +49,6 @@
     cursor: pointer;
   }
   .toggle .label {
-    /*background-color: rgba(255,255,255,0.6);*/
     position: absolute;
     display: none;
     left: 1.5em;
