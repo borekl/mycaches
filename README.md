@@ -4,13 +4,14 @@
 
 Simple web app for keeping track of my
 [geocaching](https://www.geocaching.com/) finds and hides. Created to
-replace a manually maintained HTML page. Written in perl, it originally used
-Web::Simple micro-framework and then rewritten using Mojolicious web
-framework (primarly because I wanted to learn Mojolicious).
+replace a manually maintained HTML page. Written in perl using Mojolicious
+framework with Svelte front-end components. Please note that this
+is personal tool so it may be rather unpolished in some parts.
 
 * [Setup](#setup)
     * [Configure the application](#configure-the-application)
     * [Create an admin user](#create-an-admin-user)
+    * [Front-end setup](#front-end-setup)
     * [Verify setup](#verify-setup)
 * [Development](#development)
 * [Production](#production)
@@ -66,6 +67,14 @@ You can list of known users with the `-l` option:
     ~/dev/mycaches$ ./script/my_caches users -l
     Authorized users:
     daniel
+
+### Front-end setup
+
+You need to have npm and nodejs installed for this to work. Go into the
+`frontend` directory and run:
+
+    npm install
+    npm run build
 
 ### Verify setup
 
