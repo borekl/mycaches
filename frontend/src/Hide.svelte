@@ -189,7 +189,7 @@
       <div class="label lbl_terr">terrain</div>
       <div class="rating val_terr"><FiveStars bind:value="{curr.terrain}"/></div>
       <div class="label lbl_finds">finds</div>
-      <div class="val_finds"><input size=4 bind:value={curr.finds}></div>
+      <div class="val_finds">{curr.finds}</div>
       <div class="label lbl_published">published</div>
       <div class="val_published"><input size=4 bind:value={curr.published}></div>
       <div class="label lbl_found">last found</div>
@@ -281,7 +281,7 @@
   .lbl_terr { grid-area: lbl-terr }
   .val_terr { grid-area: val-terr }
   .lbl_finds { grid-area: lbl-finds }
-  .val_finds { grid-area: val-finds }
+  .val_finds { grid-area: val-finds; font-size: 133%; }
   .lbl_published { grid-area: lbl-published }
   .val_published { grid-area: val-published }
   .lbl_found { grid-area: lbl-found }

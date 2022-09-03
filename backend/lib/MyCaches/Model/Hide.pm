@@ -15,9 +15,11 @@ has 'published' => (
   is => 'ro',
   coerce => sub ($v) { MyCaches::Types::Date::ingest($v) }
 );
-# number of finds
+# number of finds / note that this is not a field in the backend 'hides' table
+# but an aggregate number of 'found it' logs in the 'logs' table
 has 'finds' => (
-  is => 'ro', default => 0
+  is => 'ro', default => 0,
+  coerce => sub ($v) { int($v) },
 );
 # last find date
 has 'found' => (
@@ -50,15 +52,15 @@ around BUILDARGS => sub ($orig, $class, %arg) {
 
     if(exists $arg{load}{id}) {
       if($arg{load}{id} > 0) {
-        @select = ( 'hides', undef, { hides_i => $arg{load}{id} } );
+        @select = ( 'v_hides', undef, { hides_i => $arg{load}{id} } );
       } else {
-        @select = ( 'hides', undef, undef, { -desc => 'hides_i' } );
+        @select = ( 'v_hides', undef, undef, { -desc => 'hides_i' } );
       }
       $val = $arg{load}{id};
     }
 
     elsif(exists $arg{load}{cacheid}) {
-      @select = ( 'hides', undef, { cacheid => $arg{load}{cacheid} } );
+      @select = ( 'v_hides', undef, { cacheid => $arg{load}{cacheid} } );
       $val = $arg{load}{cacheid};
     }
 

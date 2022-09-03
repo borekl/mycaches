@@ -109,3 +109,18 @@ CREATE TABLE logs (
 
 -- 3 down
 DROP TABLE logs;
+
+
+-- 4 up / add view for getting basic hides info
+CREATE VIEW v_hides AS
+  SELECT
+    hides_i, cacheid, name, difficulty, terrain, published, found, ctype,
+    gallery, status, count(logs_i) AS finds
+  FROM hides
+  LEFT JOIN (SELECT * FROM logs WHERE logtype = 1) USING (cacheid)
+  GROUP BY
+    hides_i, cacheid, name, difficulty, terrain, published, found, ctype,
+    gallery, status;
+
+-- 4 down
+DROP VIEW v_hides;
