@@ -145,7 +145,7 @@ my $t = Test2::MojoX->new('MyCaches', { dbfile => ':temp:' });
       call ctype => 4;
       call gallery => 1;
       call status => 1;
-      call finds => 123;
+      call finds => 0;
     }, 'Load entry by id (1)');
   }
 
@@ -163,7 +163,7 @@ my $t = Test2::MojoX->new('MyCaches', { dbfile => ':temp:' });
       call ctype => 4;
       call gallery => 1;
       call status => 1;
-      call finds => 123;
+      call finds => 0;
     }, 'Load entry by id (1)');
 
     # check finding the next row id

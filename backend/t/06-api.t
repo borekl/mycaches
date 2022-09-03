@@ -21,14 +21,14 @@ my $check_hide = checker(my %hide = (
   cacheid => 'GC9ABCD', name => 'Žluťoučký kůň 🐴',
   difficulty => 5, terrain => 4.5, ctype => 4, gallery => 1,
   published => '2018-12-18',  found => '2019-12-18',
-  finds => 321, status => 1,
+  finds => 0, status => 1,
 ));
 
 my $check_hide_upd = checker(my %hide_upd = (
   cacheid => 'GC9EFGH', name => 'Pěl ďábelské ódy 🐴',
   difficulty => 4, terrain => 1.5, ctype => 2, gallery => 0,
   published => '2019-12-18',  found => '2020-12-18',
-  finds => 456, status => 2,
+  finds => 0, status => 2,
 ));
 
 my $check_find = checker(my %find = (
