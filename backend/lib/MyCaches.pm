@@ -7,6 +7,7 @@ use MyCaches::Helpers;
 use MyCaches::Model::Users;
 use MyCaches::Model::Find;
 use MyCaches::Model::Hide;
+use MyCaches::Model::Loglist;
 use Mojo::SQLite;
 
 sub startup($self)
@@ -66,6 +67,10 @@ sub startup($self)
 
   $self->helper(myhide => sub {
     MyCaches::Model::Hide->new(sqlite => shift->sqlite, @_)
+  });
+
+  $self->helper(loglist => sub {
+    MyCaches::Model::Loglist->new(sqlite => shift->sqlite, @_)
   });
 
   #--- ROUTES ------------------------------------------------------------------
