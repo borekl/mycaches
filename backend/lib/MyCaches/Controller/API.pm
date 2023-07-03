@@ -57,7 +57,7 @@ sub load ($c)
       $inst = $c->_inst(load => { id => $c->stash('id') });
       $last_id = $inst->get_last_id;
     }
-    $h = $inst->to_hash;
+    $h = $inst->hash_for_client;
     # 'last' key indicates whether the entry loaded from the database is the
     # last one; this requires strict ordering of the rowid fields
     if(defined $last_id) { $h->{last} = ($inst->id == $last_id ? \1 : \0) }

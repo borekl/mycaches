@@ -80,7 +80,7 @@ my $t = Test2::MojoX->new('MyCaches', { dbfile => ':temp:' });
   }, 'Non-default instance check (from db)');
 
   { # data export
-    my $h = $c->to_hash;
+    my $h = $c->hash_for_client;
     is($h, hash {
       field hides_i => 123;
       field published => '2018-12-18';
@@ -93,7 +93,7 @@ my $t = Test2::MojoX->new('MyCaches', { dbfile => ':temp:' });
   }
 
   { # data export for db
-    my $h = $c->to_hash(db => 1);
+    my $h = $c->hash_for_db;
     is($h, hash { field age => DNE(); etc() }, 'Data export to hash (db)');
   }
 }

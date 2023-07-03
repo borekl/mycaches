@@ -112,10 +112,10 @@ around BUILDARGS => sub ($orig, $class, %arg)
 };
 
 #-------------------------------------------------------------------------------
-# return data as hash
-sub to_hash($self, %arg)
+# return instance data as a hash, suitable for sending to database
+sub hash_for_db ($self)
 {
-  my $data = $self->SUPER::to_hash(%arg);
+  my $data = $self->SUPER::hash_for_db;
 
   $data->{finds_i} = $self->id;
   $data->{prev} = $self->prev ? $self->prev->strftime('%F') : undef;
@@ -124,13 +124,18 @@ sub to_hash($self, %arg)
   $data->{favorite} = $self->favorite;
   $data->{xtf} = $self->xtf;
   $data->{logid} = $self->logid;
-  # following are computed fields, not relevant for instances used for saving
-  # to database
-  if(!$arg{db}) {
-    $data->{age} = $self->age;
-    $data->{held} = $self->held;
-  }
 
+  return $data;
+}
+
+#-------------------------------------------------------------------------------
+# return instance data as a hash, transformed and filled in with fields suitable
+# for client
+sub hash_for_client ($self)
+{
+  my $data = $self->SUPER::hash_for_client;
+  $data->{age} = $self->age;
+  $data->{held} = $self->held;
   return $data;
 }
 

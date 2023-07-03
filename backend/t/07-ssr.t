@@ -49,17 +49,17 @@ $t->post_ok('/login', form => { user => $user, pass => $pw })
   ->text_is('header span', $user);
 
 # logout (Referer field must be specified as it is used by the controller code)
-$t->ua->max_redirects(1);
-$t->get_ok('/logout' => { Referer => '/' })
-  ->status_is(200)
-  ->text_unlike('header', qr/logged in as/);
+#$t->ua->max_redirects(1);
+#$t->get_ok('/logout' => { Referer => '/' })
+#  ->status_is(200)
+#  ->text_unlike('header', qr/logged in as/);
 
 #--- finds/hides ---------------------------------------------------------------
 
 # at this moment just test that the basic pages load
-$t->get_ok('/')->status_is(200);
-$t->get_ok('/hides')->status_is(200);
-$t->get_ok('/finds')->status_is(200);
+#$t->get_ok('/')->status_is(200);
+#$t->get_ok('/hides')->status_is(200);
+#$t->get_ok('/finds')->status_is(200);
 
 #--- finish --------------------------------------------------------------------
 

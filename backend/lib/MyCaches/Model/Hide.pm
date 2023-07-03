@@ -34,75 +34,26 @@ has 'age' => (
 );
 
 #-------------------------------------------------------------------------------
-# code implementing alternate way of initializing the instance from loaded
-# database entry stored in 'entry' key
-around BUILDARGS => sub ($orig, $class, %arg) {
-
-  my (@select, $val);
-
-  # loading an entry from database // keys load.id or load.cacheid will make the
-  # constructor to attempt loading single entry and use its contents to
-  # initialize the instance; when load.id is defined but false, the highest
-  # rowid entry is loaded
-  if(exists $arg{load}) {
-
-    if(exists $arg{load}{id}) {
-      if($arg{load}{id} > 0) {
-        @select = ( 'v_hides', undef, { hides_i => $arg{load}{id} } );
-      } else {
-        @select = ( 'v_hides', undef, undef, { -desc => 'hides_i' } );
-      }
-      $val = $arg{load}{id};
-    }
-
-    elsif(exists $arg{load}{cacheid}) {
-      @select = ( 'v_hides', undef, { cacheid => $arg{load}{cacheid} } );
-      $val = $arg{load}{cacheid};
-    }
-
-    delete $arg{load};
-
-    my $re = $arg{sqlite}->db->select(@select);
-    my $entry = $re->hash;
-    if($entry) {
-      $arg{entry} = $entry;
-    } else {
-      die "Hide $val not found";
-    }
-    $re->finish;
-
-  }
-
-  # initialization with a database entry
-  if(exists $arg{entry}) {
-    my $e = $arg{entry};
-    $arg{id} = $e->{hides_i};
-    $arg{published} = $e->{published};
-    $arg{finds} = $e->{finds};
-    $arg{found} = $e->{found};
-  }
-
-  # map rowid
-  else {
-    $arg{id} = $arg{hides_i} if exists $arg{hides_i}
-  }
-
-  # finish
-  return $class->$orig(%arg);
-};
-
-#-------------------------------------------------------------------------------
-# return data as hash
-sub to_hash($self, %arg)
+# return instance data as a hash, suitable for sending to database
+sub hash_for_db ($self)
 {
-  my $data = $self->SUPER::to_hash(%arg);
+  my $data = $self->SUPER::hash_for_db;
 
   $data->{hides_i} = $self->id;
   $data->{published} = $self->published->strftime('%F') if $self->published;
   $data->{finds} = $self->finds;
   $data->{found} = $self->found ? $self->found->strftime('%F') : undef;
-  $data->{age} = $self->age unless $arg{db};
 
+  return $data;
+}
+
+#-------------------------------------------------------------------------------
+# return instance data as a hash, transformed and filled in with fields suitable
+# for client
+sub hash_for_client ($self)
+{
+  my $data = $self->SUPER::hash_for_client;
+  $data->{age} = $self->age;
   return $data;
 }
 

@@ -96,7 +96,7 @@ exit;
 
 
   { # export of attributes
-    my $h = $c->to_hash;
+    my $h = $c->hash_for_client;
     is($h, hash {
       field finds_i => $c->id;
       field prev => $c->prev->strftime('%F');
@@ -112,7 +112,7 @@ exit;
   }
 
   { # export of attributes for db
-    my $h = $c->to_hash(db => 1);
+    my $h = $c->hash_for_db;
     is($h, hash {
       field age => DNE();
       field held => DNE();

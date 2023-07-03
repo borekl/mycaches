@@ -36,7 +36,7 @@ sub load($c, %arg)
 sub to_hash($caches)
 {
   my @data;
-  push(@data, $_->to_hash) foreach (@$caches);
+  push(@data, $_->hash_for_client) foreach (@$caches);
   return \@data;
 }
 
@@ -94,10 +94,10 @@ sub find($self)
   my $id = $self->stash('id');
 
   if($id eq 'new') {
-    $self->stash(find => MyCaches::Model::Find->new->to_hash);
+    $self->stash(find => MyCaches::Model::Find->new->hash_for_client);
   } else {
     $self->stash(
-      find => $self->myfind(load => { id => $id })->to_hash
+      find => $self->myfind(load => { id => $id })->hash_for_client
     )
   }
 
@@ -113,10 +113,10 @@ sub hide($self)
   my $id = $self->stash('id');
 
   if($id eq 'new') {
-    $self->stash(hide => MyCaches::Model::Hide->new->to_hash);
+    $self->stash(hide => MyCaches::Model::Hide->new->hash_for_client);
   } else {
     $self->stash(
-      hide => $self->myhide(load => { id => $id })->to_hash
+      hide => $self->myhide(load => { id => $id })->hash_for_client
     );
   }
 
@@ -132,7 +132,7 @@ sub save($self) {
   # find
   if($self->stash('entity') eq 'find') {
     my $find = MyCaches::Model::Find->new(
-      $self->req->params->to_hash->%*, sqlite => $self->sqlite,
+      $self->req->params->hash_for_client->%*, sqlite => $self->sqlite,
       status => ST_ACTIVE
     );
     if($self->param('finds_i')) {
@@ -148,7 +148,7 @@ sub save($self) {
   # hide
   elsif($self->stash('entity') eq 'hide') {
     my $hide = MyCaches::Model::Hide->new(
-      $self->req->params->to_hash->%*, sqlite => $self->sqlite
+      $self->req->params->hash_for_client->%*, sqlite => $self->sqlite
     );
     if($self->param('hides_i')) {
       $hide->update;

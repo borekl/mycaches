@@ -62,34 +62,28 @@ around BUILDARGS => sub ($orig, $class, %arg)
 };
 
 #-------------------------------------------------------------------------------
-# return instance data as a hash
-sub to_hash($self, %arg)
-{
-  my %re = (
-    cacheid => $self->cacheid,
-    name => $self->name,
-    difficulty => $self->difficulty,
-    terrain => $self->terrain,
-    ctype => $self->ctype,
-    gallery => $self->gallery,
-    status => $self->status,
-  );
-
-  $re{id} = $self->id unless $arg{db};
-  $re{tz} = $self->tz unless $arg{db};
-  $re{difficulty} *= 2 if $arg{db};
-  $re{terrain} *= 2 if $arg{db};
-
-  return \%re;
-}
+# return instance data as a hash, suitable for sending to database
+sub hash_for_db ($self) {{
+  cacheid => $self->cacheid,
+  name => $self->name,
+  difficulty => $self->difficulty * 2,
+  terrain => $self->terrain * 2,
+  ctype => $self->ctype,
+  gallery => $self->gallery,
+  status => $self->status,
+}}
 
 #-------------------------------------------------------------------------------
-# receive date in ISO format and return Time::Moment object
-sub tm_from_date($self, $date)
+# return instance data as a hash, transformed and filled in with fields suitable
+# for client
+sub hash_for_client ($self)
 {
-  my $now = Time::Moment->now;
-  my $tz = $now->strftime('%:z');
-  return Time::Moment->from_string($date . "T00:00$tz");
+  my $re = $self->hash_for_db;
+  $re->{id} = $self->id;
+  $re->{tz} = $self->tz;
+  $re->{difficulty} = $self->difficulty;
+  $re->{terrain} = $self->terrain;
+  return $re;
 }
 
 #-------------------------------------------------------------------------------
@@ -152,7 +146,7 @@ sub _db_table($self) {
 sub create($self)
 {
   my $db = $self->sqlite->db;
-  my $entry = $self->get_new_id->to_hash(db => 1);
+  my $entry = $self->get_new_id->hash_for_db;
   $db->insert($self->_db_table, $entry);
   return $self;
 }
@@ -166,7 +160,7 @@ sub update($self)
   my $id = $self->id;
   my $r = $self->sqlite->db->update(
     $table,
-    $self->to_hash(db => 1),
+    $self->hash_for_db,
     { "${table}_i" => $id }
   );
   die "$label $id not found" unless $r->rows;

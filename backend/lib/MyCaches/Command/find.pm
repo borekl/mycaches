@@ -37,8 +37,8 @@ sub run ($self, @args)
     try { $hide = $self->app->myhide(
       load => { cacheid => $cacheid }
     ) };
-    push(@re, $find->to_hash) if $find;
-    push(@re, $hide->to_hash) if $hide;
+    push(@re, $find->hash_for_client) if $find;
+    push(@re, $hide->hash_for_client) if $hide;
   }
 
   # load finds
@@ -46,7 +46,7 @@ sub run ($self, @args)
     my $find = $self->app->myfind(
       load => { id => $finds_i }
     );
-    push(@re, $find->to_hash);
+    push(@re, $find->hash_for_client);
   }
 
   # load hides
@@ -54,7 +54,7 @@ sub run ($self, @args)
     my $hide = $self->app->myhide(
       load => { id => $hides_i }
     );
-    push(@re, $hide->to_hash);
+    push(@re, $hide->hash_for_client);
   }
 
   p @re, show_dualvar => 'off' if @re;

@@ -51,9 +51,9 @@
 
           <td class="numeric">
             % if(session 'user') {
-              <a href="<%= url_for '/finds/' . $item->{finds_i} %>"><%= $item->{finds_i} %></a>
+              <a href="<%= url_for '/finds/' . $item->{id} %>"><%= $item->{id} %></a>
             % } else {
-              <%= $item->{finds_i} %>
+              <%= $item->{id} %>
             % }
           </td>
 
@@ -125,9 +125,9 @@
 
         <td class="numeric">
           % if(session 'user') {
-            <a href="<%= url_for '/hides/' . $item->{hides_i} %>"><%= $item->{hides_i} %></a>
+            <a href="<%= url_for '/hides/' . $item->{id} %>"><%= $item->{id} %></a>
           % } else {
-            <%= $item->{hides_i} %>
+            <%= $item->{id} %>
           % }
         </td>
 

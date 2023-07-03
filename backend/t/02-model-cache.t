@@ -102,7 +102,7 @@ my $db = $t->app->sqlite;
 #--- data export ---------------------------------------------------------------
 
   { # export attributes as hash
-    my $h = $c->to_hash;
+    my $h = $c->hash_for_client;
     is($h, hash {
       field cacheid => 'GC9ABCD';
       field name => 'Žluťoučký kůň 🐴';
@@ -117,7 +117,7 @@ my $db = $t->app->sqlite;
   }
 
   { # export attributes as hash for db
-    my $h = $c->to_hash(db => 1);
+    my $h = $c->hash_for_db;
     is($h, hash {
       field difficulty => 10;
       field terrain => 9;
