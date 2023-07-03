@@ -1,14 +1,12 @@
 package MyCaches::Model::Find;
 
+# class representing single find, based off Cache class
+
 use Moo;
 extends 'MyCaches::Model::Cache';
 use experimental 'signatures';
 use MyCaches::Types::Date;
 use MyCaches::Model::Const;
-
-#------------------------------------------------------------------------------
-# ATTRIBUTES
-#------------------------------------------------------------------------------
 
 # previous find date
 has 'prev' => (
@@ -46,19 +44,17 @@ has 'held' => (
   }
 );
 
-#------------------------------------------------------------------------------
-# We allow for alternate ways of initializing the instance
-#------------------------------------------------------------------------------
-
-around BUILDARGS => sub ($orig, $class, %arg) {
-
+#-------------------------------------------------------------------------------
+# code implementing alternate way of initializing the instance from loaded
+# database entry stored in 'entry' key
+around BUILDARGS => sub ($orig, $class, %arg)
+{
   my (@select, $val);
 
-  #--- loading an entry from database -----------------------------------------
-  # keys load.id or load.cacheid will make the constructor to attempt loading
-  # single entry and use its contents to initialize the instance; when load.id
-  # is defined but false, the highest rowid entry is loaded
-
+  # loading an entry from database // keys load.id or load.cacheid will make the
+  # constructor to attempt loading single entry and use its contents to
+  # initialize the instance; when load.id is defined but false, the highest
+  # rowid entry is loaded
   if(exists $arg{load}) {
 
     if(exists $arg{load}{id}) {
@@ -87,10 +83,9 @@ around BUILDARGS => sub ($orig, $class, %arg) {
     $re->finish;
   }
 
-  #--- initialization with a database entry
-  # if 'entry' hashref is passed as argument, use it to initialize the instance
-  # the contents is expected to be a verbatim database row
-
+  # initialization with a database entry // if 'entry' hashref is passed as
+  # argument, use it to initialize the instance the contents is expected to be a
+  # verbatim database row
   if(exists $arg{entry}) {
     my $e = $arg{entry};
     $arg{id} = $e->{finds_i};
@@ -102,8 +97,7 @@ around BUILDARGS => sub ($orig, $class, %arg) {
     $arg{logid} = $e->{logid};
   }
 
-  #--- map rowid
-
+  # map rowid
   else {
     $arg{id} = $arg{finds_i} if exists $arg{finds_i}
   }
@@ -113,15 +107,12 @@ around BUILDARGS => sub ($orig, $class, %arg) {
   $arg{status} = ST_ARCHIVED if $arg{archived};
   delete $arg{archived} if exists $arg{archived};
 
-  #--- finish
-
+  # finish
   return $class->$orig(%arg);
 };
 
-#------------------------------------------------------------------------------
-# Return data as hash
-#------------------------------------------------------------------------------
-
+#-------------------------------------------------------------------------------
+# return data as hash
 sub to_hash($self, %arg)
 {
   my $data = $self->SUPER::to_hash(%arg);
@@ -142,7 +133,5 @@ sub to_hash($self, %arg)
 
   return $data;
 }
-
-#------------------------------------------------------------------------------
 
 1;

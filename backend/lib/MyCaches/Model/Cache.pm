@@ -1,14 +1,13 @@
 package MyCaches::Model::Cache;
 
+# base class for Finds and Hides, contains common attributes and methods; this
+# should never be used directly
+
 use Moo;
 with 'MyCaches::Roles::LocalTZ';
 use experimental 'signatures';
 use Time::Moment;
 use MyCaches::Model::Const;
-
-#------------------------------------------------------------------------------
-# ATTRIBUTES
-#------------------------------------------------------------------------------
 
 # ref to db connection
 has 'sqlite' => (
@@ -36,14 +35,12 @@ has 'status' => (
   coerce => sub { $_[0] // ST_UNDEF }
 );
 
-#------------------------------------------------------------------------------
-# We allow for alternate ways of initializing the instance
-#------------------------------------------------------------------------------
-
-around BUILDARGS => sub ($orig, $class, %arg) {
-
-  #--- initialization with a database entry
-
+#-------------------------------------------------------------------------------
+# code implementing alternate way of initializing the instance from loaded
+# database entry stored in 'entry' key
+around BUILDARGS => sub ($orig, $class, %arg)
+{
+  # initialization with a database entry
   if(exists $arg{entry}) {
     my $e = $arg{entry};
     $arg{cacheid} = $e->{cacheid};
@@ -60,15 +57,12 @@ around BUILDARGS => sub ($orig, $class, %arg) {
     undef $v unless length $v;
   }
 
-  #--- finish
-
+  # finish
   return $class->$orig(%arg);
 };
 
-#------------------------------------------------------------------------------
-# Return data as hash
-#------------------------------------------------------------------------------
-
+#-------------------------------------------------------------------------------
+# return instance data as a hash
 sub to_hash($self, %arg)
 {
   my %re = (
@@ -89,10 +83,8 @@ sub to_hash($self, %arg)
   return \%re;
 }
 
-#------------------------------------------------------------------------------
-# Receive date in ISO format and return Time::Moment object
-#------------------------------------------------------------------------------
-
+#-------------------------------------------------------------------------------
+# receive date in ISO format and return Time::Moment object
 sub tm_from_date($self, $date)
 {
   my $now = Time::Moment->now;
@@ -100,12 +92,10 @@ sub tm_from_date($self, $date)
   return Time::Moment->from_string($date . "T00:00$tz");
 }
 
-#------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 # Auxiliary function to get last rowid from a table. This is needed when adding
 # a new entry. We are not using sequences since our rowids actually have some
-# semantics to them. FIXME
-#------------------------------------------------------------------------------
-
+# semantics to them. FIXME: that might not be a good idea
 sub get_last_id($self)
 {
   my $table = $self->_db_table;
@@ -118,7 +108,7 @@ sub get_last_id($self)
   return $row->{$rowid} // 0;
 }
 
-#------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 # set new id for this instance
 sub get_new_id($self)
 {
@@ -126,11 +116,9 @@ sub get_new_id($self)
   return $self;
 }
 
-#------------------------------------------------------------------------------
-# Calculate time difference between two points of time (supplied as
-# Time::Moment instances) in years and days.
-#------------------------------------------------------------------------------
-
+#-------------------------------------------------------------------------------
+# calculate time difference between two points of time (supplied as Time::Moment
+# instances) in years and days.
 sub calc_years_days($self, $tm1, $tm2 )
 {
   my %re = ( years => 0, days => 0, rdays => 0 );
@@ -148,7 +136,7 @@ sub calc_years_days($self, $tm1, $tm2 )
 }
 
 #------------------------------------------------------------------------------
-# Return backend database table for the instance.
+# return backend database table for the instance
 sub _db_table($self) {
   if($self->isa('MyCaches::Model::Find')) {
     return 'finds';
@@ -160,7 +148,7 @@ sub _db_table($self) {
 }
 
 #------------------------------------------------------------------------------
-# Create new entry in the database
+# create new entry in the database
 sub create($self)
 {
   my $db = $self->sqlite->db;
@@ -170,7 +158,7 @@ sub create($self)
 }
 
 #------------------------------------------------------------------------------
-# Update existing entry in the database
+# update existing entry in the database
 sub update($self)
 {
   my $table = $self->_db_table;
@@ -186,7 +174,7 @@ sub update($self)
 }
 
 #------------------------------------------------------------------------------
-# Delete existing entry in the database
+# delete existing entry in the database
 sub delete($self)
 {
   my $table = $self->_db_table;
@@ -198,7 +186,5 @@ sub delete($self)
   die "$label $id not found" unless $r->rows;
   return $self;
 }
-
-#------------------------------------------------------------------------------
 
 1;

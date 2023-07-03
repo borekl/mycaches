@@ -1,14 +1,12 @@
 package MyCaches::Model::Hide;
 
+# class representing single find, based off Cache class
+
 use Moo;
 extends 'MyCaches::Model::Cache';
 use experimental 'signatures';
 use MyCaches::Types::Date;
 use POSIX qw(strftime);
-
-#------------------------------------------------------------------------------
-# ATTRIBUTES
-#------------------------------------------------------------------------------
 
 # publication date
 has 'published' => (
@@ -35,19 +33,17 @@ has 'age' => (
   }
 );
 
-#------------------------------------------------------------------------------
-# CONSTRUCTOR // we allow for alternate ways of initializing the instance
-#------------------------------------------------------------------------------
-
+#-------------------------------------------------------------------------------
+# code implementing alternate way of initializing the instance from loaded
+# database entry stored in 'entry' key
 around BUILDARGS => sub ($orig, $class, %arg) {
 
   my (@select, $val);
 
-  #--- loading an entry from database -----------------------------------------
-  # keys load.id or load.cacheid will make the constructor to attempt loading
-  # single entry and use its contents to initialize the instance; when load.id
-  # is defined but false, the highest rowid entry is loaded
-
+  # loading an entry from database // keys load.id or load.cacheid will make the
+  # constructor to attempt loading single entry and use its contents to
+  # initialize the instance; when load.id is defined but false, the highest
+  # rowid entry is loaded
   if(exists $arg{load}) {
 
     if(exists $arg{load}{id}) {
@@ -77,8 +73,7 @@ around BUILDARGS => sub ($orig, $class, %arg) {
 
   }
 
-  #--- initialization with a database entry
-
+  # initialization with a database entry
   if(exists $arg{entry}) {
     my $e = $arg{entry};
     $arg{id} = $e->{hides_i};
@@ -87,21 +82,17 @@ around BUILDARGS => sub ($orig, $class, %arg) {
     $arg{found} = $e->{found};
   }
 
-  #--- map rowid
-
+  # map rowid
   else {
     $arg{id} = $arg{hides_i} if exists $arg{hides_i}
   }
 
-  #--- finish
-
+  # finish
   return $class->$orig(%arg);
 };
 
-#------------------------------------------------------------------------------
-# Return data as hash
-#------------------------------------------------------------------------------
-
+#-------------------------------------------------------------------------------
+# return data as hash
 sub to_hash($self, %arg)
 {
   my $data = $self->SUPER::to_hash(%arg);
@@ -114,7 +105,5 @@ sub to_hash($self, %arg)
 
   return $data;
 }
-
-#------------------------------------------------------------------------------
 
 1;
