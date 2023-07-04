@@ -8,6 +8,7 @@ with 'MyCaches::Roles::LocalTZ';
 use experimental 'signatures';
 use Time::Moment;
 use MyCaches::Model::Const;
+use MyCaches::Misc qw(empty_strings_to_undefs);
 
 # ref to db connection
 has 'sqlite' => (
@@ -15,51 +16,47 @@ has 'sqlite' => (
   isa => sub { die 'Need sqlite' unless $_[0]->isa('Mojo::SQLite')}
 );
 # row id
-has 'id' => ( is => 'rw' );
+has 'id' => ( is => 'rwp' );
 # cache id (GC code)
-has 'cacheid' => ( is => 'ro' );
+has 'cacheid' => ( is => 'rwp' );
 # cache name
-has 'name'  => ( is => 'ro' );
+has 'name'  => ( is => 'rwp' );
 # cache difficulty (1-5 in steps of 0.5)
-has 'difficulty' => ( is => 'ro', default => 1 );
+has 'difficulty' => ( is => 'rwp', default => 1 );
 # cache terrain (1-5 in steps of 0.5)
-has 'terrain' => ( is => 'ro', default => 1 );
+has 'terrain' => ( is => 'rwp', default => 1 );
 # cache type (as specified in icon SVG)
-has 'ctype' => ( is => 'ro', default => 2 );
+has 'ctype' => ( is => 'rwp', default => 2 );
 # gallery available flag
-has 'gallery' => ( is => 'ro', default => 0 );
+has 'gallery' => ( is => 'rwp', default => 0 );
 # cache status
 has 'status' => (
-  is => 'ro',
+  is => 'rwp',
   default => ST_UNDEF,
   coerce => sub { $_[0] // ST_UNDEF }
 );
 
-#-------------------------------------------------------------------------------
-# code implementing alternate way of initializing the instance from loaded
-# database entry stored in 'entry' key
+# convert empty strings to undefs when creating new instance
 around BUILDARGS => sub ($orig, $class, %arg)
 {
-  # initialization with a database entry
-  if(exists $arg{entry}) {
-    my $e = $arg{entry};
-    $arg{cacheid} = $e->{cacheid};
-    $arg{ctype} = $e->{ctype};
-    $arg{name} = $e->{name};
-    $arg{terrain} = $e->{terrain} / 2;
-    $arg{difficulty} = $e->{difficulty} / 2;
-    $arg{gallery} = $e->{gallery};
-    $arg{status} = $e->{status};
-  }
-
-  # values that are equal to empty strings are converted to undef
-  foreach my $v (values %arg) {
-    undef $v unless length $v;
-  }
-
-  # finish
+  empty_strings_to_undefs(\%arg);
   return $class->$orig(%arg);
 };
+
+#-------------------------------------------------------------------------------
+# set instance attributes from a database row
+sub set_from_db_row ($self, %e)
+{
+  empty_strings_to_undefs(\%e);
+  $self->_set_cacheid($e{cacheid});
+  $self->_set_ctype($e{ctype});
+  $self->_set_name($e{name});
+  $self->_set_terrain($e{terrain} / 2);
+  $self->_set_difficulty($e{difficulty} / 2);
+  $self->_set_gallery($e{gallery});
+  $self->_set_status($e{status});
+  return $self;
+}
 
 #-------------------------------------------------------------------------------
 # return instance data as a hash, suitable for sending to database
@@ -106,7 +103,7 @@ sub get_last_id($self)
 # set new id for this instance
 sub get_new_id($self)
 {
-  $self->id($self->get_last_id + 1);
+  $self->_set_id($self->get_last_id + 1);
   return $self;
 }
 

@@ -50,20 +50,18 @@ my $t = Test2::MojoX->new('MyCaches', { dbfile => ':temp:' });
 }
 
 { # instance creation, non-default, from db entry
-  my $c = $t->app->myhide(
-    entry => {
-      hides_i => 123,
-      cacheid => 'GC9ABCD',
-      name => 'Žluťoučký kůň 🐴',
-      difficulty => 10,
-      terrain => 9,
-      ctype => 4,
-      gallery => 1,
-      published => '2018-12-18',
-      found => Time::Moment->now->strftime('%F'),
-      finds => 321,
-      status => 1,
-    }
+  my $c = $t->app->myhide->set_from_db_row(
+    hides_i => 123,
+    cacheid => 'GC9ABCD',
+    name => 'Žluťoučký kůň 🐴',
+    difficulty => 10,
+    terrain => 9,
+    ctype => 4,
+    gallery => 1,
+    published => '2018-12-18',
+    found => Time::Moment->now->strftime('%F'),
+    finds => 321,
+    status => 1,
   );
   is($c, object {
     prop blessed => 'MyCaches::Model::Hide';
@@ -132,9 +130,7 @@ my $t = Test2::MojoX->new('MyCaches', { dbfile => ':temp:' });
   is($c->id, 1, 'New entry rowid');
 
   { # load the entry by row id
-    my $d = $t->app->myhide(
-      load => { id => $c->id }
-    );
+    my $d = $t->app->myhide->load(id => $c->id);
     is($d, object {
       prop blessed => 'MyCaches::Model::Hide';
       call id => 1;
@@ -146,13 +142,11 @@ my $t = Test2::MojoX->new('MyCaches', { dbfile => ':temp:' });
       call gallery => 1;
       call status => 1;
       call finds => 0;
-    }, 'Load entry by id (1)');
+    }, 'Load entry by id');
   }
 
   { # load the entry by cache id
-    my $d = $t->app->myhide(
-      load => { cacheid => 'GC9ABCD' }
-    );
+    my $d = $t->app->myhide->load(cacheid => 'GC9ABCD');
     is($d, object {
       prop blessed => 'MyCaches::Model::Hide';
       call id => 1;
@@ -164,7 +158,7 @@ my $t = Test2::MojoX->new('MyCaches', { dbfile => ':temp:' });
       call gallery => 1;
       call status => 1;
       call finds => 0;
-    }, 'Load entry by id (1)');
+    }, 'Load entry by cacheid');
 
     # check finding the next row id
     $d->get_new_id;
@@ -176,9 +170,7 @@ my $t = Test2::MojoX->new('MyCaches', { dbfile => ':temp:' });
   ok(lives { $c->update }, 'Update entry') or diag($@);
 
   { # check the updated entry
-    my $e = $t->app->myhide(
-      load => { id => $c->id }
-    );
+    my $e = $t->app->myhide->load(id => $c->id);
     is($e, object {
       prop blessed => 'MyCaches::Model::Hide';
       call name => string 'Pěl ďábelské ódy';
@@ -188,9 +180,7 @@ my $t = Test2::MojoX->new('MyCaches', { dbfile => ':temp:' });
   # delete entry from db
   ok(lives { $c->delete }, 'Delete entry') or diag($@);
   like(dies {
-    $t->app->myhide(
-      load => { cacheid => 'GC9ABCD' }
-    )
+    $t->app->myhide->load(cacheid => 'GC9ABCD')
   }, qr/Hide \w+ not found/, 'Deleted entry retrieval');
 
   # delete this entry again, this should fail

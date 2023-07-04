@@ -73,17 +73,14 @@ my $db = $t->app->sqlite;
 }
 
 { # non-default instance from database entry
-  my $c = MyCaches::Model::Cache->new(
-    sqlite => $db,
-    entry => {
-      cacheid => 'GC9ABCD',
-      name => 'Žluťoučký kůň 🐴',
-      difficulty => 10,
-      terrain => 9,
-      ctype => 4,
-      gallery => 1,
-      status => ST_ACTIVE,
-    }
+  my $c = MyCaches::Model::Cache->new(sqlite => $db)->set_from_db_row(
+    cacheid => 'GC9ABCD',
+    name => 'Žluťoučký kůň 🐴',
+    difficulty => 10,
+    terrain => 9,
+    ctype => 4,
+    gallery => 1,
+    status => ST_ACTIVE,
   );
   is($c, object {
     prop blessed => 'MyCaches::Model::Cache';

@@ -10,25 +10,25 @@ use MyCaches::Model::Const;
 
 # previous find date
 has 'prev' => (
-  is => 'ro',
+  is => 'rwp',
   coerce => sub ($v) { MyCaches::Types::Date::ingest($v) }
 );
 # my find date
 has 'found' => (
-  is => 'ro',
+  is => 'rwp',
   coerce => sub ($v) { MyCaches::Types::Date::ingest($v) }
 );
 # next find date
 has 'next' => (
-  is => 'ro',
+  is => 'rwp',
   coerce => sub ($v) { MyCaches::Types::Date::ingest($v) }
 );
 # cache favorited by me flag
-has 'favorite' => ( is => 'ro', default => 0 );
+has 'favorite' => ( is => 'rwp', default => 0 );
 # ftf/stf/ttf flag
-has 'xtf' => ( is => 'ro', default => 0 );
+has 'xtf' => ( is => 'rwp', default => 0 );
 # log id string ('LUID')
-has 'logid' => ( is => 'ro' );
+has 'logid' => ( is => 'rwp' );
 # age, or how many days since last find when I found the cache
 has 'age' => (
   is => 'lazy',
@@ -43,73 +43,6 @@ has 'held' => (
     $self->calc_years_days($self->found, $self->next // $self->now);
   }
 );
-
-#-------------------------------------------------------------------------------
-# code implementing alternate way of initializing the instance from loaded
-# database entry stored in 'entry' key
-around BUILDARGS => sub ($orig, $class, %arg)
-{
-  my (@select, $val);
-
-  # loading an entry from database // keys load.id or load.cacheid will make the
-  # constructor to attempt loading single entry and use its contents to
-  # initialize the instance; when load.id is defined but false, the highest
-  # rowid entry is loaded
-  if(exists $arg{load}) {
-
-    if(exists $arg{load}{id}) {
-      if($arg{load}{id} > 0) {
-        @select = ( 'finds', undef, { finds_i => $arg{load}{id} } );
-      } else {
-        @select = ( 'finds', undef, undef, { -desc => 'finds_i' } );
-      }
-      $val = $arg{load}{id};
-    }
-
-    elsif(exists $arg{load}{cacheid}) {
-      @select = ( 'finds', undef, { cacheid => $arg{load}{cacheid} } );
-      $val = $arg{load}{cacheid};
-    }
-
-    delete $arg{load};
-
-    my $re = $arg{sqlite}->db->select(@select);
-    my $entry = $re->hash;
-    if($entry) {
-      $arg{entry} = $entry;
-    } else {
-      die "Find $val not found";
-    }
-    $re->finish;
-  }
-
-  # initialization with a database entry // if 'entry' hashref is passed as
-  # argument, use it to initialize the instance the contents is expected to be a
-  # verbatim database row
-  if(exists $arg{entry}) {
-    my $e = $arg{entry};
-    $arg{id} = $e->{finds_i};
-    $arg{prev} = $e->{prev};
-    $arg{found} = $e->{found};
-    $arg{next} = $e->{next};
-    $arg{favorite} = $e->{favorite};
-    $arg{xtf} = $e->{xtf};
-    $arg{logid} = $e->{logid};
-  }
-
-  # map rowid
-  else {
-    $arg{id} = $arg{finds_i} if exists $arg{finds_i}
-  }
-
-  # archived flag mapping; if we receve archived = 1 from the frontend, we map
-  # this to status = 6
-  $arg{status} = ST_ARCHIVED if $arg{archived};
-  delete $arg{archived} if exists $arg{archived};
-
-  # finish
-  return $class->$orig(%arg);
-};
 
 #-------------------------------------------------------------------------------
 # return instance data as a hash, suitable for sending to database
@@ -137,6 +70,53 @@ sub hash_for_client ($self)
   $data->{age} = $self->age;
   $data->{held} = $self->held;
   return $data;
+}
+
+#-------------------------------------------------------------------------------
+# set instance attributes from a database row
+sub set_from_db_row ($self, %e)
+{
+  $self->SUPER::set_from_db_row(%e);
+  $self->_set_id($e{finds_i});
+  $self->_set_prev($e{prev});
+  $self->_set_found($e{found});
+  $self->_set_next($e{next});
+  $self->_set_favorite($e{favorite});
+  $self->_set_xtf($e{xtf});
+  $self->_set_logid($e{logid});
+  return $self;
+}
+
+#-------------------------------------------------------------------------------
+# load single entry specified either by rowid ('id') or cacheid; defined but
+# false rowid (ie. id == 0) will load the highest rowid entry
+sub load ($self, %arg)
+{
+  my $val = 'LAST';
+  my @select = ( 'finds', undef );
+
+  if(exists $arg{id} && defined $arg{id}) {
+    if($arg{id}) {
+      $val = $arg{id};
+      push(@select, { finds_i => $val });
+    } else {
+      push(@select, undef, { -desc => 'finds_i'});
+    }
+  } elsif($arg{cacheid}) {
+    $val = $arg{cacheid};
+    push(@select, { cacheid => $val });
+  }
+
+  my $re = $self->sqlite->db->select(@select);
+  my $entry = $re->hash;
+  if($entry) {
+    $self->set_from_db_row(%$entry)
+  } else {
+    die "Find $val not found";
+  }
+  $re->finish;
+
+  return $self;
 }
 
 1;

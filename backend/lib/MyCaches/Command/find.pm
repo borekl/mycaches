@@ -31,29 +31,21 @@ sub run ($self, @args)
 
   foreach my $cacheid (@caches) {
     my ($find, $hide);
-    try { $find = $self->app->myfind(
-      load => { cacheid => $cacheid },
-    ) };
-    try { $hide = $self->app->myhide(
-      load => { cacheid => $cacheid }
-    ) };
+    try { $find = $self->app->myfind->load(cacheid => $cacheid) };
+    try { $hide = $self->app->myhide->load(cacheid => $cacheid) };
     push(@re, $find->hash_for_client) if $find;
     push(@re, $hide->hash_for_client) if $hide;
   }
 
   # load finds
   foreach my $finds_i (@finds) {
-    my $find = $self->app->myfind(
-      load => { id => $finds_i }
-    );
+    my $find = $self->app->myfind->load(id => $finds_i);
     push(@re, $find->hash_for_client);
   }
 
   # load hides
   foreach my $hides_i (@hides) {
-    my $hide = $self->app->myhide(
-      load => { id => $hides_i }
-    );
+    my $hide = $self->app->myhide->load(id => $hides_i);
     push(@re, $hide->hash_for_client);
   }
 

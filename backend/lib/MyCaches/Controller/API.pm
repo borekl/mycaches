@@ -52,9 +52,9 @@ sub load ($c)
     } elsif($c->stash('id') eq 'last') {
       my $temp_inst = $c->_inst();
       $last_id = $temp_inst->get_last_id;
-      $inst = $c->_inst(load => { id => $last_id });
+      $inst = $c->_inst->load(id => $last_id);
     } else {
-      $inst = $c->_inst(load => { id => $c->stash('id') });
+      $inst = $c->_inst->load(id => $c->stash('id'));
       $last_id = $inst->get_last_id;
     }
     $h = $inst->hash_for_client;
@@ -87,7 +87,7 @@ sub update ($c)
 sub delete ($c)
 {
   try {
-    my $inst = $c->_inst(load => { id => $c->stash('id') });
+    my $inst = $c->_inst->load(id => $c->stash('id'));
     $inst->delete;
     $c->rendered(204);
   } catch($e) {

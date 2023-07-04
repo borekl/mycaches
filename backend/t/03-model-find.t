@@ -60,23 +60,21 @@ exit;
 }
 
 { # instance creation, non-default, from db entry
-  my $c = $t->app->myfind(
-    entry => {
-      cacheid => 'GC9ABCD',
-      name => 'Žluťoučký kůň 🐴',
-      difficulty => 10,
-      terrain => 9,
-      ctype => 4,
-      gallery => 1,
-      status => 1,
-      finds_i => 123,
-      prev => '2019-01-19',
-      found => '2019-01-19',
-      next => '2019-01-19',
-      favorite => 1,
-      xtf => 1,
-      logid => 'abcdef-012',
-    }
+  my $c = $t->app->myfind->set_from_db_row(
+    cacheid => 'GC9ABCD',
+    name => 'Žluťoučký kůň 🐴',
+    difficulty => 10,
+    terrain => 9,
+    ctype => 4,
+    gallery => 1,
+    status => 1,
+    finds_i => 123,
+    prev => '2019-01-19',
+    found => '2019-01-19',
+    next => '2019-01-19',
+    favorite => 1,
+    xtf => 1,
+    logid => 'abcdef-012',
   );
   is($c, object {
     prop blessed => 'MyCaches::Model::Find';
@@ -238,9 +236,7 @@ exit;
   is($c->id, 1, 'New entry row id');
 
   { # load the entry by row id
-    my $d = $t->app->find(
-      load => { id => $c->id }
-    );
+    my $d = $t->app->find->load(id => $c->id);
     is($d, object {
       prop blessed => 'MyCaches::Model::Find';
       call id => 1;
@@ -267,9 +263,7 @@ exit;
   }
 
   { # load the entry by cacheid
-    my $d = $t->app->find(
-      load => { cacheid => 'GC9ABCD' }
-    );
+    my $d = $t->app->find->load(cacheid => 'GC9ABCD');
     is($d, object {
       prop blessed => 'MyCaches::Model::Find';
       call id => 1;

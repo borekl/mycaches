@@ -19,8 +19,8 @@ sub load($c, %arg)
 
   while(my $row = $result->hash) {
     my $cache;
-    $cache = $c->myfind(entry => $row) if exists $row->{finds_i};
-    $cache = $c->myhide(entry => $row) if exists $row->{hides_i};
+    $cache = $c->myfind->set_from_db_row(%$row) if exists $row->{finds_i};
+    $cache = $c->myhide->set_from_db_row(%$row) if exists $row->{hides_i};
     push(@caches, $cache);
   }
 
@@ -94,11 +94,9 @@ sub find($self)
   my $id = $self->stash('id');
 
   if($id eq 'new') {
-    $self->stash(find => MyCaches::Model::Find->new->hash_for_client);
+    $self->stash(find => $self->myfind->hash_for_client);
   } else {
-    $self->stash(
-      find => $self->myfind(load => { id => $id })->hash_for_client
-    )
+    $self->stash(find => $self->myfind->load(id => $id)->hash_for_client)
   }
 
   $self->render;
@@ -113,11 +111,9 @@ sub hide($self)
   my $id = $self->stash('id');
 
   if($id eq 'new') {
-    $self->stash(hide => MyCaches::Model::Hide->new->hash_for_client);
+    $self->stash(hide => $self->myhide->hash_for_client);
   } else {
-    $self->stash(
-      hide => $self->myhide(load => { id => $id })->hash_for_client
-    );
+    $self->stash(hide => $self->myhide->load(id => $id)->hash_for_client);
   }
 
   $self->render;
@@ -131,8 +127,8 @@ sub save($self) {
 
   # find
   if($self->stash('entity') eq 'find') {
-    my $find = MyCaches::Model::Find->new(
-      $self->req->params->hash_for_client->%*, sqlite => $self->sqlite,
+    my $find = $self->myfind(
+      $self->req->params->to_hash->%*,
       status => ST_ACTIVE
     );
     if($self->param('finds_i')) {
@@ -147,9 +143,7 @@ sub save($self) {
 
   # hide
   elsif($self->stash('entity') eq 'hide') {
-    my $hide = MyCaches::Model::Hide->new(
-      $self->req->params->hash_for_client->%*, sqlite => $self->sqlite
-    );
+    my $hide = $self->myhide($self->req->params->to_hash->%*);
     if($self->param('hides_i')) {
       $hide->update;
       $self->stash(op => 'update');
@@ -173,15 +167,11 @@ sub save($self) {
 sub delete ($self)
 {
   if($self->stash('entity') eq 'find') {
-    my $find = MyCaches::Model::Find->new(
-      id => $self->stash('id'), sqlite => $self->sqlite
-    )->delete;
+    my $find = $self->myfind(id => $self->stash('id'))->delete;
   }
 
   elsif($self->stash('entity') eq 'hide') {
-    my $hide = MyCaches::Model::Hide->new(
-      id => $self->stash('id'), sqlite => $self->sqlite
-    )->delete;
+    my $hide = $self->myhide(id => $self->stash('id'))->delete;
   }
 
   $self->render;
